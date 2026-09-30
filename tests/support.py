@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pathlib
 
 GOLDEN = pathlib.Path(__file__).resolve().parent / "golden"

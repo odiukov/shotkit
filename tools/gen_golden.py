@@ -1,6 +1,8 @@
 """Generate golden prompt fixtures from the Short Drama tool.
 
-Run ONCE, from the shortdrama repo, with its interpreter:
+Run ONCE, from the shortdrama repo ROOT (its `app` package is not installed —
+this script puts the invoking cwd on sys.path itself, so the cwd must BE that
+root), with that repo's interpreter:
 
     cd /Users/oleksandr/orca/projects/shortdrama
     uv run python /Users/oleksandr/orca/projects/shotkit/tools/gen_golden.py
@@ -9,10 +11,20 @@ Writes /Users/oleksandr/orca/projects/shotkit/tests/golden/*.txt.
 Reads the shortdrama tree and writes nothing to it.
 """
 
+from __future__ import annotations
+
+import os
 import pathlib
 import sys
 
 OUT = pathlib.Path("/Users/oleksandr/orca/projects/shotkit/tests/golden")
+
+# `python /abs/path/to/script.py` puts the SCRIPT's own directory on
+# sys.path[0], not the invoking cwd — so `import app...` below would fail to
+# resolve shortdrama's package even when run from shortdrama's repo root, since
+# that root is never installed as a package. Put the cwd on sys.path explicitly
+# so the documented command actually works.
+sys.path.insert(0, os.getcwd())
 
 from app.domain.types import Character, Location, Prop, Style, Look, RefSlot
 from app.domain import ref_kit, prompt_guards, turnaround
