@@ -142,6 +142,7 @@ def _assemble_motion(
     dialogue: str,
     generate_audio: bool,
     scene_prompt: str = "",
+    synopsis: str = "",
     locs_raw: list[dict] | None = None,
     props_raw: list[dict] | None = None,
     loop: bool = False,
@@ -156,12 +157,16 @@ def _assemble_motion(
     resolution; here the caller states the mode directly, since that resolution
     is infra this fixture generator has no business reproducing.
 
-    `scene_prompt`/`locs_raw`/`props_raw` default to nothing because none of the
-    fixtures below need them, NOT because the reproduction narrows those inputs:
-    `present` (scene_request.py:573-582) is resolved against `motionPrompt + " "
-    + scenePrompt`, and `ref_union` (scene_request.py:569-572) is built from
-    chars + locations + props together, so a fixture that DOES need a
-    scenePrompt-only mention or a location/prop mention must pass them here.
+    `scene_prompt`/`synopsis`/`locs_raw`/`props_raw` default to nothing because
+    none of the fixtures below need them, NOT because the reproduction narrows
+    those inputs: `present` (scene_request.py:573-582) is resolved against
+    `motionPrompt + " " + scenePrompt`, `ref_union` (scene_request.py:569-572) is
+    built from chars + locations + props together, and the assembled motion
+    STRING itself falls back to the scene's `synopsis` when `motionPrompt` is
+    empty (scene_request.py:678, `board.get("motionPrompt") or (scene_obj or
+    {}).get("synopsis") or ""`) — so a fixture that DOES need a scenePrompt-only
+    mention, a location/prop mention, or the no-motionPrompt fallback must pass
+    them here.
     """
     ref_union = [
         {"id": e.get("id"), "name": e.get("name", "")}
@@ -192,10 +197,11 @@ def _assemble_motion(
 
     # scene_request.py:676-695 — identity -> motion -> loop -> spoken line ->
     # one mode clause -> audio discipline -> strip mentions. NOTE: the assembled
-    # motion string itself is built from `motionPrompt` ALONE (never `motion_text`
-    # / scenePrompt) — scenePrompt only ever widens WHICH characters count toward
-    # the >=2 threshold above, exactly as in the tool.
-    motion = identity_clause + (motion_prompt or "")
+    # motion string is built from `motionPrompt`, falling back to `synopsis` only
+    # when motionPrompt itself is empty (never `motion_text` / scenePrompt) —
+    # scenePrompt only ever widens WHICH characters count toward the >=2
+    # threshold above, exactly as in the tool.
+    motion = identity_clause + (motion_prompt or synopsis or "")
     motion = _tool_loop_hint(motion, loop)
     motion = prompt_guards.with_spoken_line(
         motion, (dialogue or "") if generate_audio else "", narrator_voices
