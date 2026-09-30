@@ -1,6 +1,6 @@
 import unittest
 
-from shotkit.style import STYLE_PRESETS, find_preset
+from shotkit.style import _COMMON_BANNED, STYLE_PRESETS, find_preset
 
 
 class TestPresets(unittest.TestCase):
@@ -25,10 +25,14 @@ class TestPresets(unittest.TestCase):
         # A preset is a medium AND the things that medium must not drift into. Ship the
         # preamble alone and an anime project renders photoreal the moment the model
         # feels like it — the banned list is what holds the look.
-        shared = "deformed hands, extra fingers, fused limbs"
+        #
+        # Subtracting the shared half is what makes this test bite. Asserting against a
+        # truncated fragment of _COMMON_BANNED does not: a preset carrying ONLY the
+        # shared negatives is trivially unequal to a fragment of itself, so the
+        # degenerate case sails through.
         for p in STYLE_PRESETS:
             with self.subTest(preset=p.id):
                 self.assertTrue(p.banned.strip(), p.id)
-                self.assertIn(shared, p.banned)
-                # Each preset also names the medium it must not become.
-                self.assertNotEqual(p.banned.strip(), shared)
+                self.assertIn(_COMMON_BANNED, p.banned)
+                own = p.banned.replace(_COMMON_BANNED, "").strip().strip(",").strip()
+                self.assertTrue(own, f"{p.id} carries only the shared negatives")
