@@ -8,7 +8,7 @@ All content that reaches scene fields is **English only**; keep these examples i
 
 You wrote the outline, so it *feels* fine — that is exactly the blind spot. Enforce an **information boundary**, not just good intentions:
 
-- **Only what is literally written in the beat list / cast / choices is admissible.** Your intent, your memory of "I meant that to land in S1", and any "(plan: …)" annotation are **inadmissible** — if it isn't in a beat's on-screen text, it does not exist for the critic.
+- **Only what is literally written in the beat list / cast is admissible.** Your intent, your memory of "I meant that to land in S1", and any "(plan: …)" annotation are **inadmissible** — if it isn't in a beat's on-screen text, it does not exist for the critic.
 - **Grade guilty until the artifact proves innocent.** A bare "PASS" is a FAIL. The artifact is the table/ledger the test asks for, built only by quoting beat text. No artifact = you didn't run it.
 - **Find at least one real problem before any PASS.** Found nothing? You read as the author — re-read cold.
 - If your runtime can dispatch a subagent, give this pass to a fresh agent whose only input is the outline text. **If it can't (Claude Desktop / claude.ai): run the inline fresh-eyes protocol instead — it is mandatory, not optional:**

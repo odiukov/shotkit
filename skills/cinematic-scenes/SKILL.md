@@ -387,7 +387,7 @@ The final gate. Walk every item against the finished `motionPrompt`; any miss = 
 16. **No trap words** — "stacked / split / panel / side-by-side"; vignette/eyehole words in POV; a removal-implying verb ("wipes off") on a state that must persist.
 17. **Length ≤ ~300 words**; `dialogue` sized ≤ ~2 words/sec of `durationSec`.
 18. **One voice per shot** — no shot carries both an on-camera `dialogue` line and a `VO:` segment. If the scene has both kinds, **every** segment is `[shot N]`-anchored and the two kinds name different shots; the narration sits in a shot where nobody speaks on camera.
-19. **Idle / fork loop** (only in a branching episode, or a deliberate idle hold) — i2v keyframe authored, `loop:true` (or `question` set), one held take with reversible motion returning to the start pose, `dialogue` empty.
+19. **Idle loop** (only for a deliberate idle hold, not a default) — `loop: true`, one held take with reversible motion returning to the start pose, `dialogue` empty.
 20. **Continuity** — entry state matches the previous scene's exit (positions, frame-sides, prop state, wardrobe state, time-of-day); after any edit, dependents re-checked.
 21. **Nothing that trips the moderation gate** — no negated constraint anywhere (`NO fire`, `no clothing`, `no restyling`, `fully covered`), no age in years or diminutive on a character in a romance beat, no "mounted behind her"-class blocking, no role or franchise in a roster **name** — and every `@mentioned` character's `canonicalDescription` re-read, since it is injected into this prompt and you cannot see it here. A refused job is the one failure that costs the render before a frame exists. See "The moderation gate".
 

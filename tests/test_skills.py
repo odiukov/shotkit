@@ -37,7 +37,10 @@ class TestSkillLayout(unittest.TestCase):
                 text = (SKILLS / name / "SKILL.md").read_text(encoding="utf-8")
                 self.assertTrue(text.startswith("---\n"), name)
                 head = text.split("---", 2)[1]
-                self.assertRegex(head, rf"^name:\s*{re.escape(name)}\s*$", name)
+                # (?m) is load-bearing: `head` starts with a newline, so without
+                # MULTILINE the `^` can only match before that newline and this
+                # assertion can never pass, for any skill.
+                self.assertRegex(head, rf"(?m)^name:\s*{re.escape(name)}\s*$", name)
                 self.assertIn("description:", head)
 
 
