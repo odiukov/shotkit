@@ -15,7 +15,11 @@ class StylePreset:
     id: str
     name: str
     global_preamble: str
+    banned: str
 
+
+# Negatives every preset shares: model failure modes that read as artifacts in any medium.
+_COMMON_BANNED = "deformed hands, extra fingers, fused limbs, on-screen text, captions, subtitles, watermark, logo"
 
 STYLE_PRESETS: list[StylePreset] = [
     StylePreset(
@@ -28,11 +32,15 @@ STYLE_PRESETS: list[StylePreset] = [
             "photoreal fabrics, high-resolution DSLR look, color-graded with warm natural tones "
             "and elegant beauty aesthetics, full photorealism"
         ),
+        # Photoreal must NEGATE every illustration/render failure mode explicitly.
+        banned=f"2D, illustration, painterly, painting, drawing, anime, cartoon, cgi look, 3D render, {_COMMON_BANNED}",
     ),
     StylePreset(
         id="cinematic-35mm",
         name="Cinematic 35mm",
         global_preamble="cinematic, naturalistic lighting, shallow depth of field, 35mm film look",
+        # Photoreal must NEGATE illustration explicitly.
+        banned=f"2D, illustration, painterly, anime, cartoon, cgi look, {_COMMON_BANNED}",
     ),
     StylePreset(
         id="gouache-storybook",
@@ -41,6 +49,7 @@ STYLE_PRESETS: list[StylePreset] = [
             "hand-painted 2D animation, storybook illustration, soft gouache and watercolor textures, "
             "gentle ink outlines, warm muted autumn palette, cozy European picture-book look, no photorealism"
         ),
+        banned=f"photorealistic, 3D render, live-action, {_COMMON_BANNED}",
     ),
     StylePreset(
         id="anime-cel",
@@ -49,6 +58,7 @@ STYLE_PRESETS: list[StylePreset] = [
             "classic 2D anime cel animation, clean bold line art, flat cel shading, vibrant saturated palette, "
             "expressive eyes, painterly skies, no photorealism"
         ),
+        banned=f"photorealistic, 3D render, live-action, {_COMMON_BANNED}",
     ),
     StylePreset(
         id="pixar-3d",
@@ -57,6 +67,7 @@ STYLE_PRESETS: list[StylePreset] = [
             "stylized 3D animated film look, soft global illumination, subsurface skin scattering, "
             "appealing rounded character forms, rich warm color grading, cinematic depth of field"
         ),
+        banned=f"photorealistic live-action, 2D flat illustration, {_COMMON_BANNED}",
     ),
     StylePreset(
         id="comic-ink",
@@ -65,6 +76,7 @@ STYLE_PRESETS: list[StylePreset] = [
             "inked comic book art, bold black linework, halftone shading, dramatic high-contrast lighting, "
             "limited spot-color palette, graphic-novel composition, no photorealism"
         ),
+        banned=f"photorealistic, 3D render, live-action, {_COMMON_BANNED}",
     ),
 ]
 
