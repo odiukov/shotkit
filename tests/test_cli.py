@@ -249,6 +249,9 @@ class TestHandoff(unittest.TestCase):
         self.assertNotEqual(out.strip(), prompt_text.strip())
 
     def test_handoff_with_no_references_says_so_plainly_not_an_empty_heading(self):
+        # "ghost" has no `uri` at all — bible.json genuinely names no destination for
+        # it, so the message must say that plainly rather than invent a path or fall
+        # back to an empty heading.
         bible = {
             "style": {"globalPreamble": "photoreal cinematic, 35mm", "banned": ""},
             "characters": [],
@@ -277,20 +280,138 @@ class TestHandoff(unittest.TestCase):
 
             text = out.getvalue()
             self.assertIn("=== ATTACH THESE IMAGES, IN THIS ORDER ===", text)
-            # Says plainly that none are needed, rather than an empty heading with
-            # nothing under it.
+            # Says plainly that nothing is configured, rather than an empty heading
+            # with nothing under it, and never invents a path to save to.
             heading_idx = text.index("=== ATTACH THESE IMAGES, IN THIS ORDER ===")
             after_heading = text[heading_idx:].strip()
             self.assertNotEqual(
                 after_heading, "=== ATTACH THESE IMAGES, IN THIS ORDER ==="
             )
-            self.assertIn("none", after_heading.lower())
+            self.assertIn("no destination", after_heading.lower())
+            self.assertIn("bible.json", after_heading)
 
     def test_handoff_still_writes_warnings_to_stderr(self):
         (self.root / "refs" / "key.png").unlink()
         code, _, err = self.run_cli("prop", "key", "--handoff")
         self.assertEqual(code, 0)
         self.assertIn("missing reference file", err)
+
+    def test_handoff_sheet_with_references_keeps_the_plain_numbered_list(self):
+        # skye (make_project's default) has a non-empty refKit — this is the
+        # unchanged case: a numbered list in Render.refs order, nothing else.
+        code, out, _ = self.run_cli("sheet", "skye", "--handoff")
+        self.assertEqual(code, 0)
+        out_dir = self.root / "out" / "characters" / "skye"
+        refs = (
+            (out_dir / "primary.sheet.refs.txt")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
+        self.assertTrue(refs)
+        for i, path in enumerate(refs, start=1):
+            self.assertIn(f"{i}. {path}", out)
+        # The empty-case wording must never leak into the non-empty case.
+        self.assertNotIn("creates that reference", out)
+        self.assertNotIn("no destination", out)
+
+    def test_handoff_sheet_with_no_references_names_the_destination_path(self):
+        # A brand-new character: a primary look with a refImage path already named
+        # in bible.json, but no refKit/identityRefs/base-character anchor yet — the
+        # exact "sheet mira --handoff" scenario from the bug report. The message
+        # must name the path to save the render to, not just say "none needed".
+        bible = {
+            "style": {"globalPreamble": "photoreal cinematic, 35mm", "banned": ""},
+            "characters": [
+                {
+                    "id": "mira",
+                    "name": "Mira",
+                    "canonicalDescription": "Woman, early 20s, auburn hair.",
+                    "bodyPlan": "humanoid",
+                    "looks": [
+                        {
+                            "label": "primary",
+                            "description": "green raincoat",
+                            "refImage": "refs/mira-primary.png",
+                        }
+                    ],
+                }
+            ],
+            "locations": [],
+            "props": [],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "scenes").mkdir(parents=True)
+            (root / "refs").mkdir()
+            (root / "bible.json").write_text(json.dumps(bible), encoding="utf-8")
+
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = main(["--project", str(root), "sheet", "mira", "--handoff"])
+
+            self.assertEqual(code, 0)
+            refs_file = root / "out" / "characters" / "mira" / "primary.sheet.refs.txt"
+            self.assertEqual(refs_file.read_text(encoding="utf-8"), "")
+
+            text = out.getvalue()
+            expected_path = str(root / "refs" / "mira-primary.png")
+            self.assertIn(expected_path, text)
+            self.assertIn("creates that reference", text)
+
+    def test_handoff_motion_with_no_references_explains_mentions_not_a_save_path(self):
+        # An empty attach list on a mention-based render means something different
+        # from the sheet/location/prop case: nothing is @mentioned (or what's
+        # mentioned has no image configured) — never a save instruction.
+        bible = {
+            "style": {"globalPreamble": "photoreal cinematic, 35mm", "banned": ""},
+            "characters": [],
+            "locations": [],
+            "props": [],
+        }
+        scene = {
+            "id": "empty01",
+            "locationId": "",
+            "scenePrompt": "Wide static shot of an empty room, nothing else happens.",
+            "motionPrompt": "Wide static shot of an empty room, nothing else happens.",
+            "dialogue": "",
+            "voiceover": "",
+            "durationSec": 8,
+            "generateAudio": False,
+            "aspect": "9:16",
+            "loop": False,
+            "banned": "",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "scenes").mkdir(parents=True)
+            (root / "refs").mkdir()
+            (root / "bible.json").write_text(json.dumps(bible), encoding="utf-8")
+            (root / "scenes" / "empty01.json").write_text(
+                json.dumps(scene), encoding="utf-8"
+            )
+
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = main(
+                    [
+                        "--project",
+                        str(root),
+                        "motion",
+                        "empty01",
+                        "--mode",
+                        "t2v",
+                        "--handoff",
+                    ]
+                )
+
+            self.assertEqual(code, 0)
+            refs_file = root / "out" / "scenes" / "empty01" / "motion.refs.txt"
+            self.assertEqual(refs_file.read_text(encoding="utf-8"), "")
+
+            text = out.getvalue()
+            self.assertNotIn("save", text.lower())
+            self.assertNotIn("creates that reference", text)
+            self.assertIn("@mention", text)
 
 
 class TestStatusCommand(unittest.TestCase):

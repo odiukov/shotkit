@@ -114,11 +114,14 @@ intake form.
 
 Ask everything you need in **one message**, not one question at a time:
 
-- **Character** — two pieces of information, kept separate:
+- **Character** — three pieces of information, kept separate:
   1. **Identity**: age, face, build, hair. This becomes `canonicalDescription` — the person themselves, unchanged across scenes.
   2. **Default look** (wardrobe/state): what they're wearing when we first meet them. This becomes the `primary` entry in the character's `looks[]` array.
-  
-  **Why split them?** Folding a garment into identity is the single most common way a project loses face consistency across renders. A `canonicalDescription` is read at every render regardless of what the character is wearing that scene — if wardrobe is baked there, you've locked the character's face to one outfit and lost the ability for costume changes or scene variations. `character-refs` explains why a reference image, not prose, is what holds a face steady; the wardrobe lives in a separate `look` so a character can be recast in different costumes and still hold the same face.
+  3. **Reference photos**: do they already have any images of this person's face? This is the fork in how the sheet gets generated, so ask it here rather than discovering it later. If yes, the photos go under `refs/` and their paths into the character's `identityRefs` list in `bible.json` — the sheet is then generated to MATCH that face, not invented from prose. If no, `identityRefs` stays empty and the sheet is generated from the description alone (see "The reference pass" below for what each route produces). Neither answer blocks anything; ask once, here, so you're not re-asking mid-render.
+
+  If what they have is several separate photos — one for the face, one for a garment, a separate body reference — that's a stronger mechanism than one flat photo (`refKit`, role-labelled references); don't set that up here, just note it and point them at `character-refs`, which owns it.
+
+  **Why split identity and look?** Folding a garment into identity is the single most common way a project loses face consistency across renders. A `canonicalDescription` is read at every render regardless of what the character is wearing that scene — if wardrobe is baked there, you've locked the character's face to one outfit and lost the ability for costume changes or scene variations. `character-refs` explains why a reference image, not prose, is what holds a face steady; the wardrobe lives in a separate `look` so a character can be recast in different costumes and still hold the same face.
 - **Location** — what kind of place, and the light.
 - **Prop** — what the object is.
 
@@ -144,7 +147,10 @@ for either file; they're plain JSON you create directly (field shapes verified a
 - Character: `id`, `name`, `canonicalDescription` (identity only, from the answers
   above), a `looks` entry labelled `"primary"` with a `description` (wardrobe/state) and
   a `refImage` path under `refs/` **that does not exist yet** — that's what the
-  reference pass below fills in.
+  reference pass below fills in. If the user has existing photos of this person, save
+  them under `refs/` too and list their paths in `identityRefs`; otherwise leave
+  `identityRefs` empty (or omit it) — see "The reference pass" below for what each
+  choice produces.
 - Location: `id`, `name`, `canonicalDescription`, `lightingProfile`, a `views` entry
   labelled `"primary"` with a `uri` under `refs/` that doesn't exist yet.
 - Prop: `id`, `name`, `canonicalDescription`, a `uri` under `refs/` that doesn't exist
@@ -155,6 +161,29 @@ for either file; they're plain JSON you create directly (field shapes verified a
 Update `STORY.md`'s Cast / Scenes-in-order sections as you add each entry.
 
 ## The reference pass — before the scene
+
+A character's sheet runs one of two routes, and both end at the same place: a saved
+image file that the look's `refImage` points at, which every scene from then on attaches.
+
+- **Text-only** (no `identityRefs` on this character) — the sheet is generated from
+  `canonicalDescription` and the look's `description` alone, because prose is all there
+  is to generate it from. Its output is not a reference for something else — it IS the
+  reference: save the result to the `refImage` path already named in `bible.json`, and
+  every later scene that `@mentions` this character attaches that file. An empty
+  "ATTACH THESE IMAGES" list on this route is the expected outcome, not a sign
+  something is missing — `shotkit sheet --handoff` says so directly and names the exact
+  path to save the result to (or says plainly that no path is configured yet, if the
+  bible entry doesn't have one, rather than invent one).
+- **Reference-led** (the character carries `identityRefs` — photos the user already gave
+  you) — the sheet prompt reads differently: it instructs the image model to match the
+  attached photo's face, skin, hair and build exactly rather than inventing one from
+  prose, and those photos appear in the handoff's numbered attach list. Role-labelled
+  references (`refKit`: separate face/body/hair/garment photos) are a stronger version
+  of the same idea — see `character-refs` for how those are built and attached.
+
+Locations and props have only the text-only route — `location`/`prop --handoff` behaves
+the same way as the character's text-only case: an empty attach list names the
+destination path (or says none is configured) because the render IS what fills it in.
 
 The scene cannot be assembled until every entity it `@mentions` has a reference image on
 disk — `shotkit lint` will report each one missing, and a `.refs.txt` that lists a path
@@ -174,13 +203,13 @@ shotkit --project <dir> prop <prop-id> --handoff
 ```
 (all three flags and commands verified against `shotkit/cli.py`'s subparsers and
 `_render_paths`/`_write_render`/`_handoff_block`). Each `--handoff` prints one block: the
-prompt to paste into an image model, and — for `sheet` specifically — a numbered
-reference list if the character already has other reference images configured (a new
-character's first sheet typically has none yet, so the list may say so plainly rather
-than show an empty heading).
+prompt to paste into an image model, and a numbered reference list in attach order
+whenever references exist — for the text-only route described above, it names the save
+path instead (see above).
 
 **Hand the user every block, tell them where to save each result** (the look's/view's/
-prop's `refImage`/`uri` path under `refs/`, exactly as written into `bible.json` above),
+prop's `refImage`/`uri` path under `refs/`, exactly as written into `bible.json` above —
+the same path the handoff block itself now names when the list comes back empty),
 **and stop.** Do not attempt to author or render the scene yet — update `STORY.md` to
 note these entities are now "references ready" once the user confirms the images are
 saved, then continue.

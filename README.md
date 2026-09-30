@@ -134,15 +134,16 @@ out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
 
 ## The reference-order rule
 
-> **Attach images in exactly the order `.refs.txt` lists them.** Only `sheet` (a
-> character reference sheet built from a `refKit`) numbers its references by
-> position in the prompt itself ("the third image is the GARMENT...") — there, the
-> order is exact and load-bearing by name. Every other command's `.refs.txt` still
-> reflects a real, meaningful order — the sequence its `@mentions` resolved in —
-> even though the prompt text doesn't spell that order out in words. Attach out of
-> order on any of them — or add, drop, or re-sort one along the way — and every
-> image after the change is mislabelled. The generator will not complain; it will
-> simply act on the wrong image for a given role, silently.
+> **Attach images in exactly the order `.refs.txt` lists them.** Two commands make that
+> strictly load-bearing for identity: `sheet` (built from a `refKit`) numbers its
+> references by position in the prompt itself ("the third image is the GARMENT..."),
+> and `motion --mode ref-anchored` declares `@Image1 is the EXACT opening frame` — get
+> either of those out of order and a role really does swap onto the wrong photo.
+> Everything else — `frame`, `poster`, `motion` on `t2v`/`i2v`, `location`, `prop` — binds
+> identity by DESCRIPTION, not position, so reordering those doesn't swap anyone. Keep the
+> order anyway: many generators weight earlier references more heavily, and a reference
+> set past an engine's cap silently drops the surplus, so which images come first can
+> decide which ones make the trip at all.
 
 ## Not included
 

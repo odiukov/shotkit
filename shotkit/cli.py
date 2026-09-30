@@ -85,6 +85,19 @@ def _handoff_block(render: project_mod.Render) -> str:
     `project.render_sheet`'s ordering invariant) — reordering, filtering or
     inserting into this list here would silently mislabel every image after
     the change, with nothing to catch it.
+
+    An empty `refs` means two different things depending on the command, and the
+    message must not conflate them:
+
+    - `sheet` / `location` / `prop` (`render.creates_reference`): this render's OWN
+      output IS the reference — there is nothing to attach because nothing has been
+      generated yet. `render.save_to` names the exact path bible.json already gives
+      it, when one is configured; when the look/view/prop genuinely has no path
+      configured yet, say that plainly instead of inventing one from the stem.
+    - `frame` / `poster` / `motion`: an empty list means the prompt's `@mentions`
+      resolved to nothing with an image attached — either it mentions no one, or
+      what it mentions has no reference image configured. Never a save instruction
+      here; this render doesn't produce a reference at all.
     """
     lines = [
         "=== PROMPT — paste this into your generator ===",
@@ -94,8 +107,22 @@ def _handoff_block(render: project_mod.Render) -> str:
     ]
     if render.refs:
         lines.extend(f"{i}. {p}" for i, p in enumerate(render.refs, start=1))
+    elif render.creates_reference:
+        if render.save_to:
+            lines.append(
+                "(nothing to attach — this render creates that reference: save "
+                f"the output to {render.save_to}, then every scene onward attaches it)"
+            )
+        else:
+            lines.append(
+                "(nothing to attach — and no destination is configured in "
+                "bible.json for this reference yet; add one, then rerun)"
+            )
     else:
-        lines.append("(none needed — this render has no reference images to attach)")
+        lines.append(
+            "(none attached — nothing in this prompt @mentions a reference image, "
+            "or what's mentioned has none configured)"
+        )
     return "\n".join(lines)
 
 

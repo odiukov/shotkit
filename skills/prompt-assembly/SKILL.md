@@ -187,16 +187,27 @@ out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
   path per line, in the exact order `@mention` resolution (or, for `sheet`, the
   `refKit` manifest) produced them.
 
-**Attach the images to your generator in that file's order — on every command, not just
-`sheet`.** Only `sheet`'s `refKit` manifest actually numbers references by position in
-the prompt text ("the third image is the GARMENT..."); `reference_layout_clause` (the
-frame/poster guard for two or more characters) states a *count*, not an ordering, and
-`location`/`prop` carry no ordinal language in the prompt at all. But every command's
-`.refs.txt` still reflects the real order its references were resolved in, whether or
-not the prompt spells that order out in words — reorder the attachments on any of them
-and the reference that lands on a given role silently changes, with no error from
-anything: the generator has no way to know your attachment order doesn't match the
-resolution it was given.
+**Attach the images to your generator in that file's order.** Whether getting the order
+wrong actually swaps an identity depends on the command:
+
+- **Strictly load-bearing — order decides who's who:** a `sheet` built from a `refKit`,
+  where the manifest numbers references in the prompt text itself ("the third image is
+  the GARMENT..."); and `motion --mode ref-anchored`, where the prompt declares
+  `@Image1 is the EXACT opening frame`. Attach out of order on either of these and the
+  role that lands on a given image really does change.
+- **Not load-bearing for identity on everything else:** `frame`, `poster`, `motion` on
+  `t2v`/`i2v`, `location` and `prop` all bind identity by DESCRIPTION, not position —
+  the who-is-who / "Maintain identity" clauses match each name to a description, so
+  swapping two reference images changes nothing about who is who.
+  `reference_layout_clause` (the frame/poster guard for two or more characters) states a
+  *count*, not an ordering, and `location`/`prop` carry no ordinal language in the
+  prompt at all.
+- **Still worth keeping the order anyway**, for two real reasons rather than an
+  identity-swap risk that isn't actually there on this half of the commands: many
+  engines weight earlier references more heavily than later ones, and when a reference
+  set exceeds an engine's cap the surplus is silently dropped — so which images come
+  first can decide which ones survive the trip at all. See `references/engines.md` for
+  the cap discussion.
 
 ## `--handoff` — the copy-paste form of the same two files
 
@@ -214,7 +225,15 @@ the plain prompt echo with one block a person can act on without opening anythin
 3. /abs/path/refs/lobby.png
 ```
 
-The numbered list is exactly the resolved `.refs.txt` order, unchanged. When a render
-needs no references, the heading still prints, followed by a plain line saying none are
-needed — never an empty heading with nothing under it, which a reader can't tell apart
-from something having silently broken. Warnings still go to stderr either way.
+The numbered list is exactly the resolved `.refs.txt` order, unchanged. When a render has
+nothing to attach, the heading still prints, followed by a message that depends on which
+kind of render this is — never an empty heading with nothing under it, which a reader
+can't tell apart from something having silently broken:
+
+- `sheet` / `location` / `prop` — this render's own output IS the reference, so the line
+  names the exact path (from `bible.json`) to save the result to, or says plainly that no
+  path is configured there yet rather than invent one.
+- `frame` / `poster` / `motion` — the line says the prompt's `@mentions` resolved to
+  nothing with a reference image attached.
+
+Warnings still go to stderr either way.

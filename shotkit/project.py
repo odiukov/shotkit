@@ -93,6 +93,15 @@ class Render:
     prompt: str
     refs: list[str]
     warnings: list[str]
+    # Set only by render_sheet/render_location/render_prop — the three renders whose
+    # OWN output becomes a reference image, rather than attaching @mentions of other
+    # entities. _handoff_block reads these only when `refs` is empty, to tell the two
+    # "nothing to attach" cases apart: a creator render with nothing needed yet (name
+    # the save path, when bible.json already names one) versus a mention-based render
+    # (frame/poster/motion) whose empty list means the prompt mentions nothing, or
+    # mentions something with no image configured.
+    creates_reference: bool = False
+    save_to: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -606,7 +615,21 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
 
         refs = identity_paths + base_paths
 
-    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
+    # This sheet's OWN destination, straight from bible.json — never guessed from the
+    # stem. Populated whenever the requested look already names a refImage, whether or
+    # not refs (above) ended up empty; _handoff_block only reads it in the empty case.
+    save_to = (
+        str(project.root / look_obj.ref_image)
+        if look_obj and look_obj.ref_image
+        else None
+    )
+    return Render(
+        prompt=prompt,
+        refs=refs,
+        warnings=missing_ref_files(refs),
+        creates_reference=True,
+        save_to=save_to,
+    )
 
 
 def render_location(
@@ -620,14 +643,32 @@ def render_location(
     # their architecture, materials, colours and lighting EXACTLY") — every existing
     # angle is consistency reference for the one being created.
     refs = [str(project.root / v.uri) for v in loc.views]
-    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
+    # Every `views[]` entry that exists already contributed its own uri to refs above,
+    # so refs is empty only when the location has NO views at all yet — nothing in
+    # bible.json names a destination for any label in that case, this one included.
+    return Render(
+        prompt=prompt,
+        refs=refs,
+        warnings=missing_ref_files(refs),
+        creates_reference=True,
+        save_to=None,
+    )
 
 
 def render_prop(project: Project, prop_id: str) -> Render:
     p = _find(project.props, prop_id, "prop")
     prompt = build_prop_view(project.style, p)
     refs = [str(project.root / p.uri)] if p.uri else []
-    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
+    # p.uri IS the destination; when it's set, refs above is already non-empty (the
+    # unchanged case), so refs is empty here only when bible.json names no uri at all.
+    save_to = str(project.root / p.uri) if p.uri else None
+    return Render(
+        prompt=prompt,
+        refs=refs,
+        warnings=missing_ref_files(refs),
+        creates_reference=True,
+        save_to=save_to,
+    )
 
 
 # ---------------------------------------------------------------------------
