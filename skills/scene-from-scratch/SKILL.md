@@ -125,6 +125,15 @@ Ask everything you need in **one message**, not one question at a time:
 **If the user already described someone/someplace/something in their request, use
 that** — don't re-ask for a detail they already gave you.
 
+**And split what they gave you along the same line.** A request almost always arrives with
+the wardrobe attached — *"a woman in a charcoal coat hands him a folder"*. Take the coat as
+the `primary` look and keep `canonicalDescription` to the person, exactly as if you had
+asked the two questions separately. Copying their sentence whole into `canonicalDescription`
+is the easy mistake here, because it is the sentence you were handed: it reads as obedience
+and silently locks that coat onto the character in every scene they ever appear in. If what
+they gave you is all wardrobe and no face, ask for the identity half — that one is worth
+asking for.
+
 ## Writing the bible
 
 Write `bible.json` and `scenes/<id>.json` yourself — `shotkit` has no authoring command
