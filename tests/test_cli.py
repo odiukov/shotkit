@@ -345,6 +345,24 @@ class TestStatusCommand(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("bible.json", err.getvalue())
 
+    def test_status_uses_same_output_path_as_render_paths(self):
+        """Regression test: status and _render_paths must agree on where scene output
+        lives. If the output layout ever changes, they must change together."""
+        from shotkit.cli import _render_paths, SCENES_CATEGORY
+
+        # Generate a frame to populate out/
+        self.run_cli("frame", "s01")
+
+        # Ask _render_paths where it put the output
+        prompt_path, _ = _render_paths(self.root, SCENES_CATEGORY, "s01", "frame")
+        expected_out_dir = prompt_path.parent
+
+        # Verify that status sees the output in the same place
+        code, out, _ = self.run_cli("status")
+        self.assertEqual(code, 0)
+        # The "x" mark means status found output for s01
+        self.assertIn("[x] s01", out)
+
 
 class TestStylesCommand(unittest.TestCase):
     def test_styles_lists_all_six_presets_with_no_project_required(self):

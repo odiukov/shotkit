@@ -49,6 +49,12 @@ TEMPLATE_DIR = pathlib.Path(__file__).resolve().parent.parent / "template"
 
 _MOTION_MODES = ("i2v", "t2v", "ref-anchored")
 
+# Output directory category names — shared with _render_paths and cmd_status.
+SCENES_CATEGORY = "scenes"
+CHARACTERS_CATEGORY = "characters"
+LOCATIONS_CATEGORY = "locations"
+PROPS_CATEGORY = "props"
+
 
 # ---------------------------------------------------------------------------
 # Output
@@ -180,7 +186,9 @@ def cmd_frame(root: pathlib.Path, args: argparse.Namespace) -> int:
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
     render = project_mod.render_frame(project, scene)
-    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "frame")
+    prompt_path, refs_path = _render_paths(
+        root, SCENES_CATEGORY, args.scene_id, "frame"
+    )
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
@@ -193,7 +201,9 @@ def cmd_poster(root: pathlib.Path, args: argparse.Namespace) -> int:
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
     render = project_mod.render_poster(project, scene)
-    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "poster")
+    prompt_path, refs_path = _render_paths(
+        root, SCENES_CATEGORY, args.scene_id, "poster"
+    )
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
@@ -217,7 +227,9 @@ def cmd_motion(root: pathlib.Path, args: argparse.Namespace) -> int:
         )
     except ValueError as exc:
         return _refuse(str(exc))
-    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "motion")
+    prompt_path, refs_path = _render_paths(
+        root, SCENES_CATEGORY, args.scene_id, "motion"
+    )
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
@@ -232,7 +244,7 @@ def cmd_sheet(root: pathlib.Path, args: argparse.Namespace) -> int:
     except ValueError as exc:
         return _refuse(str(exc))
     prompt_path, refs_path = _render_paths(
-        root, "characters", args.character_id, f"{args.look}.sheet"
+        root, CHARACTERS_CATEGORY, args.character_id, f"{args.look}.sheet"
     )
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
@@ -246,7 +258,9 @@ def cmd_location(root: pathlib.Path, args: argparse.Namespace) -> int:
     except KeyError as exc:
         return _refuse(_key_error_message(exc))
     leaf = f"{args.view or 'primary'}.view"
-    prompt_path, refs_path = _render_paths(root, "locations", args.location_id, leaf)
+    prompt_path, refs_path = _render_paths(
+        root, LOCATIONS_CATEGORY, args.location_id, leaf
+    )
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
@@ -258,7 +272,7 @@ def cmd_prop(root: pathlib.Path, args: argparse.Namespace) -> int:
         render = project_mod.render_prop(project, args.prop_id)
     except KeyError as exc:
         return _refuse(_key_error_message(exc))
-    prompt_path, refs_path = _render_paths(root, "props", args.prop_id, "prop")
+    prompt_path, refs_path = _render_paths(root, PROPS_CATEGORY, args.prop_id, "prop")
     return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
@@ -319,7 +333,7 @@ def cmd_status(root: pathlib.Path, args: argparse.Namespace) -> int:
     if scenes_dir.is_dir():
         for scene_path in sorted(scenes_dir.glob("*.json")):
             scene_id = scene_path.stem
-            scene_out_dir = root / "out" / "scenes" / scene_id
+            scene_out_dir = root / "out" / SCENES_CATEGORY / scene_id
             has_output = scene_out_dir.is_dir() and any(scene_out_dir.iterdir())
             mark = "x" if has_output else " "
             note = "out/ has rendered artifacts" if has_output else "no output yet"
