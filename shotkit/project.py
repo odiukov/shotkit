@@ -527,11 +527,19 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
     look_obj = next(
         (lk for lk in character.looks if norm_label(lk.label) == look_label), None
     )
-    has_identity_photos = bool(character.identity_refs)
+    # Mirrors the tool's generate_character_look (app/application/
+    # ensure_references.py:240-259): once the requested look resolves to an
+    # EXISTING, non-primary Look, both `bases` and `identity_refs` are dropped
+    # unconditionally (`bases = []`, `identity = ... if label == "primary" else
+    # []`) — a non-primary render conditions on the primary-look anchor ALONE,
+    # never on identity-variant bases or the user's uploaded identity photos.
+    is_non_primary_look = look_obj is not None and look_label != "primary"
+    sheet_bases = [] if is_non_primary_look else bases
+    has_identity_photos = bool(character.identity_refs) and not is_non_primary_look
     prompt = build_character_sheet(
         project.style,
         character,
-        bases,
+        sheet_bases,
         look_obj,
         has_identity_photos=has_identity_photos,
         ref_manifest=manifest,
@@ -542,15 +550,32 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
         # subject_line/look_line/_reference_clause entirely) — the kit's own slots are
         # the only images the prompt talks about.
         refs = [str(project.root / slot.uri) for slot in slots]
+    elif is_non_primary_look:
+        # A non-primary look conditions on the primary-look anchor ALONE — the
+        # unconditional counterpart of `sheet_bases`/`has_identity_photos` above.
+        # Mirrors the tool's generate_character_look (app/application/
+        # ensure_references.py): for a non-primary label the anchor is unconditional
+        # — `primary_look(c)` or `reference_images[0]`, `references = [ImageRef(uri=
+        # anchor_uri)]`, and NOTHING ELSE (`bases = []`, `identity = []`) — and it
+        # RAISES when neither exists rather than emit a sheet with no anchored face.
+        anchor_uri, _warns = _select_character_look(character, "primary")
+        if not anchor_uri:
+            raise ValueError(
+                f'character "{character.id}" has no primary look yet — generate '
+                "the primary look first, the other looks condition on it to keep "
+                "the same face"
+            )
+        refs = [str(project.root / anchor_uri)]
     else:
-        # No manifest: the prompt's identity clause (has_identity_photos) and its
-        # IDENTITY ANCHOR clause (bases) each assert that specific images are
-        # attached — identity_refs and each base's own primary reference, in that
-        # order, matching the tool's ensure_references.py (`identity + references`
-        # in both ensure_character_references and generate_character_look). Shipping
-        # those clauses beside an empty refs list is exactly the C2 bug: a prompt
-        # that asserts references are attached next to a reference list that does
-        # not contain them.
+        # Primary look (first-ever sheet or a regeneration): the prompt's identity
+        # clause (has_identity_photos) and its IDENTITY ANCHOR clause (bases) each
+        # assert that specific images are attached — identity_refs and each base's
+        # own primary reference, in that order, matching the tool's
+        # ensure_references.py (`identity + references` in both
+        # ensure_character_references and generate_character_look's primary branch).
+        # Shipping those clauses beside an empty refs list is exactly the C2 bug: a
+        # prompt that asserts references are attached next to a reference list that
+        # does not contain them.
         identity_paths = [str(project.root / u) for u in character.identity_refs]
         base_paths: list[str] = []
         for b in bases:
@@ -558,29 +583,7 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
             if uri:
                 base_paths.append(str(project.root / uri))
 
-        # A THIRD assertion lives in build_character_sheet's identity_only formula:
-        # `look is not None and label != "primary"` forces the IDENTITY ONLY clause
-        # for ANY non-primary look, unconditionally — "this character's own primary
-        # sheet while a new look is rendered" per _reference_clause's docstring.
-        # Mirrors the tool's generate_character_look (app/application/
-        # ensure_references.py): for a non-primary label the anchor is unconditional
-        # — `primary_look(c)` or `reference_images[0]`, `references = [ImageRef(uri=
-        # anchor_uri)]` — and it RAISES when neither exists rather than emit a sheet
-        # with no anchored face. Appended last: identity_refs and base anchors are a
-        # different assertion (has_identity_photos / IDENTITY ANCHOR) that this look's
-        # own primary-look anchor doesn't replace.
-        anchor_paths: list[str] = []
-        if look_obj is not None and look_label != "primary":
-            anchor_uri, _warns = _select_character_look(character, "primary")
-            if not anchor_uri:
-                raise ValueError(
-                    f'character "{character.id}" has no primary look yet — generate '
-                    "the primary look first, the other looks condition on it to keep "
-                    "the same face"
-                )
-            anchor_paths = [str(project.root / anchor_uri)]
-
-        refs = identity_paths + base_paths + anchor_paths
+        refs = identity_paths + base_paths
 
     return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 

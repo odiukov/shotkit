@@ -279,6 +279,72 @@ def main() -> None:
     w("location_view", turnaround.build_location_view(STYLE, CHURCH))
     w("prop_view", turnaround.build_prop_view(STYLE, KEY))
 
+    # ── Non-primary character-sheet branch (no-manifest path) ──
+    # Reproduces `generate_character_look` (app/application/ensure_references.py):
+    # a character with an identity-variant base @mentioned in its description, real
+    # identity photos, and a primary look with its own refImage — then two requests
+    # against it, primary vs. a non-primary look, so the branches pin against each
+    # other and a future edit cannot silently swap their behaviour.
+    SKYE_WITH_IDENTITY = Character(
+        id="skye",
+        name="Skye",
+        canonicalDescription=(
+            "Woman, 29, sharp cheekbones, dark brown eyes, black hair cut to the jaw, "
+            "slim athletic build. @eli's sister."
+        ),
+        bodyPlan="humanoid",
+        identityRefs=["refs/skye-photo1.png", "refs/skye-photo2.png"],
+        looks=[
+            Look(
+                label="primary",
+                description="charcoal wool coat over a grey shirt",
+                refImage="refs/skye-primary.png",
+            ),
+            Look(label="casual", description="denim jacket, sneakers"),
+        ],
+    )
+    # Reproduces `_identity_bases` (ensure_references.py:82-89): characters
+    # @mentioned in c's canonicalDescription, resolved against a roster.
+    _roster = {SKYE_WITH_IDENTITY.id: SKYE_WITH_IDENTITY, ELI.id: ELI}
+    _base_ids = mentioned_ref_ids(
+        SKYE_WITH_IDENTITY.canonical_description,
+        [
+            {"id": r.id, "name": r.name}
+            for r in _roster.values()
+            if r.id != SKYE_WITH_IDENTITY.id
+        ],
+    )
+    IDENTITY_BASES = [_roster[i] for i in _base_ids if i in _roster]
+
+    # PRIMARY branch (ensure_references.py:217-239, 253-259): bases =
+    # _base_conditioning's identity-variant bases, identity = _identity_refs(c)
+    # because label == "primary" -> has_identity_photos=True.
+    w(
+        "sheet_primary_with_identity",
+        turnaround.build_character_sheet(
+            STYLE,
+            SKYE_WITH_IDENTITY,
+            IDENTITY_BASES,
+            SKYE_WITH_IDENTITY.looks[0],
+            has_identity_photos=True,
+        ),
+    )
+    # NON-PRIMARY branch (ensure_references.py:240-259): bases = [] and
+    # identity = [] UNCONDITIONALLY once label != "primary" — neither the
+    # identity-variant base above nor this character's own identity photos
+    # condition the sheet; has_identity_photos=False so the reference clause
+    # reads as the generic IDENTITY ONLY wording, never "real photographs".
+    w(
+        "sheet_non_primary_look",
+        turnaround.build_character_sheet(
+            STYLE,
+            SKYE_WITH_IDENTITY,
+            [],
+            SKYE_WITH_IDENTITY.looks[1],
+            has_identity_photos=False,
+        ),
+    )
+
     w("manifest_face_body_outfit", ref_kit.build_ref_manifest(SLOTS))
     w(
         "manifest_full_only",

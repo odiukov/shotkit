@@ -9,6 +9,8 @@ EXPECTED = [
     "sheet_humanoid_primary",
     "sheet_quadruped",
     "sheet_with_manifest",
+    "sheet_non_primary_look",
+    "sheet_primary_with_identity",
     "location_view",
     "prop_view",
     "manifest_face_body_outfit",

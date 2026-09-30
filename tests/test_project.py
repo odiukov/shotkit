@@ -318,6 +318,97 @@ class TestSheetNonPrimaryLookAnchor(unittest.TestCase):
         self.assertIn("primary", str(ctx.exception).lower())
 
 
+NON_PRIMARY_WITH_IDENTITY_AND_BASE_BIBLE = {
+    "style": {
+        "globalPreamble": "photoreal cinematic, 35mm",
+        "banned": "text, watermark",
+    },
+    "characters": [
+        {
+            "id": "skye",
+            "name": "Skye",
+            "canonicalDescription": "Woman, 29, dark eyes, black hair to the jaw. @eli's sister.",
+            "identityRefs": ["refs/skye-photo1.png", "refs/skye-photo2.png"],
+            "looks": [
+                {
+                    "label": "primary",
+                    "description": "charcoal wool coat",
+                    "refImage": "refs/skye-primary.png",
+                },
+                {
+                    "label": "casual",
+                    "description": "denim jacket, sneakers",
+                },
+            ],
+        },
+        {
+            "id": "eli",
+            "name": "Eli",
+            "canonicalDescription": "Man, 34, heavy brow, close-cropped sandy hair.",
+            "looks": [
+                {
+                    "label": "primary",
+                    "description": "grey jacket",
+                    "refImage": "refs/eli-primary.png",
+                }
+            ],
+        },
+    ],
+    "locations": [],
+    "props": [],
+}
+
+
+class TestSheetNonPrimaryLookDropsIdentityAndBases(unittest.TestCase):
+    """The tool's generate_character_look non-primary branch (app/application/
+    ensure_references.py:240-259) zeroes BOTH identity-variant `bases` and
+    `identity_refs` unconditionally once label != "primary" — `bases = []` at
+    :250 and `identity = _identity_refs(c) if label == "primary" else []` at
+    :253. Only the primary-look anchor (`primary_look(c)` / `reference_images[0]`)
+    travels. A non-primary render must therefore:
+      - attach EXACTLY that one anchor image, not identity photos or a base's face
+      - read as IDENTITY ONLY generic wording, never "real photographs of this
+        person" (that phrasing is gated on has_identity_photos, which the tool
+        forces False for any non-primary label regardless of identity_refs)
+    A character with a primary refImage, identityRefs, AND a base mentioned in
+    its description exercises all three misbehaviours in one render.
+    """
+
+    def _make(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        root = pathlib.Path(tmp.name)
+        (root / "scenes").mkdir(parents=True)
+        (root / "refs").mkdir()
+        (root / "bible.json").write_text(
+            json.dumps(NON_PRIMARY_WITH_IDENTITY_AND_BASE_BIBLE), encoding="utf-8"
+        )
+        for name in (
+            "skye-primary.png",
+            "skye-photo1.png",
+            "skye-photo2.png",
+            "eli-primary.png",
+        ):
+            (root / "refs" / name).write_bytes(b"\x89PNG")
+        return load_project(root), root
+
+    def test_refs_are_exactly_the_primary_anchor(self):
+        project, root = self._make()
+        r = render_sheet(project, "skye", look="casual")
+        self.assertEqual(r.refs, [str(root / "refs" / "skye-primary.png")])
+
+    def test_prompt_uses_identity_only_wording_not_real_photographs(self):
+        project, _root = self._make()
+        r = render_sheet(project, "skye", look="casual")
+        self.assertIn("IDENTITY ONLY", r.prompt)
+        self.assertNotIn("real photographs of this person", r.prompt)
+
+    def test_prompt_carries_no_identity_anchor_clause_for_the_base(self):
+        project, _root = self._make()
+        r = render_sheet(project, "skye", look="casual")
+        self.assertNotIn("IDENTITY ANCHOR", r.prompt)
+
+
 class TestFrameRender(ProjectCase):
     def test_mentioned_entities_contribute_refs_and_no_at_tokens_survive(self):
         r = render_frame(self.project, self.scene)

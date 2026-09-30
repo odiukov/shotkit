@@ -29,6 +29,33 @@ WOLF = Character(
     canonical_description="Grey timber wolf, amber eyes, thick winter coat.",
     body_plan="quadruped",
 )
+ELI = Character(
+    id="eli",
+    name="Eli",
+    canonical_description="Man, 34, heavy brow, close-cropped sandy hair, broad shoulders.",
+)
+# Mirrors tools/gen_golden.py's SKYE_WITH_IDENTITY exactly (a base @mentioned in the
+# description, real identity photos, a primary look with its own refImage) — used to
+# pin the primary vs. non-primary branches of generate_character_look against each
+# other (app/application/ensure_references.py).
+SKYE_WITH_IDENTITY = Character(
+    id="skye",
+    name="Skye",
+    canonical_description=(
+        "Woman, 29, sharp cheekbones, dark brown eyes, black hair cut to the jaw, "
+        "slim athletic build. @eli's sister."
+    ),
+    body_plan="humanoid",
+    identity_refs=["refs/skye-photo1.png", "refs/skye-photo2.png"],
+    looks=[
+        Look(
+            label="primary",
+            description="charcoal wool coat over a grey shirt",
+            ref_image="refs/skye-primary.png",
+        ),
+        Look(label="casual", description="denim jacket, sneakers"),
+    ],
+)
 CHURCH = Location(
     id="church",
     name="Church",
@@ -76,6 +103,37 @@ class TestSheetsMatchTheTool(unittest.TestCase):
 
     def test_prop_view(self):
         self.assertEqual(build_prop_view(STYLE, KEY), golden("prop_view"))
+
+    def test_primary_look_with_identity_photos_and_a_base(self):
+        # generate_character_look's PRIMARY branch: bases = the identity-variant
+        # base(s) @mentioned in the description, has_identity_photos=True because
+        # label == "primary" (identity = _identity_refs(c)).
+        self.assertEqual(
+            build_character_sheet(
+                STYLE,
+                SKYE_WITH_IDENTITY,
+                [ELI],
+                SKYE_WITH_IDENTITY.looks[0],
+                has_identity_photos=True,
+            ),
+            golden("sheet_primary_with_identity"),
+        )
+
+    def test_non_primary_look_drops_bases_and_identity_photos(self):
+        # generate_character_look's NON-PRIMARY branch: bases = [] and
+        # identity = [] UNCONDITIONALLY once label != "primary" — neither the
+        # identity-variant base nor this character's own identity photos
+        # condition the sheet; has_identity_photos=False.
+        self.assertEqual(
+            build_character_sheet(
+                STYLE,
+                SKYE_WITH_IDENTITY,
+                [],
+                SKYE_WITH_IDENTITY.looks[1],
+                has_identity_photos=False,
+            ),
+            golden("sheet_non_primary_look"),
+        )
 
 
 class TestManifestSuppressesTheProse(unittest.TestCase):
