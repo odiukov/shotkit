@@ -1,0 +1,10 @@
+photoreal cinematic, soft natural light, 35mm
+OUTPUT FORMAT — the single most important thing to get right: render ONE photographic frame, a single continuous image edge to edge. A reference image here IS a multi-panel character sheet (one large hero portrait, a grid of head angles, a row of full-body turnaround poses) or an object sheet — it is a REFERENCE for identity ONLY. Read a character sheet only for the person's face, hair and wardrobe; read an object sheet only for the object's shape, colour and material. Do NOT reproduce its layout in ANY form: no grid, no panels, no gutters or dividers, no insets, no split-screen, no diptych, no contact sheet, no collage, no thumbnail strip, no repeated angles of the same subject, no character-sheet layout. Render exactly ONE instance of each character and each object, posed naturally inside the single scene. There are 2 characters in this frame — place all 2 of them together in the same single shared frame, interacting in one scene; never as separate panels, insets or side-by-side portraits.
+Single cinematic keyframe. Skye kneels before the altar in the Church while Eli watches from the door.
+A single photograph from one camera angle, one continuous image that fills the whole frame edge to edge.
+A single frozen instant — the state at this exact moment, no motion blur, no before-and-after, no transition.
+Setting: Church: A cold stone chapel, empty pews, tall narrow windows. Lighting: Grey overcast daylight through the windows, no warm sources..
+Props: Red Key: A small brass key with a red enamel bow, scratched.
+Maintain identity: Skye: Woman, 29, sharp cheekbones, dark brown eyes, black hair cut to the jaw, slim athletic build. Wearing: charcoal wool coat over a grey shirt. Eli: Man, 34, heavy brow, close-cropped sandy hair, broad shoulders..
+Keep the frame clean of any on-screen text, captions, subtitles, watermarks, logos or UI overlays.
+Avoid: text, watermark, extra fingers

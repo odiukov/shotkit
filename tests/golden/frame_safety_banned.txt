@@ -1,0 +1,2 @@
+Keep the frame clean of any on-screen text, captions, subtitles, watermarks, logos or UI overlays.
+Avoid: text, watermark, extra fingers
