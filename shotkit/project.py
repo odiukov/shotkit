@@ -83,16 +83,16 @@ class Scene:
 class Project:
     root: pathlib.Path
     style: Style
-    characters: list = field(default_factory=list)
-    locations: list = field(default_factory=list)
-    props: list = field(default_factory=list)
+    characters: list[Character] = field(default_factory=list)
+    locations: list[Location] = field(default_factory=list)
+    props: list[Prop] = field(default_factory=list)
 
 
 @dataclass
 class Render:
     prompt: str
-    refs: list
-    warnings: list
+    refs: list[str]
+    warnings: list[str]
 
 
 # ---------------------------------------------------------------------------
@@ -287,11 +287,18 @@ def _selected_look_description(char: Character, view) -> str:
 
 
 def _character_has_image(c: Character) -> bool:
+    """Whether a bare @mention of this character attaches an identity reference.
+
+    Only what _select_character_look resolves counts. identity_refs and ref_kit feed
+    the character SHEET path (render_sheet) and never reach a scene frame, so counting
+    them here reports a scene clean while render_frame attaches nothing — a paid render
+    of an unanchored face.
+    """
     uri, _ = _select_character_look(c, "primary")
-    return bool(uri) or bool(c.identity_refs) or bool(c.ref_kit)
+    return bool(uri)
 
 
-def ref_dicts(project: Project) -> list:
+def ref_dicts(project: Project) -> list[dict]:
     """{"id", "name", "has_image"} for every entity in the project, for mentions.py."""
     out = []
     for c in project.characters:
@@ -369,6 +376,11 @@ def _resolve_mentions(project: Project, text: str):
 
 
 def _combined_banned(project: Project, scene: Scene) -> str:
+    # The tool itself has no per-scene banned list — app/web/handlers/scene_request.py:272
+    # sources `banned` from the style alone. A per-scene banned field is a shotkit
+    # original; unioning it with the style's negatives (rather than one overriding the
+    # other) means an author can add scene-specific negatives without having to repeat
+    # or drop the project-wide baseline.
     return ", ".join(x for x in (project.style.banned, scene.banned) if x)
 
 
@@ -417,7 +429,9 @@ def render_poster(project: Project, scene: Scene) -> Render:
     return Render(prompt=prompt, refs=refs, warnings=warnings)
 
 
-def render_motion(project: Project, scene: Scene, mode: str, keyframe=None) -> Render:
+def render_motion(
+    project: Project, scene: Scene, mode: str, keyframe: str | None = None
+) -> Render:
     if mode == "ref-anchored" and not keyframe:
         raise ValueError("ref-anchored mode requires a keyframe")
 
@@ -469,9 +483,16 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
     return Render(prompt=prompt, refs=refs, warnings=[])
 
 
-def render_location(project: Project, location_id: str, view=None) -> Render:
+def render_location(
+    project: Project, location_id: str, view: str | None = None
+) -> Render:
     loc = _find(project.locations, location_id, "location")
     prompt = build_location_view(project.style, loc, view)
+    # Deliberate: attach every stored view, not just the primary. This is generating a
+    # NEW view of the location, and build_location_view's own prompt text asks for
+    # exactly this ("this is the SAME place from a different camera angle — match
+    # their architecture, materials, colours and lighting EXACTLY") — every existing
+    # angle is consistency reference for the one being created.
     refs = [str(project.root / v.uri) for v in loc.views]
     return Render(prompt=prompt, refs=refs, warnings=[])
 

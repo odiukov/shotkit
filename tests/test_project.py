@@ -4,19 +4,33 @@ import tempfile
 import unittest
 
 from shotkit.project import (
-    load_project, load_scene, lint_scene, ref_dicts,
-    render_frame, render_motion, render_sheet,
+    load_project,
+    load_scene,
+    lint_scene,
+    ref_dicts,
+    render_frame,
+    render_motion,
+    render_sheet,
 )
 
 BIBLE = {
-    "style": {"globalPreamble": "photoreal cinematic, 35mm", "banned": "text, watermark"},
+    "style": {
+        "globalPreamble": "photoreal cinematic, 35mm",
+        "banned": "text, watermark",
+    },
     "characters": [
         {
-            "id": "skye", "name": "Skye",
+            "id": "skye",
+            "name": "Skye",
             "canonicalDescription": "Woman, 29, dark eyes, black hair to the jaw.",
             "bodyPlan": "humanoid",
-            "looks": [{"label": "primary", "description": "charcoal wool coat",
-                       "refImage": "refs/skye-primary.png"}],
+            "looks": [
+                {
+                    "label": "primary",
+                    "description": "charcoal wool coat",
+                    "refImage": "refs/skye-primary.png",
+                }
+            ],
             "refKit": [
                 {"role": "face", "uri": "refs/skye-face.png", "note": "neutral"},
                 {"role": "body", "uri": "refs/skye-body.png", "note": ""},
@@ -25,28 +39,42 @@ BIBLE = {
         }
     ],
     "locations": [
-        {"id": "church", "name": "Church",
-         "canonicalDescription": "A cold stone chapel, empty pews.",
-         "lightingProfile": "Grey overcast daylight.",
-         "views": [{"label": "primary", "uri": "refs/church-01.png"},
-                   {"label": "night", "uri": "refs/church-night.png"}]}
+        {
+            "id": "church",
+            "name": "Church",
+            "canonicalDescription": "A cold stone chapel, empty pews.",
+            "lightingProfile": "Grey overcast daylight.",
+            "views": [
+                {"label": "primary", "uri": "refs/church-01.png"},
+                {"label": "night", "uri": "refs/church-night.png"},
+            ],
+        }
     ],
     "props": [
-        {"id": "key", "name": "Red Key", "canonicalDescription": "Brass key, red bow.",
-         "uri": "refs/key.png"}
+        {
+            "id": "key",
+            "name": "Red Key",
+            "canonicalDescription": "Brass key, red bow.",
+            "uri": "refs/key.png",
+        }
     ],
 }
 
 SCENE = {
-    "id": "s01", "locationId": "church",
+    "id": "s01",
+    "locationId": "church",
     "scenePrompt": "@skye kneels before the altar in @church",
     "motionPrompt": "She lifts her head toward the window",
     # 15 words ~= 7.5s at 2 words/sec, inside an 8s clip: long enough that
     # lint_dialogue_fit's "fills under half the clip" warning does not fire, short
     # enough that its overrun warning does not either. TestLints asserts a clean scene.
     "dialogue": "Skye: I never asked for any of this, and you knew it from the start.",
-    "voiceover": "", "durationSec": 8, "generateAudio": True,
-    "aspect": "9:16", "loop": False, "banned": "",
+    "voiceover": "",
+    "durationSec": 8,
+    "generateAudio": True,
+    "aspect": "9:16",
+    "loop": False,
+    "banned": "",
 }
 
 
@@ -54,9 +82,18 @@ def make_project(tmp: pathlib.Path, bible=None, scene=None) -> pathlib.Path:
     (tmp / "scenes").mkdir(parents=True)
     (tmp / "refs").mkdir()
     (tmp / "bible.json").write_text(json.dumps(bible or BIBLE), encoding="utf-8")
-    (tmp / "scenes" / "s01.json").write_text(json.dumps(scene or SCENE), encoding="utf-8")
-    for name in ("skye-primary.png", "skye-face.png", "skye-body.png", "coat.png",
-                 "church-01.png", "church-night.png", "key.png"):
+    (tmp / "scenes" / "s01.json").write_text(
+        json.dumps(scene or SCENE), encoding="utf-8"
+    )
+    for name in (
+        "skye-primary.png",
+        "skye-face.png",
+        "skye-body.png",
+        "coat.png",
+        "church-01.png",
+        "church-night.png",
+        "key.png",
+    ):
         (tmp / "refs" / name).write_bytes(b"\x89PNG")
     return tmp
 
@@ -74,7 +111,9 @@ class ProjectCase(unittest.TestCase):
 
 class TestLoading(ProjectCase):
     def test_camel_case_wire_names_map_onto_the_dataclasses(self):
-        self.assertEqual(self.project.style.global_preamble, "photoreal cinematic, 35mm")
+        self.assertEqual(
+            self.project.style.global_preamble, "photoreal cinematic, 35mm"
+        )
         self.assertEqual(self.project.characters[0].canonical_description[:5], "Woman")
         self.assertEqual(self.project.locations[0].lighting_profile[:4], "Grey")
         self.assertEqual(self.project.characters[0].ref_kit[2].role, "outfit")
@@ -94,7 +133,10 @@ class TestSheetReferenceOrder(ProjectCase):
         r = render_sheet(self.project, "skye")
         self.assertEqual(
             r.refs,
-            [str(self.root / "refs" / n) for n in ("skye-face.png", "skye-body.png", "coat.png")],
+            [
+                str(self.root / "refs" / n)
+                for n in ("skye-face.png", "skye-body.png", "coat.png")
+            ],
         )
         third = [ln for ln in r.prompt.splitlines() if ln.startswith("the third image")]
         self.assertEqual(len(third), 1)
@@ -149,7 +191,9 @@ class TestMotionRender(ProjectCase):
 class TestLints(ProjectCase):
     def test_a_broken_mention_is_reported(self):
         self.scene.scene_prompt = "@nobody waits in @church"
-        self.assertTrue(any("@nobody" in w for w in lint_scene(self.project, self.scene)))
+        self.assertTrue(
+            any("@nobody" in w for w in lint_scene(self.project, self.scene))
+        )
 
     def test_music_words_are_reported(self):
         self.scene.motion_prompt = "she hums a tune"
@@ -157,3 +201,17 @@ class TestLints(ProjectCase):
 
     def test_a_clean_scene_lints_clean(self):
         self.assertEqual(lint_scene(self.project, self.scene), [])
+
+    def test_a_character_with_only_a_ref_kit_is_reported_missing(self):
+        # ref_kit feeds the character SHEET, never a scene frame. If has_image counted
+        # it, lint would call the scene clean while render_frame attached no identity
+        # reference for that character — a paid render of an unanchored face.
+        c = self.project.characters[0]
+        c.looks = []
+        c.reference_images = []
+        self.assertTrue(c.ref_kit, "fixture must still carry a ref kit")
+        r = render_frame(self.project, self.scene)
+        self.assertFalse([p for p in r.refs if "skye" in p.lower()])
+        self.assertTrue(
+            [w for w in lint_scene(self.project, self.scene) if "Skye" in w]
+        )
