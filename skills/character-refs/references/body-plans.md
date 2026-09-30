@@ -31,9 +31,11 @@ character simply builds the prompt for the new plan; there's nothing else to res
 
 Every non-humanoid plan carries an explicit anatomy guard in the prompt — "no T-pose, no
 arms, no hands, no fingers, no human shoulders spread horizontally, no upright bipedal
-stance" — because a reference-conditioned image model defaults toward humanoid poses
-even when the description says otherwise; the guard is what actually holds the anatomy
-in place.
+stance." **Reasoning, not independently verified:** the guard exists as a negative
+alongside the positive description because the observed failure (an unset `bodyPlan`
+producing a standing, armed dog) suggests a positive description of the anatomy alone
+may not be enough to hold it — the working assumption is that stating the humanoid
+defaults are explicitly OFF does more than describing the correct anatomy on its own.
 
 ## Setting it
 

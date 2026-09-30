@@ -37,12 +37,11 @@ anchor the averted gaze to a concrete point ("eyes on the floor display"), never
 nothing.
 
 **Failure it prevents.** Image models default an unposed face to staring straight into
-the lens — it's the most common face pose in their training data. Left unstated, two
-people "talking" in one frame both look at the camera instead of at each other, and the
-frame reads as two separate POV shots glued together rather than a scene between them.
-An averted gaze with no anchor reads as vacant or dead-eyed for the same reason: the
-model has nowhere to point the eyes, so it defaults toward the lens again or renders a
-blank stare.
+the lens. Left unstated, two people "talking" in one frame both look at the camera
+instead of at each other, and the frame reads as two separate POV shots glued together
+rather than a scene between them. An averted gaze with no anchor reads as vacant or
+dead-eyed for the same reason: the model has nowhere to point the eyes, so it defaults
+toward the lens again or renders a blank stare.
 
 **Wrong:**
 > Mira and Dev stand in the kitchen, mid-conversation, warm evening light.

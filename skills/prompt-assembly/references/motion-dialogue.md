@@ -8,10 +8,9 @@ from what the still already shows — it cannot cut away to a setup the frame do
 contain. If your motion prompt's first beat needs a different composition than the
 keyframe shows, the keyframe is wrong, not the motion prompt.
 
-Titles, captions, choice buttons and any other on-screen UI are **post overlays**,
-composited after generation. Never write them into a keyframe or a motion prompt asking
-the model to render them — a generative video/image model does not render legible,
-stable UI text, and even a lucky single frame won't hold across a clip.
+Titles, captions and any other on-screen UI are **post overlays**, composited after
+generation, not something a keyframe or motion prompt should ask the generator to
+render.
 
 ## Multishot lives in the motion prompt
 
@@ -66,10 +65,22 @@ an error. Leaving a segment unanchored is legal — the generator places it at i
 discretion — but on a multishot clip an unanchored segment can land anywhere, so anchor
 anything that must speak in a specific shot.
 
-Never anchor an on-camera line and a `VO:` segment to the **same** shot number: with a
-face already in that frame, the engine reads both speech events over that one face, and
-the narration comes out lip-synced to the wrong character. Give the narration its own
-shot — an insert, a reaction, a wide with nobody speaking — inside the same scene.
+Avoid anchoring an on-camera line and a `VO:` segment to the **same** shot number.
+`shotkit` builds one sentence per anchored segment and joins them all into the same
+motion prompt — an anchored spoken line becomes "In SHOT 2, `<speaker>` speaks this line
+aloud, naturally and in sync: …", and an anchored `VO:` segment becomes "In SHOT 2, an
+off-screen narrator voice-over says, no narrator appears on camera: …". Anchor both
+kinds to the same `SHOT 2` and the assembled prompt states both sentences about that one
+shot — a face speaking in sync, and, in the same breath, narration from someone who
+"appears on camera" nowhere. `shotkit lint`'s `lint_shot_anchors` does not catch this: it
+only checks that an anchor points at a shot the motion prompt declares, not who else is
+anchored there. **Reasoning, not verified against a render:** since the on-camera face is
+already in that frame, it seems likely a video generator resolves this contradiction by
+lip-syncing the VO line to that face instead of keeping it off-screen — shotkit has no
+way to test this itself, since it only assembles text and never calls a generator. Treat
+it as a real risk worth avoiding, not a confirmed failure mode. Give the narration its
+own shot — an insert, a reaction, a wide with nobody speaking — inside the same scene,
+and anchor it there instead.
 
 ## Size baked speech to ~2 words per second of clip duration
 
@@ -93,9 +104,12 @@ motion prompt — not even to negate them ("no music"). Two separate reasons:
 
 - Music is a **post-production layer**, laid in during editing, never something a scene
   prompt should be asking a video/image generator to produce.
-- On an i2v-style generator that bakes its own audio, these words — even negated — read
-  as a push toward a musical or lip-sync register the model then tries to honor, which
-  shows up as lip-sync artefacts even in a scene with no singing intended.
+- `shotkit lint`'s music-word check (`lint_music_words`) flags the bare word regardless
+  of negation — "no music" trips it exactly like "music" does. **Reasoning, not
+  independently verified:** the working assumption behind that design is that a
+  generator baking its own audio can read even a negated music word as a push toward a
+  musical or lip-sync register, showing up as lip-sync artefacts in a scene with no
+  singing intended — which is why the lint doesn't try to parse the negation away.
 
 You don't need to author a no-music disclaimer yourself: when `generateAudio` is true,
 `shotkit` already appends its own audio-discipline clause to the assembled motion prompt.

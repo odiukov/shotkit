@@ -43,12 +43,22 @@ a render on it.
 
 ## The poster block (`shotkit poster`)
 
-Same shape, with two swaps: the header line reads `"Theatrical movie poster key art,
-vertical 9:16 portrait composition. <scenePrompt>."` instead of "Single cinematic
-keyframe," and step 5 is replaced by a composition clause naming the exact top/bottom
-percentage band a vertical poster's crop will keep on screen (from the scene's
-`posterFocusY`, or a sensible default) — a poster is composed for a crop, not a full
-frame, so the subject has to land inside the surviving band on purpose.
+Same shape, with three swaps:
+
+- The header line (step 3) reads `"Theatrical movie poster key art, vertical 9:16
+  portrait composition. <scenePrompt>."` instead of "Single cinematic keyframe."
+- The lock right after it (step 4) reads "A single polished poster image with a clear
+  focal hierarchy and dramatic cinematic lighting" instead of the frame's
+  one-continuous-image-edge-to-edge lock.
+- Step 5 (the frozen-instant lock, in the frame block) is replaced by a composition
+  clause naming the exact top/bottom percentage band a vertical poster's crop will keep
+  on screen (from the scene's `posterFocusY`, or a sensible default) — a poster is
+  composed for a crop, not a full frame, so the subject has to land inside the surviving
+  band on purpose.
+
+Carrying the frame's continuous-image lock into a poster prompt produces a sentence
+`shotkit` never actually emits for a poster — the two headers lead into two different
+follow-up locks, not the same one.
 
 ## The motion block (`shotkit motion`)
 
@@ -81,11 +91,9 @@ generator.
 ## Never author a fresh style per scene
 
 A project's look lives in exactly **one** place: `style.globalPreamble`. Every frame,
-poster and motion prompt reproduces it verbatim, as the very first clause. Do not
-compose a new camera/film-stock line per scene — that is the single most common way a
-project's visual identity drifts scene to scene, because two different-but-similar
-style sentences read as two different looks to an image model even when a human would
-call them the same.
+poster and motion prompt reproduces it verbatim, as the very first clause. Authoring a
+fresh camera/film-stock line per scene, instead of reusing this one, is the single most
+common way a project's visual identity drifts scene to scene.
 
 Six style presets ship as starting points to copy into `style.globalPreamble` and
 `style.banned` rather than write from scratch: **Romance drama (photoreal)**,
