@@ -1,5 +1,6 @@
 import unittest
 
+from shotkit import poster
 from shotkit.scene import (
     build_motion_prompt,
     build_poster_prompt,
@@ -76,6 +77,8 @@ class TestFrameMatchesTheTool(unittest.TestCase):
         )
 
     def test_poster(self):
+        # posterFocusY explicitly set (here, to the tool's own default value) — the
+        # scene is asking for a crop band, so the composition clause must be there.
         self.assertEqual(
             build_poster_prompt(
                 "Skye alone in the Church, the Red Key in her fist",
@@ -84,9 +87,25 @@ class TestFrameMatchesTheTool(unittest.TestCase):
                 [KEY],
                 STYLE.global_preamble,
                 STYLE.banned,
+                focus_y=poster.DEFAULT_FOCUS_Y,
             ),
             golden("poster_default_focus"),
         )
+
+    def test_poster_with_no_focus_y_drops_the_composition_clause(self):
+        # poster.py's own docstring: compose_clause "is meant to be emitted only when
+        # the scene actually asks for a crop band (e.g. a posterFocusY field present
+        # in the scene data)". A project with no story-card UI of its own must not be
+        # told 61% of its poster is cropped away for a card it doesn't have.
+        out = build_poster_prompt(
+            "Skye alone in the Church, the Red Key in her fist",
+            [SKYE],
+            [CHURCH],
+            [KEY],
+            STYLE.global_preamble,
+            STYLE.banned,
+        )
+        self.assertNotIn("Composition constraint", out)
 
 
 class TestMotionModes(unittest.TestCase):
@@ -242,6 +261,36 @@ class TestMotionPromptGolden(unittest.TestCase):
             refs_for_strip=REFS_SKYE_ELI,
         )
         self.assertEqual(out, golden("motion_ref_anchored"))
+
+    def test_loop_flag_adds_the_seamless_loop_clause(self):
+        out = build_motion_prompt(
+            "@skye stares out the window, unmoving",
+            mode="i2v",
+            chars=[SKYE],
+            dialogue="",
+            generate_audio=True,
+            loop=True,
+            refs_for_strip=REFS,
+        )
+        self.assertEqual(out, golden("motion_loop"))
+
+    def test_a_character_mentioned_only_in_scene_prompt_still_gets_the_who_is_who_clause(
+        self,
+    ):
+        # C1 regression: project.py::render_motion resolves the mention SET (and so
+        # the `chars` list build_motion_prompt receives) from motionPrompt UNION
+        # scenePrompt. motionPrompt here (the text actually assembled) mentions
+        # neither Skye nor Eli — this pins the tool's assembled string for exactly
+        # that union-resolved `chars` list.
+        out = build_motion_prompt(
+            "She walks forward across the floor, glancing back once",
+            mode="i2v",
+            chars=[SKYE, ELI],
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+            refs_for_strip=REFS_SKYE_ELI,
+        )
+        self.assertEqual(out, golden("motion_scene_prompt_only_mention"))
 
 
 class TestWhoIsWhoThreshold(unittest.TestCase):

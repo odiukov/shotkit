@@ -22,7 +22,6 @@ import json
 import pathlib
 from dataclasses import dataclass, field
 
-from shotkit import poster as poster_geometry
 from shotkit.guards import (
     lint_dialogue_fit,
     lint_music_words,
@@ -437,11 +436,11 @@ def render_poster(project: Project, scene: Scene) -> Render:
         project, scene.scene_prompt
     )
     clean_prompt = strip_mentions(scene.scene_prompt, ref_dicts(project))
-    focus_y = (
-        scene.poster_focus_y
-        if scene.poster_focus_y is not None
-        else poster_geometry.DEFAULT_FOCUS_Y
-    )
+    # None (no posterFocusY on the scene) means "this project has no story-card crop
+    # to compose for" — build_poster_prompt drops the composition clause entirely
+    # rather than defaulting to the Short Drama card geometry. Do NOT substitute
+    # poster.DEFAULT_FOCUS_Y here; that default exists for crop_band()/compose_clause()
+    # callers who already know a crop band is wanted, not as a synthesized "yes".
     prompt = build_poster_prompt(
         clean_prompt,
         chars,
@@ -450,7 +449,7 @@ def render_poster(project: Project, scene: Scene) -> Render:
         project.style.global_preamble,
         _combined_banned(project, scene),
         look_desc_by_char,
-        focus_y,
+        scene.poster_focus_y,
     )
     warnings = warnings + missing_ref_files(refs)
     return Render(prompt=prompt, refs=refs, warnings=warnings)
@@ -481,8 +480,18 @@ def render_motion(
     if mode == "ref-anchored" and not keyframe:
         raise ValueError("ref-anchored mode requires a keyframe")
 
+    # The mention set (and therefore the reference list and the who-is-who >=2
+    # threshold) is resolved from motionPrompt UNION scenePrompt, exactly like the
+    # tool's `present` (scene_request.py:573-582) and `_build_scene_ref_budget`. The
+    # shipped template is the demonstration: scenePrompt names the cast, motionPrompt
+    # is bare camera direction — resolving from motion_prompt alone left every t2v
+    # render unanchored while lint stayed clean (lint already unions the two prompts
+    # independently in `lint_scene` below). The assembled STRING still comes from
+    # motion_prompt alone (`build_motion_prompt` below) — scenePrompt only ever
+    # widens which characters/locations/props count, never what text is sent.
+    mention_text = " ".join(filter(None, [scene.motion_prompt, scene.scene_prompt]))
     chars, _locations, _props, _look_desc_by_char, refs, warnings = _resolve_mentions(
-        project, scene.motion_prompt
+        project, mention_text
     )
     prompt = build_motion_prompt(
         scene.motion_prompt,
@@ -512,21 +521,44 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
     # and the ref paths below it — nothing may filter, sort or insert between them.
     slots = list(character.ref_kit)
     manifest = build_ref_manifest(slots)
-    refs = [str(project.root / slot.uri) for slot in slots]
 
     bases = _character_bases(project, character)
     look_label = norm_label(look)
     look_obj = next(
         (lk for lk in character.looks if norm_label(lk.label) == look_label), None
     )
+    has_identity_photos = bool(character.identity_refs)
     prompt = build_character_sheet(
         project.style,
         character,
         bases,
         look_obj,
-        has_identity_photos=bool(character.identity_refs),
+        has_identity_photos=has_identity_photos,
         ref_manifest=manifest,
     )
+
+    if manifest:
+        # A refKit manifest REPLACES the reference clause (build_character_sheet drops
+        # subject_line/look_line/_reference_clause entirely) — the kit's own slots are
+        # the only images the prompt talks about.
+        refs = [str(project.root / slot.uri) for slot in slots]
+    else:
+        # No manifest: the prompt's identity clause (has_identity_photos) and its
+        # IDENTITY ANCHOR clause (bases) each assert that specific images are
+        # attached — identity_refs and each base's own primary reference, in that
+        # order, matching the tool's ensure_references.py (`identity + references`
+        # in both ensure_character_references and generate_character_look). Shipping
+        # those clauses beside an empty refs list is exactly the C2 bug: a prompt
+        # that asserts references are attached next to a reference list that does
+        # not contain them.
+        identity_paths = [str(project.root / u) for u in character.identity_refs]
+        base_paths: list[str] = []
+        for b in bases:
+            uri, _warns = _select_character_look(b, "primary")
+            if uri:
+                base_paths.append(str(project.root / uri))
+        refs = identity_paths + base_paths
+
     return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 
 

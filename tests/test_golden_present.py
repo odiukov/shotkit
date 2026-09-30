@@ -29,6 +29,8 @@ EXPECTED = [
     "motion_voices",
     "motion_t2v_no_audio",
     "motion_ref_anchored",
+    "motion_loop",
+    "motion_scene_prompt_only_mention",
 ]
 
 

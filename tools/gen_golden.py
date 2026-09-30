@@ -359,6 +359,32 @@ def main() -> None:
             ref_only=True,
         ),
     )
+    w(
+        "motion_loop",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE],
+            motion_prompt="@skye stares out the window, unmoving",
+            dialogue="",
+            generate_audio=True,
+            loop=True,
+        ),
+    )
+    # C1 regression fixture: Skye and Eli are @mentioned ONLY in scenePrompt —
+    # motionPrompt (the text actually assembled) names neither. `present`
+    # (scene_request.py:573-582) is resolved against motionPrompt + " " +
+    # scenePrompt, so the who-is-who clause must still fire for these two. See the
+    # docstring above (`_assemble_motion`'s `scene_prompt` parameter note) — this is
+    # exactly the fixture it warned no test yet exercised.
+    w(
+        "motion_scene_prompt_only_mention",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE, MOTION_ELI],
+            motion_prompt="She walks forward across the floor, glancing back once",
+            scene_prompt="@skye faces @eli across the nave, neither willing to speak first",
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+        ),
+    )
 
     print(f"wrote {len(list(OUT.glob('*.txt')))} fixtures to {OUT}", file=sys.stderr)
 

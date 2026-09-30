@@ -1,5 +1,5 @@
 """Reference-image prompts (character sheets, location/prop hero frames) — port
-of src/domain/turnaround.ts.
+of app/domain/turnaround.py.
 
 Pure; only domain imports. Only the Style section varies per project. The
 character sheet's panel layout is fixed per BODY PLAN; location and prop views are

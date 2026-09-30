@@ -105,6 +105,90 @@ class TestCli(unittest.TestCase):
         self.assertTrue((self.root / "out" / "key.prop.txt").exists())
 
 
+class TestCliRefusalMessages(unittest.TestCase):
+    """cli.py's own module docstring: every refusal prints a message naming the
+    offending thing and returns 1 — never an uncaught traceback, and never a message
+    that blames the wrong thing.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = make_project(pathlib.Path(self._tmp.name))
+        self.bad_project = pathlib.Path(self._tmp.name) / "does-not-exist"
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def run_cli(self, project, *args):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = main(["--project", str(project), *args])
+        return code, out.getvalue(), err.getvalue()
+
+    def test_sheet_refuses_a_bad_project_instead_of_crashing(self):
+        code, _, err = self.run_cli(self.bad_project, "sheet", "skye")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+
+    def test_location_refuses_a_bad_project_instead_of_crashing(self):
+        code, _, err = self.run_cli(self.bad_project, "location", "church")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+
+    def test_prop_refuses_a_bad_project_instead_of_crashing(self):
+        code, _, err = self.run_cli(self.bad_project, "prop", "key")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+
+    def test_frame_with_a_bad_project_names_the_project_not_the_scene(self):
+        code, _, err = self.run_cli(self.bad_project, "frame", "s01")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+        self.assertNotIn("unknown scene id", err)
+
+    def test_motion_with_a_bad_project_names_the_project_not_the_scene(self):
+        code, _, err = self.run_cli(self.bad_project, "motion", "s01", "--mode", "t2v")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+        self.assertNotIn("unknown scene id", err)
+
+    def test_lint_with_a_bad_project_names_the_project_not_the_scene(self):
+        code, _, err = self.run_cli(self.bad_project, "lint", "s01")
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err)
+        self.assertNotIn("unknown scene id", err)
+
+    def test_unknown_character_id_message_is_not_doubled(self):
+        code, _, err = self.run_cli(self.root, "sheet", "nosuch")
+        self.assertEqual(code, 1)
+        self.assertEqual(err.count("unknown character id"), 1, err)
+
+    def test_unknown_location_id_message_is_not_doubled(self):
+        code, _, err = self.run_cli(self.root, "location", "nosuch")
+        self.assertEqual(code, 1)
+        self.assertEqual(err.count("unknown location id"), 1, err)
+
+    def test_unknown_prop_id_message_is_not_doubled(self):
+        code, _, err = self.run_cli(self.root, "prop", "nosuch")
+        self.assertEqual(code, 1)
+        self.assertEqual(err.count("unknown prop id"), 1, err)
+
+
+class TestStylesCommand(unittest.TestCase):
+    def test_styles_lists_all_six_presets_with_no_project_required(self):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            # No --project at all, and no cwd with a bible.json — styles is static.
+            code = main(["styles"])
+        self.assertEqual(code, 0)
+        text = out.getvalue()
+        from shotkit.style import STYLE_PRESETS
+
+        for p in STYLE_PRESETS:
+            self.assertIn(p.id, text)
+            self.assertIn(p.name, text)
+
+
 class TestInit(unittest.TestCase):
     def test_init_copies_the_template(self):
         with tempfile.TemporaryDirectory() as tmp:

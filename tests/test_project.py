@@ -151,6 +151,78 @@ class TestSheetReferenceOrder(ProjectCase):
         self.assertIn("GARMENT", first[0])
 
 
+NO_REF_KIT_BIBLE = {
+    "style": {
+        "globalPreamble": "photoreal cinematic, 35mm",
+        "banned": "text, watermark",
+    },
+    "characters": [
+        {
+            "id": "skye",
+            "name": "Skye",
+            "canonicalDescription": "Woman, 29, dark eyes, black hair to the jaw.",
+            "identityRefs": ["refs/skye-photo1.png", "refs/skye-photo2.png"],
+            "looks": [
+                {
+                    "label": "primary",
+                    "description": "charcoal wool coat",
+                    "refImage": "refs/skye-primary.png",
+                }
+            ],
+        },
+        {
+            "id": "shade",
+            "name": "Shade",
+            "canonicalDescription": "@skye's twin, but with silver hair instead of black.",
+        },
+    ],
+    "locations": [],
+    "props": [],
+}
+
+
+class TestSheetNoManifestRefs(unittest.TestCase):
+    """render_sheet with no refKit (no manifest): the prompt still claims identity
+    photos / a base's face are attached (has_identity_photos, bases -> _identity_anchor)
+    — refs must actually carry those images, matching the tool's ensure_references.py
+    (identity + base-conditioning references), not ship empty beside that claim.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = pathlib.Path(self._tmp.name)
+        (self.root / "scenes").mkdir(parents=True)
+        (self.root / "refs").mkdir()
+        (self.root / "bible.json").write_text(
+            json.dumps(NO_REF_KIT_BIBLE), encoding="utf-8"
+        )
+        for name in ("skye-primary.png", "skye-photo1.png", "skye-photo2.png"):
+            (self.root / "refs" / name).write_bytes(b"\x89PNG")
+        self.project = load_project(self.root)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_identity_photos_asserted_in_the_prompt_are_attached(self):
+        r = render_sheet(self.project, "skye")
+        self.assertIn("real photographs of this person", r.prompt)
+        self.assertEqual(
+            r.refs,
+            [
+                str(self.root / "refs" / "skye-photo1.png"),
+                str(self.root / "refs" / "skye-photo2.png"),
+            ],
+        )
+
+    def test_an_identity_variants_base_face_is_asserted_and_attached(self):
+        r = render_sheet(self.project, "shade")
+        self.assertIn("IDENTITY ANCHOR", r.prompt)
+        self.assertTrue(
+            any(p.endswith("skye-primary.png") for p in r.refs),
+            f"refs did not include skye's base reference image: {r.refs}",
+        )
+
+
 class TestFrameRender(ProjectCase):
     def test_mentioned_entities_contribute_refs_and_no_at_tokens_survive(self):
         r = render_frame(self.project, self.scene)
@@ -186,6 +258,56 @@ class TestMotionRender(ProjectCase):
     def test_ref_anchored_without_a_keyframe_is_refused(self):
         with self.assertRaises(ValueError):
             render_motion(self.project, self.scene, mode="ref-anchored")
+
+
+class TestMotionMentionUnion(unittest.TestCase):
+    """render_motion must resolve @mentions from motionPrompt + scenePrompt, not
+    motionPrompt alone — matching the tool's `present` set (scene_request.py:573-582)
+    and `_build_scene_ref_budget`, both unioned. The shipped template is exactly this
+    shape: scenePrompt names the cast, motionPrompt is bare camera direction.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        bible = json.loads(json.dumps(BIBLE))
+        bible["characters"].append(
+            {
+                "id": "eli",
+                "name": "Eli",
+                "canonicalDescription": "Man, 34, heavy brow, close-cropped hair.",
+            }
+        )
+        scene = dict(SCENE)
+        scene["scenePrompt"] = "@skye faces @eli across the nave"
+        scene["motionPrompt"] = "She lifts her head toward the window"
+        self.root = make_project(pathlib.Path(self._tmp.name), bible=bible, scene=scene)
+        self.project = load_project(self.root)
+        self.scene = load_scene(self.project, "s01")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_a_character_named_only_in_scene_prompt_still_attaches_its_reference(self):
+        r = render_motion(self.project, self.scene, mode="t2v")
+        self.assertTrue(
+            any(p.endswith("skye-primary.png") for p in r.refs),
+            f"refs did not include skye's reference image: {r.refs}",
+        )
+
+    def test_the_who_is_who_threshold_counts_scene_prompt_mentions_too(self):
+        # Both Skye and Eli are only @mentioned in scenePrompt; motionPrompt mentions
+        # neither. With the union, that's still 2 described characters, so the
+        # who-is-who clause must fire.
+        r = render_motion(self.project, self.scene, mode="t2v")
+        self.assertIn(
+            "Character identities — match each face to its reference image", r.prompt
+        )
+
+    def test_lint_clean_scene_still_has_zero_returncode_via_the_cli_contract(self):
+        # Regression guard for the exact bug report: the template's motion render
+        # must not silently ship with an empty refs file while lint says nothing.
+        r = render_motion(self.project, self.scene, mode="t2v")
+        self.assertTrue(r.refs, "motion render attached no references at all")
 
 
 class TestMotionNarratorVoice(unittest.TestCase):

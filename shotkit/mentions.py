@@ -143,8 +143,11 @@ def parse_ref_mentions(text: str, refs: list[dict]) -> list[dict]:
 # That was the bug, not the design: the editor read `@Cleo's auto door` as the
 # character `@Cleo` while this resolver read the location `Cleo's Auto` (longest-name-
 # first alternation matches across the apostrophe), so the UI chipped one entity and a
-# different entity's reference went to the model. The editor now shares this pattern
-# (see prompt.ts::buildMentionRe) — keep the two in lockstep.
+# different entity's reference went to the model. The tool this was ported from fixed
+# its own editor (web/ui/src/viewmodels/prompt.ts::buildMentionRe) to share this exact
+# pattern — that file lives in a different, private repo this one has no access to, so
+# it cannot be "kept in lockstep" from here; this note is historical context for why
+# the regex is built this way, not a cross-repo maintenance obligation.
 
 
 def prompt_ref_issues(text: str, refs: list[dict]) -> dict:

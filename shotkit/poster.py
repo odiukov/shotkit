@@ -27,9 +27,11 @@ POSTER_H = 2048
 #
 # The prompt below deliberately keeps to this guaranteed band — asking for atmosphere in
 # an area a narrow phone happens to reveal costs nothing, while composing for the narrow
-# phone would push faces out of frame on a Pro Max. The preview does NOT: posterCrop.ts
-# draws this band solid inside a dashed CARD_W_NARROWEST one, so the author sees the
-# range instead of a single frame their own device disagrees with.
+# phone would push faces out of frame on a Pro Max. shotkit ships no preview of its own
+# (see this module's docstring); the tool this geometry is copied from draws a companion
+# UI preview that shows this guaranteed band solid inside a WIDER dashed guide for the
+# narrowest supported phone width, so its author sees the full range instead of trusting
+# a single frame their own device might disagree with.
 CARD_W = 408.0
 CARD_H = 280.0
 

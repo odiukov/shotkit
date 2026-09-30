@@ -7,10 +7,14 @@ Each generating command loads the project, resolves one render via
     out/<stem>.refs.txt   `Render.refs`, one absolute path per line, untouched
 
 The prompt is also echoed to stdout; warnings go to stderr. Every refusal
-(unknown scene/character/location/prop id, a missing --mode, ref-anchored
-with no --keyframe, `init` into a non-empty directory) prints a message
-naming the offending thing to stderr and returns 1. `lint` returns 1 when it
-found anything, 0 when clean, and never writes to `out/`.
+(a --project with no bible.json, an unknown scene/character/location/prop id, a
+missing --mode, ref-anchored with no --keyframe, `init` into a non-empty
+directory) prints a message naming the offending thing to stderr and returns 1
+— never an uncaught traceback, and never a message blaming the wrong one of
+those when more than one could be at fault (a bad --project is never reported
+as an unknown scene id, and vice versa). `lint` returns 1 when it found
+anything, 0 when clean, and never writes to `out/`. `styles` needs no project
+at all and always returns 0.
 """
 
 from __future__ import annotations
@@ -21,6 +25,7 @@ import shutil
 import sys
 
 from shotkit import project as project_mod
+from shotkit import style as style_mod
 
 TEMPLATE_DIR = pathlib.Path(__file__).resolve().parent.parent / "template"
 
@@ -51,6 +56,18 @@ def _refuse(message: str) -> int:
     return 1
 
 
+def _key_error_message(exc: KeyError) -> str:
+    """The plain message a `_find`-raised KeyError carries, without repr-doubling.
+
+    `_find` raises `KeyError(f"unknown {kind} id: {entity_id!r}")` — a single string
+    argument. `KeyError.__str__` renders that as `repr(args[0])`, so printing `exc`
+    (or interpolating it into an f-string) doubles the already-complete message:
+    `unknown character id: 'nosuch' ("unknown character id: 'nosuch'")`. The message
+    IS `exc.args[0]`; nothing further needs wrapping it.
+    """
+    return exc.args[0] if exc.args else str(exc)
+
+
 # ---------------------------------------------------------------------------
 # Commands
 # ---------------------------------------------------------------------------
@@ -68,9 +85,34 @@ def cmd_init(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_frame(root: pathlib.Path, args: argparse.Namespace) -> int:
+def cmd_styles(args: argparse.Namespace) -> int:
+    """List the shipped style presets — no project required, nothing written to disk."""
+    for p in style_mod.STYLE_PRESETS:
+        print(f"{p.id}  —  {p.name}")
+        print(f"  preamble: {p.global_preamble}")
+        print(f"  banned:   {p.banned}")
+    return 0
+
+
+def _load_project_or_refuse(root: pathlib.Path):
+    """`project_mod.load_project(root)`, or None with the refusal already printed.
+
+    Isolated from scene/character/location/prop loading so a bad --project (no
+    bible.json) is never misreported as "unknown scene id" — the two failures name
+    different things and must never share a message.
+    """
     try:
-        project = project_mod.load_project(root)
+        return project_mod.load_project(root)
+    except FileNotFoundError as exc:
+        _refuse(str(exc))
+        return None
+
+
+def cmd_frame(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
+    try:
         scene = project_mod.load_scene(project, args.scene_id)
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
@@ -79,8 +121,10 @@ def cmd_frame(root: pathlib.Path, args: argparse.Namespace) -> int:
 
 
 def cmd_poster(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         scene = project_mod.load_scene(project, args.scene_id)
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
@@ -95,8 +139,10 @@ def cmd_motion(root: pathlib.Path, args: argparse.Namespace) -> int:
         return _refuse(
             f"unknown --mode {args.mode!r}: must be one of {', '.join(_MOTION_MODES)}"
         )
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         scene = project_mod.load_scene(project, args.scene_id)
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
@@ -110,36 +156,44 @@ def cmd_motion(root: pathlib.Path, args: argparse.Namespace) -> int:
 
 
 def cmd_sheet(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         render = project_mod.render_sheet(project, args.character_id, look=args.look)
     except KeyError as exc:
-        return _refuse(f"unknown character id: {args.character_id!r} ({exc})")
+        return _refuse(_key_error_message(exc))
     return _write_render(root, f"{args.character_id}.{args.look}.sheet", render)
 
 
 def cmd_location(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         render = project_mod.render_location(project, args.location_id, args.view)
     except KeyError as exc:
-        return _refuse(f"unknown location id: {args.location_id!r} ({exc})")
+        return _refuse(_key_error_message(exc))
     stem = f"{args.location_id}.{args.view or 'primary'}.view"
     return _write_render(root, stem, render)
 
 
 def cmd_prop(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         render = project_mod.render_prop(project, args.prop_id)
     except KeyError as exc:
-        return _refuse(f"unknown prop id: {args.prop_id!r} ({exc})")
+        return _refuse(_key_error_message(exc))
     return _write_render(root, f"{args.prop_id}.prop", render)
 
 
 def cmd_lint(root: pathlib.Path, args: argparse.Namespace) -> int:
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
     try:
-        project = project_mod.load_project(root)
         scene = project_mod.load_scene(project, args.scene_id)
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
@@ -189,6 +243,8 @@ def _build_parser() -> argparse.ArgumentParser:
     p_lint = sub.add_parser("lint", help="check a scene for broken/missing references")
     p_lint.add_argument("scene_id")
 
+    sub.add_parser("styles", help="list the shipped style presets")
+
     return parser
 
 
@@ -213,6 +269,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "init":
         return cmd_init(args)
+    if args.command == "styles":
+        return cmd_styles(args)
 
     root = pathlib.Path(args.project).resolve()
     return _ROOT_HANDLERS[args.command](root, args)

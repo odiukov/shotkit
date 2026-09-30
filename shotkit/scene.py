@@ -42,7 +42,7 @@ def _identity_clause(
     so a scene reading "both fully clothed below the waist" sent the model that phrase
     with the word "shirtless" nowhere in it: the shirtless sheet was attached and the
     render put him in a t-shirt anyway (a clothing phrase reads as an instruction and
-    overrides the sheet — see shortdrama-skills failure-modes.md).
+    overrides the sheet — see skills/cinematic-scenes/references/failure-modes.md).
 
     Only an EXPLICIT tag injects. A bare `@mention` adds no wardrobe prose: naming a
     garment for a ref-fixed character is the very failure this guards against, so the
@@ -117,14 +117,17 @@ def build_poster_prompt(
     preamble: str,
     banned: str = "",
     look_desc_by_char: dict[str, str] | None = None,
-    focus_y: float = poster.DEFAULT_FOCUS_Y,
+    focus_y: float | None = None,
 ) -> str:
     """Build a vertical theatrical movie-poster (key-art) prompt.
 
-    `focus_y` is the crop offset the player will apply, so the composition clause
-    names the band that actually reaches the story card. Asking for title-safe space
-    at the top and bottom (the old wording) put the subject exactly where the card
-    crops it off.
+    `focus_y` is the crop offset a story-card player will apply, so the composition
+    clause names the band that actually reaches the card — but shotkit has no
+    particular card of its own (see shotkit/poster.py's module docstring). The
+    clause is emitted ONLY when the scene actually asks for a crop band: `focus_y`
+    not None (i.e. a `posterFocusY` field present in the scene data). A project
+    with no story card must not be told most of its poster is cropped away for a
+    card it doesn't have.
     """
     identity = _identity_clause(chars, look_desc_by_char)
     setting = _setting_clause(locations)
@@ -134,7 +137,7 @@ def build_poster_prompt(
         reference_layout_clause(len(chars)) if (chars or props) else "",
         f"Theatrical movie poster key art, vertical 9:16 portrait composition. {scene_prompt.strip()}.",
         "A single polished poster image with a clear focal hierarchy and dramatic cinematic lighting.",
-        poster.compose_clause(focus_y),
+        poster.compose_clause(focus_y) if focus_y is not None else "",
         f"Setting: {setting}" if setting else "",
         f"Props: {prop_list}" if prop_list else "",
         f"Maintain identity: {identity}." if identity else "",
@@ -184,7 +187,8 @@ def _who_is_who_clause(chars: list[Character]) -> str:
 
 
 def _loop_hint(motion_prompt: str, loop: bool) -> str:
-    """Append the seamless-loop clause when *loop* is set (mirrors loopHint in boards.ts).
+    """Append the seamless-loop clause when *loop* is set (mirrors the tool's own
+    `_loop_hint`, app/web/handlers/scene_request.py:360).
 
     A fork clip pins the keyframe as both first and last frame, but that anchor alone only
     constrains the ENDPOINTS — the model still fills the middle with a push-in then yanks back to

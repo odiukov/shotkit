@@ -59,6 +59,20 @@ class TestEndToEnd(unittest.TestCase):
             self.assertEqual(motion.returncode, 0, motion.stderr)
             self.assertTrue((project / "out" / "s01.motion.txt").exists())
 
+            # The template's motionPrompt ("She walks forward across the floor,
+            # glancing back once") names nobody — every @mention lives in scenePrompt
+            # (@hero, @case, @ally). A new user's first motion render must still
+            # attach the cast, not ship an unanchored t2v clip with an empty refs
+            # file (see shotkit/project.py::render_motion's mention-union comment).
+            motion_refs = (
+                (project / "out" / "s01.motion.refs.txt")
+                .read_text(encoding="utf-8")
+                .splitlines()
+            )
+            self.assertTrue(motion_refs, "motion refs.txt is empty")
+            for line in motion_refs:
+                self.assertTrue(pathlib.Path(line).exists(), line)
+
     def test_pep604_annotations_have_the_future_import(self):
         # The 3.9 floor is real: `X | None` and `list[str]` in an annotation are a
         # TypeError at import time on 3.9 without the future import. Enforce it where
