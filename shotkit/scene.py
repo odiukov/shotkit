@@ -7,11 +7,17 @@ app/web/handlers/scene_request.py:676-695.
 
 from __future__ import annotations
 
-from shotkit import guards
+from shotkit import poster
+from shotkit.guards import (
+    frame_safety_tail,
+    reference_layout_clause,
+    with_audio_discipline,
+    with_i2v_safety,
+    with_keyframe_anchor,
+    with_spoken_line,
+)
 from shotkit.mentions import strip_mentions
 from shotkit.types import Character, Location, Prop
-from shotkit.guards import frame_safety_tail, reference_layout_clause
-from shotkit import poster
 
 
 # ---------------------------------------------------------------------------
@@ -192,10 +198,13 @@ def build_motion_prompt(
         motion_prompt or ""
     )
     out = _loop_hint(out, loop)
-    out = guards.with_spoken_line(out, dialogue or "")
+    # Dialogue is gated on the same flag as the audio tail, exactly as the tool gates it.
+    # Telling a model to speak a line "aloud, naturally and in sync" in a clip that bakes
+    # no audio track is a contradiction the model resolves by moving lips to nothing.
+    out = with_spoken_line(out, (dialogue or "") if generate_audio else "")
     if mode == "ref-anchored":
-        out = guards.with_keyframe_anchor(out)
+        out = with_keyframe_anchor(out)
     elif mode == "i2v":
-        out = guards.with_i2v_safety(out)
-    out = guards.with_audio_discipline(out, generate_audio)
+        out = with_i2v_safety(out)
+    out = with_audio_discipline(out, generate_audio)
     return strip_mentions(out, refs_for_strip or [])

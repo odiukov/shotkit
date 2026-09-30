@@ -126,3 +126,16 @@ class TestMotionOrdering(unittest.TestCase):
             dialogue="Skye: I never asked for this.",
         )
         self.assertIn("I never asked for this", out)
+
+    def test_dialogue_is_dropped_when_audio_is_not_baked(self):
+        # The tool gates the dialogue on the same flag as the audio tail. Without the
+        # gate, a clip that bakes no audio still carries "speak this line aloud,
+        # naturally and in sync" — and the model moves the lips to nothing.
+        out = build_motion_prompt(
+            "She turns",
+            mode="t2v",
+            chars=[SKYE],
+            dialogue="Skye: I never asked for this.",
+            generate_audio=False,
+        )
+        self.assertNotIn("I never asked for this", out)
