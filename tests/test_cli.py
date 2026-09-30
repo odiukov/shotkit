@@ -173,6 +173,36 @@ class TestCliRefusalMessages(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertEqual(err.count("unknown prop id"), 1, err)
 
+    def test_sheet_for_a_non_primary_look_with_no_primary_reference_refuses(self):
+        bible = {
+            "style": {
+                "globalPreamble": "photoreal cinematic, 35mm",
+                "banned": "text, watermark",
+            },
+            "characters": [
+                {
+                    "id": "skye",
+                    "name": "Skye",
+                    "canonicalDescription": "Woman, 29.",
+                    "looks": [
+                        {"label": "primary", "description": "charcoal wool coat"},
+                        {"label": "casual", "description": "denim jacket"},
+                    ],
+                }
+            ],
+            "locations": [],
+            "props": [],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "scenes").mkdir(parents=True)
+            (root / "refs").mkdir()
+            (root / "bible.json").write_text(json.dumps(bible), encoding="utf-8")
+            code, _, err = self.run_cli(root, "sheet", "skye", "--look", "casual")
+        self.assertEqual(code, 1)
+        self.assertIn("skye", err)
+        self.assertIn("primary", err.lower())
+
 
 class TestStylesCommand(unittest.TestCase):
     def test_styles_lists_all_six_presets_with_no_project_required(self):

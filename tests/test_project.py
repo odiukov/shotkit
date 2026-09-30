@@ -223,6 +223,101 @@ class TestSheetNoManifestRefs(unittest.TestCase):
         )
 
 
+NON_PRIMARY_LOOK_BIBLE = {
+    "style": {
+        "globalPreamble": "photoreal cinematic, 35mm",
+        "banned": "text, watermark",
+    },
+    "characters": [
+        {
+            "id": "skye",
+            "name": "Skye",
+            "canonicalDescription": "Woman, 29, dark eyes, black hair to the jaw.",
+            "looks": [
+                {
+                    "label": "primary",
+                    "description": "charcoal wool coat",
+                    "refImage": "refs/skye-primary.png",
+                },
+                {
+                    "label": "casual",
+                    "description": "denim jacket, sneakers",
+                },
+            ],
+        }
+    ],
+    "locations": [],
+    "props": [],
+}
+
+NO_PRIMARY_REF_BIBLE = {
+    "style": {
+        "globalPreamble": "photoreal cinematic, 35mm",
+        "banned": "text, watermark",
+    },
+    "characters": [
+        {
+            "id": "skye",
+            "name": "Skye",
+            "canonicalDescription": "Woman, 29, dark eyes, black hair to the jaw.",
+            "looks": [
+                {"label": "primary", "description": "charcoal wool coat"},
+                {
+                    "label": "casual",
+                    "description": "denim jacket, sneakers",
+                },
+            ],
+        }
+    ],
+    "locations": [],
+    "props": [],
+}
+
+
+class TestSheetNonPrimaryLookAnchor(unittest.TestCase):
+    """render_sheet for a non-primary look forces the IDENTITY ONLY reference clause
+    (build_character_sheet's identity_only formula: `look is not None and label !=
+    "primary"`) regardless of bases or identity photos — the prompt asserts a face
+    reference is attached. The no-manifest branch must actually attach the
+    character's OWN PRIMARY LOOK reference image for that assertion to be true,
+    mirroring the tool's generate_character_look (app/application/ensure_references.py):
+    a non-primary look always anchors on `primary_look(c)` (or `reference_images[0]`),
+    unconditionally, and raises when neither exists.
+    """
+
+    def _make(self, bible):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        root = pathlib.Path(tmp.name)
+        (root / "scenes").mkdir(parents=True)
+        (root / "refs").mkdir()
+        (root / "bible.json").write_text(json.dumps(bible), encoding="utf-8")
+        (root / "refs" / "skye-primary.png").write_bytes(b"\x89PNG")
+        return load_project(root), root
+
+    def test_a_non_primary_look_attaches_the_primary_reference_as_anchor(self):
+        project, root = self._make(NON_PRIMARY_LOOK_BIBLE)
+        r = render_sheet(project, "skye", look="casual")
+        self.assertIn("IDENTITY ONLY", r.prompt)
+        self.assertEqual(r.refs, [str(root / "refs" / "skye-primary.png")])
+        self.assertEqual(r.warnings, [])
+
+    def test_no_primary_reference_refuses_instead_of_lying(self):
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        root = pathlib.Path(tmp.name)
+        (root / "scenes").mkdir(parents=True)
+        (root / "refs").mkdir()
+        (root / "bible.json").write_text(
+            json.dumps(NO_PRIMARY_REF_BIBLE), encoding="utf-8"
+        )
+        project = load_project(root)
+        with self.assertRaises(ValueError) as ctx:
+            render_sheet(project, "skye", look="casual")
+        self.assertIn("skye", str(ctx.exception))
+        self.assertIn("primary", str(ctx.exception).lower())
+
+
 class TestFrameRender(ProjectCase):
     def test_mentioned_entities_contribute_refs_and_no_at_tokens_survive(self):
         r = render_frame(self.project, self.scene)

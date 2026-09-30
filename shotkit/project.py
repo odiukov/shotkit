@@ -557,7 +557,30 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
             uri, _warns = _select_character_look(b, "primary")
             if uri:
                 base_paths.append(str(project.root / uri))
-        refs = identity_paths + base_paths
+
+        # A THIRD assertion lives in build_character_sheet's identity_only formula:
+        # `look is not None and label != "primary"` forces the IDENTITY ONLY clause
+        # for ANY non-primary look, unconditionally — "this character's own primary
+        # sheet while a new look is rendered" per _reference_clause's docstring.
+        # Mirrors the tool's generate_character_look (app/application/
+        # ensure_references.py): for a non-primary label the anchor is unconditional
+        # — `primary_look(c)` or `reference_images[0]`, `references = [ImageRef(uri=
+        # anchor_uri)]` — and it RAISES when neither exists rather than emit a sheet
+        # with no anchored face. Appended last: identity_refs and base anchors are a
+        # different assertion (has_identity_photos / IDENTITY ANCHOR) that this look's
+        # own primary-look anchor doesn't replace.
+        anchor_paths: list[str] = []
+        if look_obj is not None and look_label != "primary":
+            anchor_uri, _warns = _select_character_look(character, "primary")
+            if not anchor_uri:
+                raise ValueError(
+                    f'character "{character.id}" has no primary look yet — generate '
+                    "the primary look first, the other looks condition on it to keep "
+                    "the same face"
+                )
+            anchor_paths = [str(project.root / anchor_uri)]
+
+        refs = identity_paths + base_paths + anchor_paths
 
     return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 

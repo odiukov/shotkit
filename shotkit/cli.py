@@ -8,7 +8,8 @@ Each generating command loads the project, resolves one render via
 
 The prompt is also echoed to stdout; warnings go to stderr. Every refusal
 (a --project with no bible.json, an unknown scene/character/location/prop id, a
-missing --mode, ref-anchored with no --keyframe, `init` into a non-empty
+missing --mode, ref-anchored with no --keyframe, a non-primary `sheet --look`
+with no primary look reference to anchor on, `init` into a non-empty
 directory) prints a message naming the offending thing to stderr and returns 1
 — never an uncaught traceback, and never a message blaming the wrong one of
 those when more than one could be at fault (a bad --project is never reported
@@ -163,6 +164,8 @@ def cmd_sheet(root: pathlib.Path, args: argparse.Namespace) -> int:
         render = project_mod.render_sheet(project, args.character_id, look=args.look)
     except KeyError as exc:
         return _refuse(_key_error_message(exc))
+    except ValueError as exc:
+        return _refuse(str(exc))
     return _write_render(root, f"{args.character_id}.{args.look}.sheet", render)
 
 
