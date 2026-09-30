@@ -227,3 +227,44 @@ class TestMotionPromptGolden(unittest.TestCase):
             refs_for_strip=REFS_SKYE_ELI,
         )
         self.assertEqual(out, golden("motion_t2v_no_audio"))
+
+    def test_ref_anchored_mode_matches_the_golden_fixture(self):
+        # The keyframe-anchored path: with_keyframe_anchor says reference #1 IS
+        # frame 0, since a reference-to-video render has no seed-frame slot of
+        # its own — the one clause most likely to rot unnoticed, since it was
+        # the only mode with no fixture behind it before this test.
+        out = build_motion_prompt(
+            "@skye faces @eli across the nave, neither willing to speak first",
+            mode="ref-anchored",
+            chars=[SKYE, ELI],
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+            refs_for_strip=REFS_SKYE_ELI,
+        )
+        self.assertEqual(out, golden("motion_ref_anchored"))
+
+
+class TestWhoIsWhoThreshold(unittest.TestCase):
+    """The >=2 threshold counts DESCRIBED characters, not @mentioned ones.
+
+    Mirrors scene_request.py:606-611: a character is filtered out of the count
+    before the len(mentioned) >= 2 check if its canonical_description is blank
+    (or cleans to nothing) — an empty identity has no face to disambiguate.
+    """
+
+    def test_a_blank_description_does_not_count_toward_the_threshold(self):
+        # Two @mentioned characters, but Mira's canonical_description is blank —
+        # only ONE of them actually carries a description, so this must produce
+        # NO who-is-who clause, not a one-entry one.
+        blank = Character(id="mira", name="Mira", canonical_description="")
+        out = build_motion_prompt(
+            "@skye faces @mira across the nave",
+            mode="t2v",
+            chars=[SKYE, blank],
+            refs_for_strip=[
+                {"id": "skye", "name": "Skye"},
+                {"id": "mira", "name": "Mira"},
+            ],
+        )
+        self.assertNotIn("Character identities", out)
+        self.assertNotIn("Mira:", out)

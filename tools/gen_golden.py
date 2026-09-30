@@ -141,6 +141,9 @@ def _assemble_motion(
     motion_prompt: str,
     dialogue: str,
     generate_audio: bool,
+    scene_prompt: str = "",
+    locs_raw: list[dict] | None = None,
+    props_raw: list[dict] | None = None,
     loop: bool = False,
     anchor_keyframe: bool = False,
     ref_only: bool = False,
@@ -152,10 +155,21 @@ def _assemble_motion(
     in the real handler those two booleans fall out of ref-budget and engine
     resolution; here the caller states the mode directly, since that resolution
     is infra this fixture generator has no business reproducing.
+
+    `scene_prompt`/`locs_raw`/`props_raw` default to nothing because none of the
+    fixtures below need them, NOT because the reproduction narrows those inputs:
+    `present` (scene_request.py:573-582) is resolved against `motionPrompt + " "
+    + scenePrompt`, and `ref_union` (scene_request.py:569-572) is built from
+    chars + locations + props together, so a fixture that DOES need a
+    scenePrompt-only mention or a location/prop mention must pass them here.
     """
+    ref_union = [
+        {"id": e.get("id"), "name": e.get("name", "")}
+        for e in [*chars_raw, *(locs_raw or []), *(props_raw or [])]
+    ]
+    motion_text = " ".join(filter(None, [motion_prompt or "", scene_prompt or ""]))
+    present = mentioned_ref_ids(motion_text, ref_union)
     narrator_voices = prompt_guards.narrator_voice_map(chars_raw)
-    ref_union = [{"id": e.get("id"), "name": e.get("name", "")} for e in chars_raw]
-    present = mentioned_ref_ids(motion_prompt, ref_union)
 
     # scene_request.py:606-617 — the who-is-who clause.
     mentioned_chars = [
@@ -177,7 +191,10 @@ def _assemble_motion(
         )
 
     # scene_request.py:676-695 — identity -> motion -> loop -> spoken line ->
-    # one mode clause -> audio discipline -> strip mentions.
+    # one mode clause -> audio discipline -> strip mentions. NOTE: the assembled
+    # motion string itself is built from `motionPrompt` ALONE (never `motion_text`
+    # / scenePrompt) — scenePrompt only ever widens WHICH characters count toward
+    # the >=2 threshold above, exactly as in the tool.
     motion = identity_clause + (motion_prompt or "")
     motion = _tool_loop_hint(motion, loop)
     motion = prompt_guards.with_spoken_line(
@@ -322,6 +339,17 @@ def main() -> None:
             motion_prompt="@skye faces @eli across the nave, neither willing to speak first",
             dialogue=DIALOGUE_BARE_VO,
             generate_audio=False,
+            ref_only=True,
+        ),
+    )
+    w(
+        "motion_ref_anchored",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE, MOTION_ELI],
+            motion_prompt="@skye faces @eli across the nave, neither willing to speak first",
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+            anchor_keyframe=True,
             ref_only=True,
         ),
     )
