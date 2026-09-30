@@ -65,14 +65,24 @@ follow-up locks, not the same one.
 `motionPrompt` becomes a video prompt in this exact order — nothing here is
 interchangeable:
 
-1. `"Maintain identity: …"` — the same identity clause as the frame block, built from
-   every character `@mentioned` in `motionPrompt`.
+1. **A who-is-who clause — but NOT the frame block's, and NOT unconditional.** The
+   motion path only ever injects `"Character identities — match each face to its
+   reference image: <Name>: <desc> <Name>: <desc> …"` (trailing space, prepended
+   directly), and only when **two or more** `@mentioned` characters carry a non-empty
+   `canonicalDescription`. Below that count nothing is injected at all: with one
+   character there is no other face to swap it with, so there's nothing to disambiguate.
+   Each description is cleaned of bible-authoring directives first (see "Two sources for
+   one trait is a coin toss" below and `character-refs`'s identity-hygiene notes) before
+   it reaches this clause. This is a DIFFERENT string from the frame/poster block's
+   `"Maintain identity: <name>: <desc>. Wearing: …"` (step 8 above) — that one fires for
+   any count and can carry tagged-look wardrobe text; this one never does.
 2. Your authored `motionPrompt` text.
 3. A loop clause, only when the scene's `loop` flag is set (locks the camera and pins
    first/last frame for a seamless repeat).
 4. The baked-speech clauses, built from `dialogue` — an on-camera line clause for plain
    `Name: words` segments, a narration clause for `VO:`-prefixed segments — only when
-   `generateAudio` is true. See `references/motion-dialogue.md`.
+   `generateAudio` is true. A `VO:` segment spoken by a named character (`Eli: VO: ...`)
+   can carry a gender/voice nudge — see `references/motion-dialogue.md`.
 5. **Exactly one** mode clause, chosen by `--mode`:
    - `t2v` — no clause added; there's no seed frame or reference-#1 anchor to declare.
    - `i2v` — "animate only what is already visible in this frame; introduce no new

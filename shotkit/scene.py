@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from shotkit import poster
 from shotkit.guards import (
+    clean_identity_description,
     frame_safety_tail,
     reference_layout_clause,
     with_audio_discipline,
@@ -29,6 +30,12 @@ def _identity_clause(
     chars: list[Character], look_desc_by_char: dict[str, str] | None = None
 ) -> str:
     """Who each character IS, plus what a TAGGED look says they are wearing.
+
+    Frame/poster ONLY — this is `_identity_clause` from
+    app/application/storyboard.py, emitted as `"Maintain identity: ..."`. The
+    motion path has a DIFFERENT clause (`_who_is_who_clause`, below): different
+    wording, a >=2-character threshold, and no wardrobe text at all — see its
+    docstring for why the two must never be conflated.
 
     A `@id#label` used to condition the reference image and nothing else, so the prompt
     text could silently contradict it — and text wins. `strip_mentions` deletes the tag,
@@ -141,6 +148,41 @@ def build_poster_prompt(
 # ---------------------------------------------------------------------------
 
 
+def _who_is_who_clause(chars: list[Character]) -> str:
+    """The MOTION path's who-is-who clause — scene_request.py:602-617, verbatim.
+
+    NOT the frame/poster `_identity_clause` above, and not interchangeable with it:
+
+    - **Threshold:** only at TWO OR MORE mentioned characters with a non-empty
+      description. On the default (no-keyframe) path the model receives N
+      unlabeled reference images plus this prompt text; with 2+ characters it has
+      no inherent binding of which image is which name and swaps them. With ONE
+      character there is nothing to swap, so the tool emits nothing.
+    - **Wording:** `"Character identities — match each face to its reference
+      image: <Name>: <desc> …"`, trailing space, prepended directly (no "Maintain
+      identity" — that string belongs only to the frame/poster clause above).
+    - **Cleaning:** each description passes through `clean_identity_description`
+      first. Not cosmetic: `canonical_description` is authored prose that can end
+      with a directive aimed at whoever fills the field ("Identity only — no
+      clothing here."). Pasted into a clip prompt verbatim, those words are just
+      content next to a described body — a provider's pre-generation moderator
+      reads "no clothing" as a request for the opposite of what it says and
+      refuses the whole job as sensitive.
+    - **No wardrobe text.** Unlike the frame/poster clause, this one never adds a
+      tagged look's "Wearing: ..." — the tool's motion assembly has no such thing.
+    """
+    mentioned = [
+        (c, clean_identity_description(c.canonical_description))
+        for c in chars
+        if c.canonical_description.strip()
+    ]
+    mentioned = [(c, desc) for c, desc in mentioned if desc]
+    if len(mentioned) < 2:
+        return ""
+    who = " ".join(f"{c.name}: {desc}" for c, desc in mentioned)
+    return f"Character identities — match each face to its reference image: {who} "
+
+
 def _loop_hint(motion_prompt: str, loop: bool) -> str:
     """Append the seamless-loop clause when *loop* is set (mirrors loopHint in boards.ts).
 
@@ -169,15 +211,15 @@ def build_motion_prompt(
     *,
     mode: str,
     chars: list[Character],
-    look_desc_by_char: dict[str, str] | None = None,
     dialogue: str = "",
     generate_audio: bool = True,
     loop: bool = False,
     refs_for_strip: list[dict] | None = None,
+    voices: dict | None = None,
 ) -> str:
     """Assemble what a video model receives, in the tool's exact order.
 
-    identity -> authored motion -> loop hint -> spoken line and narration ->
+    who-is-who -> authored motion -> loop hint -> spoken line and narration ->
     exactly ONE mode clause -> audio discipline -> mentions stripped.
 
     The three modes are not interchangeable:
@@ -187,21 +229,24 @@ def build_motion_prompt(
                      reads it as one more mood-board image and re-composes the shot.
       "t2v"          no frame at all; the model composes from prompt and references,
                      and BOTH of the above clauses would be lies.
+
+    `voices` is the speaker -> {gender, voiceNote} map `guards.narrator_voice_map`
+    builds (see `project.py::render_motion`, which builds it from the WHOLE
+    project roster, not just `chars` — a `VO:` speaker need not be @mentioned in
+    this scene's motionPrompt to have a pinned voice, exactly as in the tool).
     """
     if mode not in MOTION_MODES:
         raise ValueError(
             f"unknown motion mode {mode!r}; expected one of {MOTION_MODES}"
         )
 
-    identity = _identity_clause(chars, look_desc_by_char)
-    out = (f"Maintain identity: {identity}. " if identity else "") + (
-        motion_prompt or ""
-    )
+    identity = _who_is_who_clause(chars)
+    out = identity + (motion_prompt or "")
     out = _loop_hint(out, loop)
     # Dialogue is gated on the same flag as the audio tail, exactly as the tool gates it.
     # Telling a model to speak a line "aloud, naturally and in sync" in a clip that bakes
     # no audio track is a contradiction the model resolves by moving lips to nothing.
-    out = with_spoken_line(out, (dialogue or "") if generate_audio else "")
+    out = with_spoken_line(out, (dialogue or "") if generate_audio else "", voices)
     if mode == "ref-anchored":
         out = with_keyframe_anchor(out)
     elif mode == "i2v":

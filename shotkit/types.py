@@ -43,6 +43,12 @@ class Character:
     identity_refs: list[str] = field(default_factory=list)
     ref_kit: list[RefSlot] = field(default_factory=list)
     reference_images: list[str] = field(default_factory=list)
+    # Wire names `gender` / `voiceNote` (see project.py). Read only by the motion
+    # path's narrator-voice map (guards.narrator_voice_map) — a `VO:` segment's
+    # baked voice is the video model's own choice unless named, and naming it is a
+    # nudge ("so the engine stops flipping the narrator's voice"), never a lock.
+    gender: str = ""
+    voice_note: str = ""
 
 
 @dataclass

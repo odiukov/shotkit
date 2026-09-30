@@ -49,11 +49,15 @@ Put narration in **exactly one** of the two, never both on the same scene — th
 double narration. Reach for a `VO:` segment in `dialogue` for a one-off aside baked into
 this clip; reach for the `voiceover` field when the same narrator needs to sound
 identical across every scene of a story, since a TTS track you hold constant yourself is
-the only way to guarantee that. `shotkit` has no built-in voice catalog and does not pin
-a narrator's baked voice to anything about the character automatically — if a `VO:`
-narrator needs to sound consistent scene to scene, that consistency is on you (or
-whatever TTS step renders the separate `voiceover` track), not something `shotkit` tracks
-or infers from the character's description.
+the only way to guarantee that. `shotkit` has no voice catalog, but a `VO:` segment named
+by a character (`Eli: VO: ...`) CAN carry a nudge: set that character's `gender` (and an
+optional `voiceNote`) in `bible.json` and shotkit names it in the baked clause — "an
+off-screen male (gravelly, low register) narrator voice-over says…" — instead of the
+generic phrasing. This is exactly what it sounds like: a nudge, not a lock, worded from
+shotkit's own reasoning "so the engine stops flipping the narrator's voice." If a `VO:`
+narrator needs to sound consistent scene to scene, holding that voice is still mostly on
+you (or whatever TTS step renders the separate `voiceover` track) — `gender`/`voiceNote`
+steer the model's choice, they don't pin an exact voice the way a held TTS track does.
 
 ## `[shot N]` anchors
 
@@ -74,13 +78,12 @@ kinds to the same `SHOT 2` and the assembled prompt states both sentences about 
 shot — a face speaking in sync, and, in the same breath, narration from someone who
 "appears on camera" nowhere. `shotkit lint`'s `lint_shot_anchors` does not catch this: it
 only checks that an anchor points at a shot the motion prompt declares, not who else is
-anchored there. **Reasoning, not verified against a render:** since the on-camera face is
-already in that frame, it seems likely a video generator resolves this contradiction by
-lip-syncing the VO line to that face instead of keeping it off-screen — shotkit has no
-way to test this itself, since it only assembles text and never calls a generator. Treat
-it as a real risk worth avoiding, not a confirmed failure mode. Give the narration its
-own shot — an insert, a reaction, a wide with nobody speaking — inside the same scene,
-and anchor it there instead.
+anchored there. **This is a recorded observation, not a guess:** this pack's own
+`cinematic-scenes/references/failure-modes.md` records the mechanism directly — an
+on-camera face already in frame absorbs the VO line as its own lip-synced speech instead
+of staying off-screen — and the same rule is repeated in `short-drama-structure/SKILL.md`
+and `pov-scenes/SKILL.md`. Give the narration its own shot — an insert, a reaction, a wide
+with nobody speaking — inside the same scene, and anchor it there instead.
 
 ## Size baked speech to ~2 words per second of clip duration
 

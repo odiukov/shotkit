@@ -28,6 +28,7 @@ from shotkit.guards import (
     lint_music_words,
     lint_shot_anchors,
     lint_vo_fit,
+    narrator_voice_map,
 )
 from shotkit.mentions import (
     mentioned_ref_ids,
@@ -134,6 +135,8 @@ def _character_from_json(d: dict) -> Character:
         identity_refs=list(d.get("identityRefs", [])),
         ref_kit=[_ref_slot_from_json(x) for x in d.get("refKit", [])],
         reference_images=list(d.get("referenceImages", [])),
+        gender=d.get("gender", ""),
+        voice_note=d.get("voiceNote", ""),
     )
 
 
@@ -453,24 +456,43 @@ def render_poster(project: Project, scene: Scene) -> Render:
     return Render(prompt=prompt, refs=refs, warnings=warnings)
 
 
+def _project_narrator_voices(project: Project) -> dict:
+    """The speaker -> {gender, voiceNote} map for `with_spoken_line`'s narration clause.
+
+    Built from the WHOLE project roster (`project.characters`), not just the
+    characters `@mentioned` in this scene's motionPrompt — exactly like the tool
+    (`narrator_voices = narrator_voice_map(chars_raw)` in scene_request.py, computed
+    once from `list_characters()` before any @mention resolution). A `VO:` speaker
+    naming a character doesn't require that character to also be `@mentioned` as an
+    on-screen reference, so narrowing this map to `chars` would silently lose a
+    gender lookup for a narrator who never appears in frame.
+    """
+    return narrator_voice_map(
+        [
+            {"name": c.name, "gender": c.gender, "voiceNote": c.voice_note}
+            for c in project.characters
+        ]
+    )
+
+
 def render_motion(
     project: Project, scene: Scene, mode: str, keyframe: str | None = None
 ) -> Render:
     if mode == "ref-anchored" and not keyframe:
         raise ValueError("ref-anchored mode requires a keyframe")
 
-    chars, _locations, _props, look_desc_by_char, refs, warnings = _resolve_mentions(
+    chars, _locations, _props, _look_desc_by_char, refs, warnings = _resolve_mentions(
         project, scene.motion_prompt
     )
     prompt = build_motion_prompt(
         scene.motion_prompt,
         mode=mode,
         chars=chars,
-        look_desc_by_char=look_desc_by_char,
         dialogue=scene.dialogue,
         generate_audio=scene.generate_audio,
         loop=scene.loop,
         refs_for_strip=ref_dicts(project),
+        voices=_project_narrator_voices(project),
     )
     if mode == "ref-anchored":
         refs = [keyframe] + refs

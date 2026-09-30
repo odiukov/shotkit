@@ -28,7 +28,9 @@ sys.path.insert(0, os.getcwd())
 
 from app.domain.types import Character, Location, Prop, Style, Look, RefSlot
 from app.domain import ref_kit, prompt_guards, turnaround
+from app.domain.mentions import mentioned_ref_ids, strip_mentions
 from app.application.storyboard import build_scene_frame_prompt, build_poster_prompt
+from app.web.handlers.scene_request import _loop_hint as _tool_loop_hint
 
 STYLE = Style(
     id="default",
@@ -80,6 +82,113 @@ SLOTS = [
 ]
 
 DIALOGUE = "Skye: [shot 1] I never asked for this.\nEli: Nobody does.\nVO: [shot 2] She had, once."
+
+# ---------------------------------------------------------------------------
+# Motion-prompt assembly fixtures
+# ---------------------------------------------------------------------------
+# The tool assembles a motion prompt inline inside the animate-scene REQUEST
+# HANDLER (app/web/handlers/scene_request.py:602-695) — there is no single
+# importable "build_motion_prompt" function to call on the tool side, only a
+# sequence of pure domain-function calls threaded through a FastAPI handler
+# that also resolves DB-backed adapters, ref budgets and engine selection none
+# of which a golden fixture has any business depending on. `_assemble_motion`
+# below reproduces that sequence literally — same domain functions
+# (prompt_guards.clean_identity_description/with_spoken_line/with_i2v_safety/
+# with_keyframe_anchor/with_audio_discipline, mentions.mentioned_ref_ids/
+# strip_mentions, and the handler's own `_loop_hint`), called in the same
+# order — so the fixture still pins what the assembled STRING is, even though
+# it cannot come from one tool function because the tool has none.
+
+# Raw dicts, not Character dataclasses: chars_raw in the tool is exactly what
+# `list_characters()` hands back from the store — plain camelCase dicts — and
+# the who-is-who / narrator-voice-map logic below is written against that
+# shape (`c.get("id")`, `c.get("canonicalDescription")`, ...), verbatim from
+# scene_request.py.
+MOTION_SKYE = {
+    "id": "skye",
+    "name": "Skye",
+    "canonicalDescription": SKYE.canonical_description,
+}
+MOTION_ELI = {
+    "id": "eli",
+    "name": "Eli",
+    "canonicalDescription": ELI.canonical_description,
+}
+# Same two characters, with `gender` (and one `voiceNote`) set — the fields
+# `narrator_voice_map` reads to build the speaker -> {gender, voiceNote} map.
+MOTION_SKYE_VOICED = {**MOTION_SKYE, "gender": "female"}
+MOTION_ELI_VOICED = {
+    **MOTION_ELI,
+    "gender": "male",
+    "voiceNote": "gravelly, low register",
+}
+
+# A plain on-camera line plus an anchored, BARE "VO:" segment (no name before
+# it) — narrator_voice_map has nothing to key off a bare VO tag, so this
+# dialogue exercises the legacy/ungendered narration path.
+DIALOGUE_BARE_VO = DIALOGUE
+# The VO segment is spoken BY a named character ("Eli: VO: ...") — this is
+# the shape narrator_voice_map/with_spoken_line actually resolve a gender
+# against (a bare "VO:" tag carries no speaker name to look up).
+DIALOGUE_NAMED_VO = (
+    "Skye: [shot 1] I never asked for this.\nEli: VO: [shot 2] She had, once."
+)
+
+
+def _assemble_motion(
+    *,
+    chars_raw: list[dict],
+    motion_prompt: str,
+    dialogue: str,
+    generate_audio: bool,
+    loop: bool = False,
+    anchor_keyframe: bool = False,
+    ref_only: bool = False,
+) -> str:
+    """Reproduce scene_request.py:602-695, calling the tool's own domain functions.
+
+    `anchor_keyframe`/`ref_only` select which ONE mode clause the tool would have
+    chosen (keyframe-anchor / i2v-safety / neither, for a pure t2v ref render) —
+    in the real handler those two booleans fall out of ref-budget and engine
+    resolution; here the caller states the mode directly, since that resolution
+    is infra this fixture generator has no business reproducing.
+    """
+    narrator_voices = prompt_guards.narrator_voice_map(chars_raw)
+    ref_union = [{"id": e.get("id"), "name": e.get("name", "")} for e in chars_raw]
+    present = mentioned_ref_ids(motion_prompt, ref_union)
+
+    # scene_request.py:606-617 — the who-is-who clause.
+    mentioned_chars = [
+        (
+            c,
+            prompt_guards.clean_identity_description(
+                c.get("canonicalDescription") or ""
+            ),
+        )
+        for c in chars_raw
+        if c.get("id") in present and (c.get("canonicalDescription") or "").strip()
+    ]
+    mentioned_chars = [(c, desc) for c, desc in mentioned_chars if desc]
+    identity_clause = ""
+    if len(mentioned_chars) >= 2:
+        who = " ".join(f"{c.get('name')}: {desc}" for c, desc in mentioned_chars)
+        identity_clause = (
+            f"Character identities — match each face to its reference image: {who} "
+        )
+
+    # scene_request.py:676-695 — identity -> motion -> loop -> spoken line ->
+    # one mode clause -> audio discipline -> strip mentions.
+    motion = identity_clause + (motion_prompt or "")
+    motion = _tool_loop_hint(motion, loop)
+    motion = prompt_guards.with_spoken_line(
+        motion, (dialogue or "") if generate_audio else "", narrator_voices
+    )
+    if anchor_keyframe:
+        motion = prompt_guards.with_keyframe_anchor(motion)
+    elif not ref_only:
+        motion = prompt_guards.with_i2v_safety(motion)
+    motion = prompt_guards.with_audio_discipline(motion, generate_audio)
+    return strip_mentions(motion, ref_union)
 
 
 def w(name: str, text: str) -> None:
@@ -175,6 +284,45 @@ def main() -> None:
         "clean_identity",
         prompt_guards.clean_identity_description(
             "Identity only: face, hair, build. No clothing. Woman, 29, dark eyes."
+        ),
+    )
+
+    # ── Motion prompt assembly (the one output never pinned before Task 15) ──
+    w(
+        "motion_two_chars",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE, MOTION_ELI],
+            motion_prompt="@skye faces @eli across the nave, neither willing to speak first",
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+        ),
+    )
+    w(
+        "motion_one_char",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE, MOTION_ELI],
+            motion_prompt="@skye kneels alone before the altar",
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+        ),
+    )
+    w(
+        "motion_voices",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE_VOICED, MOTION_ELI_VOICED],
+            motion_prompt="@skye faces @eli across the nave, neither willing to speak first",
+            dialogue=DIALOGUE_NAMED_VO,
+            generate_audio=True,
+        ),
+    )
+    w(
+        "motion_t2v_no_audio",
+        _assemble_motion(
+            chars_raw=[MOTION_SKYE, MOTION_ELI],
+            motion_prompt="@skye faces @eli across the nave, neither willing to speak first",
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=False,
+            ref_only=True,
         ),
     )
 

@@ -24,6 +24,10 @@ EXPECTED = [
     "ref_layout_one",
     "ref_layout_three",
     "clean_identity",
+    "motion_two_chars",
+    "motion_one_char",
+    "motion_voices",
+    "motion_t2v_no_audio",
 ]
 
 

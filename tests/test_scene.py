@@ -39,6 +39,17 @@ KEY = Prop(
     canonical_description="A small brass key with a red enamel bow, scratched.",
 )
 REFS = [{"id": "skye", "name": "Skye"}, {"id": "church", "name": "Church"}]
+REFS_SKYE_ELI = [{"id": "skye", "name": "Skye"}, {"id": "eli", "name": "Eli"}]
+
+# A plain on-camera line plus an anchored, BARE "VO:" segment (no name before it) —
+# narrator_voice_map has nothing to key off a bare VO tag, so this exercises the
+# legacy/ungendered narration path.
+DIALOGUE_BARE_VO = "Skye: [shot 1] I never asked for this.\nEli: Nobody does.\nVO: [shot 2] She had, once."
+# The VO segment is spoken BY a named character ("Eli: VO: ...") — the shape
+# narrator_voice_map/with_spoken_line actually resolve a gender against.
+DIALOGUE_NAMED_VO = (
+    "Skye: [shot 1] I never asked for this.\nEli: VO: [shot 2] She had, once."
+)
 
 
 class TestFrameMatchesTheTool(unittest.TestCase):
@@ -139,3 +150,80 @@ class TestMotionOrdering(unittest.TestCase):
             generate_audio=False,
         )
         self.assertNotIn("I never asked for this", out)
+
+
+class TestMotionPromptGolden(unittest.TestCase):
+    """Pins the assembled motion prompt against tests/golden/motion_*.txt.
+
+    Fixtures come from `_assemble_motion` in tools/gen_golden.py, which reproduces
+    app/web/handlers/scene_request.py:602-695 literally (the tool has no single
+    importable motion-prompt builder — the assembly lives inline inside the
+    animate-scene request handler).
+    """
+
+    def test_two_mentioned_characters_get_the_who_is_who_clause(self):
+        out = build_motion_prompt(
+            "@skye faces @eli across the nave, neither willing to speak first",
+            mode="i2v",
+            chars=[SKYE, ELI],
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+            refs_for_strip=REFS_SKYE_ELI,
+        )
+        self.assertEqual(out, golden("motion_two_chars"))
+
+    def test_one_mentioned_character_gets_no_who_is_who_clause(self):
+        # Pins the >=2 threshold: with only ONE @mentioned character there is
+        # nothing to swap, so the tool emits no who-is-who clause at all.
+        out = build_motion_prompt(
+            "@skye kneels alone before the altar",
+            mode="i2v",
+            chars=[SKYE],
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=True,
+            refs_for_strip=REFS_SKYE_ELI,
+        )
+        self.assertEqual(out, golden("motion_one_char"))
+
+    def test_gendered_narrator_voice_reaches_the_vo_clause(self):
+        skye_voiced = Character(
+            id="skye",
+            name="Skye",
+            canonical_description=SKYE.canonical_description,
+            gender="female",
+        )
+        eli_voiced = Character(
+            id="eli",
+            name="Eli",
+            canonical_description=ELI.canonical_description,
+            gender="male",
+            voice_note="gravelly, low register",
+        )
+        # In real use `render_motion` builds this from the WHOLE project roster
+        # (see project.py::_project_narrator_voices) — a direct build_motion_prompt
+        # call has to hand it in itself.
+        voices = {
+            "skye": {"gender": "female", "voiceNote": ""},
+            "eli": {"gender": "male", "voiceNote": "gravelly, low register"},
+        }
+        out = build_motion_prompt(
+            "@skye faces @eli across the nave, neither willing to speak first",
+            mode="i2v",
+            chars=[skye_voiced, eli_voiced],
+            dialogue=DIALOGUE_NAMED_VO,
+            generate_audio=True,
+            refs_for_strip=REFS_SKYE_ELI,
+            voices=voices,
+        )
+        self.assertEqual(out, golden("motion_voices"))
+
+    def test_t2v_no_audio_keeps_identity_but_drops_dialogue_and_audio_tail(self):
+        out = build_motion_prompt(
+            "@skye faces @eli across the nave, neither willing to speak first",
+            mode="t2v",
+            chars=[SKYE, ELI],
+            dialogue=DIALOGUE_BARE_VO,
+            generate_audio=False,
+            refs_for_strip=REFS_SKYE_ELI,
+        )
+        self.assertEqual(out, golden("motion_t2v_no_audio"))

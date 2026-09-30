@@ -188,6 +188,51 @@ class TestMotionRender(ProjectCase):
             render_motion(self.project, self.scene, mode="ref-anchored")
 
 
+class TestMotionNarratorVoice(unittest.TestCase):
+    """End-to-end: bible.json's `gender`/`voiceNote` -> Character -> the VO clause.
+
+    Exercises the full wire path (_character_from_json -> render_motion ->
+    _project_narrator_voices -> build_motion_prompt), which TestMotionPromptGolden
+    in test_scene.py does not: that suite calls build_motion_prompt directly with
+    an already-built `voices` dict.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        bible = json.loads(json.dumps(BIBLE))
+        bible["characters"].append(
+            {
+                "id": "eli",
+                "name": "Eli",
+                "canonicalDescription": "Man, 34, heavy brow, close-cropped hair.",
+                "gender": "male",
+                "voiceNote": "gravelly, low register",
+            }
+        )
+        scene = dict(SCENE)
+        scene["motionPrompt"] = "@skye faces @eli across the nave"
+        scene["dialogue"] = (
+            "Skye: I never asked for this.\nEli: VO: [shot 1] She had, once."
+        )
+        self.root = make_project(pathlib.Path(self._tmp.name), bible=bible, scene=scene)
+        self.project = load_project(self.root)
+        self.scene = load_scene(self.project, "s01")
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_gender_and_voice_note_wire_through_to_the_vo_clause(self):
+        self.assertEqual(self.project.characters[1].gender, "male")
+        self.assertEqual(
+            self.project.characters[1].voice_note, "gravelly, low register"
+        )
+        r = render_motion(self.project, self.scene, mode="t2v")
+        self.assertIn(
+            "an off-screen male (gravelly, low register) narrator voice-over says",
+            r.prompt,
+        )
+
+
 class TestLints(ProjectCase):
     def test_a_broken_mention_is_reported(self):
         self.scene.scene_prompt = "@nobody waits in @church"

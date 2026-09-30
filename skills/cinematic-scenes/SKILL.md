@@ -228,7 +228,7 @@ shotkit does not take one prose block: a scene JSON's fields map onto separate s
 | `voiceover` | The narration track for a **separate TTS step**, synthesized after the clip, never lip-synced. shotkit has no voice catalog and does not track which TTS voice you use — if a narrator must sound the same across every scene of a story, holding that voice constant is on you (or whatever TTS tool renders it), not on shotkit. **Narration lives in exactly ONE place per scene**: `VO:` in `dialogue` for a one-off baked aside, this field when the narrator must sound the same across scenes — never both (double narration). **Fit it to the clip:** a TTS pass typically only compresses speech up to ~1.15× before it gets choppy or cut off, so budget ≈ `durationSec × 2.3` words (~2.3 words/sec at natural pace) — a rich `motionPrompt` doesn't buy the VO more room than a short scene allows. | — |
 | `generateAudio` | `true` tells shotkit to append an audio-discipline clause (ambient/dialogue only, no music) to the assembled `motionPrompt`, for a video model that bakes native audio — write the ambient cue into `motionPrompt` itself. Music is a separate post layer, not here. | — |
 
-**Pin the baked narrator's voice as best you can.** A `VO:` segment asks the video model itself to voice the narration, and left unpinned that voice can drift — even flip gender — clip to clip. Name the speaker inline (`Skye: VO: ...`) and keep that character's `canonicalDescription` consistent; it's a nudge, not a guarantee. When a narrator must sound identical in every scene, use the `voiceover` field (a separate TTS pass) instead of `VO:`, and hold that TTS voice choice constant yourself across every scene of the story.
+**Pin the baked narrator's voice as best you can.** A `VO:` segment asks the video model itself to voice the narration, and left unpinned that voice can drift — even flip gender — clip to clip. Two levers, stack both: name the speaker inline (`Skye: VO: ...`) AND set that character's `gender` (and optionally `voiceNote`) in `bible.json` — a named `VO:` speaker with a `gender` set gets it spelled out in the baked clause itself ("an off-screen female narrator voice-over says…", or "female (warm, low register) …" with a `voiceNote`), a stronger nudge than `canonicalDescription` consistency alone. It is still a nudge, not a guarantee — shotkit's own reasoning for it is "so the engine stops flipping the narrator's voice," not a lock on an exact voice. When a narrator must sound identical in every scene, use the `voiceover` field (a separate TTS pass) instead of `VO:`, and hold that TTS voice choice constant yourself across every scene of the story.
 
 #### One voice per shot — never a spoken line and a `VO:` in the same shot
 
@@ -637,13 +637,15 @@ When 2+ characters share the frame and interact (a standoff, a conversation, a f
 
 **On the default path the model receives N unlabeled reference images + the `motionPrompt` text.** With **2+ characters** it has no inherent binding of *which image is which name*, so left alone it assigns identities by guess and **swaps them** — even when the characters look clearly different, and multi-shot prompts ("3-shot sequence, hard cuts") make it worse because identity re-assigns across each cut.
 
-**shotkit closes this automatically.** Whenever a scene `@mentions` one or more characters, `shotkit motion` (and `shotkit frame`/`shotkit poster`) prepend a who-is-who clause to the prompt, built from each mentioned character's `canonicalDescription`:
+**shotkit closes this automatically — but only once there are 2+ faces to disambiguate.** With **two or more** `@mentioned` characters that each carry a non-empty `canonicalDescription`, `shotkit motion` prepends a who-is-who clause built from them:
 
 ```
-Maintain identity: Caroline: <canonicalDescription>. Lana: <canonicalDescription>.
+Character identities — match each face to its reference image: Caroline: <canonicalDescription> Lana: <canonicalDescription>
 ```
 
-So `canonicalDescription` **IS** sent on the default path (via this clause), and it is the binding that stops the swap.
+Below that count — a single `@mentioned` character — shotkit injects **nothing**: with only one face in the shot there is no other identity to swap it with, so there's nothing to disambiguate. **This is NOT the same string `shotkit frame`/`shotkit poster` inject** (their identity clause reads `"Maintain identity: Caroline: <text>. Lana: <text>."` and fires at any count, including one — see below); the two clauses live in different code, have different thresholds, and must not be confused for each other.
+
+So `canonicalDescription` **IS** sent on the default path once 2+ characters share the shot (via this clause), and it is the binding that stops the swap.
 
 So for any 2+ character shot:
 1. **Just `@mention` each character — do NOT re-type their identity trait inline.** shotkit already injects the who-is-who from `canonicalDescription`, so repeating `@caroline (platinum-blonde, couture)` inline only **duplicates** that text and bloats the prompt. Plain `@caroline tips the tray onto @lana` is enough for identity.
