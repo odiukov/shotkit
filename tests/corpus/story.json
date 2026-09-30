@@ -1,0 +1,891 @@
+{
+  "series": "November Oscar Papa Quebec Romeo sierra Tango-Uniform Victor?",
+  "style": {
+    "globalPreamble": "Whiskey xray yankee zulu.",
+    "banned": "Alpha bravo charlie."
+  },
+  "characters": [
+    {
+      "id": "apollo",
+      "name": "Apollo Exley",
+      "canonicalDescription": "Delta echo foxtrot.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Golf hotel.",
+          "refImage": "refs/apollo-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "brandon",
+      "name": "Brandon Cale",
+      "canonicalDescription": "India juliet kilo.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Lima mike.",
+          "refImage": "refs/brandon-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "jessica",
+      "name": "Jessica Sterling",
+      "canonicalDescription": "November oscar papa.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Quebec romeo.",
+          "refImage": "refs/jessica-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "kara",
+      "name": "Kara Walsh",
+      "canonicalDescription": "Sierra tango uniform.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Victor whiskey.",
+          "refImage": "refs/kara-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "maya",
+      "name": "Maya Sterling",
+      "canonicalDescription": "Xray yankee zulu.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Alpha bravo.",
+          "refImage": "refs/maya-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "mom",
+      "name": "Mom",
+      "canonicalDescription": "Charlie delta echo.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Foxtrot golf.",
+          "refImage": "refs/mom-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    },
+    {
+      "id": "newscaster",
+      "name": "Newscaster",
+      "canonicalDescription": "Hotel india juliet.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "Kilo lima.",
+          "refImage": "refs/newscaster-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [],
+      "referenceImages": [],
+      "gender": "",
+      "voiceNote": ""
+    }
+  ],
+  "locations": [
+    {
+      "id": "apex_office",
+      "name": "Apex office",
+      "canonicalDescription": "Mike november oscar.",
+      "lightingProfile": "Papa quebec.",
+      "views": [
+        {
+          "label": "primary",
+          "uri": "refs/apex_office-primary.png"
+        }
+      ]
+    },
+    {
+      "id": "boutique",
+      "name": "boutique",
+      "canonicalDescription": "Romeo sierra tango.",
+      "lightingProfile": "Uniform victor.",
+      "views": [
+        {
+          "label": "primary",
+          "uri": "refs/boutique-primary.png"
+        }
+      ]
+    },
+    {
+      "id": "downtown_street",
+      "name": "Downtown street",
+      "canonicalDescription": "Whiskey xray yankee.",
+      "lightingProfile": "Zulu alpha.",
+      "views": [
+        {
+          "label": "primary",
+          "uri": "refs/downtown_street-primary.png"
+        }
+      ]
+    }
+  ],
+  "props": [
+    {
+      "id": "cashiers_check",
+      "name": "cashiers check",
+      "canonicalDescription": "Bravo charlie delta.",
+      "uri": "refs/cashiers_check.png"
+    },
+    {
+      "id": "tin_can",
+      "name": "tin can",
+      "canonicalDescription": "Echo foxtrot golf.",
+      "uri": "refs/tin_can.png"
+    }
+  ],
+  "episodes": [
+    {
+      "number": 1,
+      "id": "ep_0e290dfc94f7",
+      "title": "Zulu",
+      "sceneIds": [
+        "sc_1",
+        "sc_2",
+        "sc_3",
+        "sc_4",
+        "sc_5",
+        "sc_5df65b3e",
+        "sc_1aada638",
+        "sc_6",
+        "sc_ba80a05a",
+        "sc_7",
+        "sc_77add865",
+        "sc_a46ace34",
+        "sc_8",
+        "sc_9",
+        "sc_10",
+        "sc_f482149b",
+        "sc_11",
+        "sc_e3239afd",
+        "sc_8dbc68ff",
+        "sc_12",
+        "sc_286e51b4",
+        "sc_9911eb9f",
+        "sc_13",
+        "sc_9b8724bf",
+        "sc_14"
+      ]
+    },
+    {
+      "number": 2,
+      "id": "ep_5ff28f297132",
+      "title": "Mike",
+      "sceneIds": [
+        "sc_1",
+        "sc_2",
+        "sc_3",
+        "sc_4",
+        "sc_5",
+        "sc_6",
+        "sc_7",
+        "sc_8",
+        "sc_9",
+        "sc_10",
+        "sc_11",
+        "sc_12",
+        "sc_13",
+        "sc_14",
+        "sc_15",
+        "sc_16",
+        "sc_17",
+        "sc_18",
+        "sc_19",
+        "sc_20",
+        "sc_21",
+        "sc_22",
+        "sc_23",
+        "sc_24"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "sc_1",
+      "locationId": "apex_office",
+      "scenePrompt": "",
+      "motionPrompt": "900001 alpha, 900002bravo charlie, 900003:900004.\nDelta echo foxtrot golf, hotel india juliet, kilo lima mike, November oscar 900005Papa.\nQuebec:\nSHOT 1 [0:00-0:04] 900006 romeo Sierra tango uniform victor whiskey, Xray-Yankee - zulu alpha bravo charlie delta echo - foxtrot golf-hotel india juliet kilo lima-mike november @apex_office#skyline oscar papa quebec romeo sierra-tango uniform victor whiskey xray yankee zulu alpha bravo charlie 900007 delta/echo, foxtrot golf hotel india-juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor; whiskey xray yankee zulu alpha bravo charlie delta. Echo foxtrot.\nSHOT 2 [0:04-0:06] 900008 golf Hotel-India, juliet Kilo Lima - mike november oscar-papa-quebec romeo sierra tango uniform victor whiskey xray yankee - zulu alpha bravo charlie @apollo delta echo foxtrot golf-hotel-india juliet kilo @apex_office#skyline lima mike-november, oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot golf hotel india. Juliet kilo.\nSHOT 3 [0:06-0:08] 900009 lima Mike, November-Oscar - papa quebec romeo sierra tango uniform victor whiskey xray - @kara yankee zulu alpha bravo @apex_office#skyline charlie delta echo foxtrot golf hotel, india juliet kilo, lima mike november oscar papa quebec romeo, sierra tango uniform victor whiskey xray @apollo. Yankee zulu.\nSHOT 4 [0:08-0:10] 900010 alpha Bravo-Charlie, Delta-Echo - foxtrot - @apollo golf hotel india juliet @kara kilo lima mike november oscar papa @apex_office#skyline, quebec romeo sierra tango uniform, victor whiskey xray yankee zulu alpha bravo-charlie. Delta.\nEcho: @apollo foxtrot golf-hotel india juliet kilo lima @kara mike-november oscar papa quebec; romeo sierra tango uniform victor whiskey xray yankee-zulu; alpha bravo charlie delta echo foxtrot golf hotel; India juliet 900011Kilo.\nLima: mike november oscar-papa quebec, romeo sierra tango-uniform victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel -> india juliet kilo lima mike november oscar papa quebec; romeo sierra, tango uniform victor.",
+      "dialogue": "Newscaster: VO: [shot 1] Whiskey xray Yankee zulu alpha, bravo charlie Delta Echo Foxtrot...",
+      "voiceover": "",
+      "durationSec": 10,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_2",
+      "locationId": "apex_office",
+      "scenePrompt": "",
+      "motionPrompt": "900012 golf, 900013hotel india, 900014:900015.\nJuliet kilo lima mike, november oscar papa, quebec romeo sierra, Tango uniform 900016Victor.\nWhiskey:\nSHOT 1 [0:00-0:03] 900017 xray Yankee, Zulu-Alpha - bravo - @kara charlie delta echo foxtrot golf hotel india juliet @apex_office#skyline kilo lima mike november @apollo oscar papa quebec-romeo-sierra tango, uniform victor whiskey xray yankee, zulu alpha bravo charlie, delta echo foxtrot; golf hotel india juliet kilo lima mike november. Oscar papa.\nSHOT 2 [0:03-0:05] 900018 quebec Romeo-Sierra, tango Uniform Victor - whiskey xray - @apollo yankee zulu alpha bravo charlie @apex_office#skyline, delta echo foxtrot golf hotel india juliet kilo lima mike november @kara oscar papa quebec romeo, sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 3 [0:05-0:09] 900019 alpha Bravo, charlie Delta Echo - foxtrot-golf - @apollo hotel @kara'india juliet kilo @apex_office#skyline lima mike november oscar papa, quebec romeo, sierra tango uniform victor whiskey xray yankee; zulu alpha bravo charlie delta echo. Foxtrot golf.\nSHOT 4 [0:09-0:15] 900020 hotel India-Juliet, Kilo-Lima - mike november oscar - @apollo papa quebec romeo sierra tango uniform victor @apex_office#skyline, whiskey xray yankee, zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo. Lima.\nMike: @apollo november oscar-papa quebec romeo sierra tango @kara uniform-victor whiskey xray yankee; zulu alpha bravo charlie delta echo foxtrot golf hotel @apollo india @kara, juliet kilo lima mike november oscar papa quebec; @apollo romeo sierra tango uniform victor whiskey xray yankee 900021 zulu; alpha bravo charlie delta echo foxtrot golf hotel; India juliet 900022Kilo.\nLima: mike november oscar-papa quebec, romeo sierra tango uniform victor whiskey xray yankee, zulu alpha bravo charlie delta echo; foxtrot golf, hotel india juliet.",
+      "dialogue": "Kara: [shot 1] Kilo, lima mike november oscar papa?\nApollo: [shot 3] Quebec romeo sierra tango uniform victor whiskey xray,\nApollo: [shot 4] yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet, kilo lima.",
+      "voiceover": "",
+      "durationSec": 15,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_3",
+      "locationId": "apex_office",
+      "scenePrompt": "",
+      "motionPrompt": "900023 mike, 900024november oscar, 900025:900026.\nPapa quebec romeo sierra, tango uniform victor, whiskey xray yankee, Zulu alpha 900027Bravo.\nCharlie:\nSHOT 1 [0:00-0:05] 900028 delta Echo, foxtrot Golf Hotel - india - @kara juliet @apex_office#skyline, kilo lima, mike november oscar papa quebec romeo, sierra tango uniform victor whiskey @apollo xray yankee zulu alpha bravo, charlie delta echo foxtrot golf. Hotel india.\nSHOT 2 [0:05-0:08] 900029 juliet Kilo, lima Mike November - oscar-papa - @apollo quebec @apex_office#skyline romeo sierra tango, uniform victor whiskey, xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel india. Juliet kilo.\nSHOT 3 [0:08-0:10] 900030 lima Mike-November, Oscar-Papa - quebec - @kara romeo @apex_office#skyline sierra tango uniform, victor whiskey xray, yankee zulu alpha bravo charlie delta echo. Foxtrot golf.\nSHOT 4 [0:10-0:12] 900031 hotel India-Juliet, Kilo-Lima - mike november - @kara oscar papa quebec romeo sierra tango uniform victor whiskey-xray yankee zulu alpha bravo @apex_office#skyline charlie delta echo foxtrot golf hotel @apollo india juliet kilo lima mike november, oscar papa quebec romeo sierra. Tango.\nUniform: @apollo victor whiskey-xray yankee zulu alpha bravo @kara charlie-delta echo foxtrot 900032 golf 900033; @kara hotel india-juliet kilo lima 900034; mike november oscar papa quebec romeo sierra tango; Uniform victor 900035Whiskey.\nXray: yankee zulu alpha-bravo charlie, delta echo foxtrot golf, hotel india juliet kilo lima-mike november oscar papa; quebec romeo, sierra tango uniform.",
+      "dialogue": "Kara: [shot 1] Victor, whiskey? Xray yankee? Zulu alpha bravo charlie delta echo foxtrot?\nApollo: [shot 2] Golf hotel india juliet kilo.\nKara: [shot 3] Lima, mike.",
+      "voiceover": "",
+      "durationSec": 12,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_4",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900036 november, 900037oscar papa, 900038:900039.\nQuebec romeo sierra tango, uniform victor whiskey, xray yankee zulu, Alpha bravo 900040Charlie.\nDelta:\nSHOT 1 [0:00-0:03] 900041 echo Foxtrot, Golf-Hotel - india - Juliet @downtown_street#crossing kilo lima mike: november oscar papa quebec romeo sierra, tango uniform victor whiskey xray, yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet, kilo lima mike november. Oscar papa.\nSHOT 2 [0:03-0:05] 900042 quebec Romeo, Sierra Tango-Uniform - victor - whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot @downtown_street#crossing, golf hotel india juliet kilo lima, mike november @tin_can oscar papa quebec romeo sierra. Tango uniform.\nSHOT 3 [0:05-0:08] 900043 victor Whiskey, xray Yankee Zulu - alpha bravo - @apollo#ragged charlie delta echo foxtrot golf hotel @downtown_street#crossing, india juliet kilo lima mike november, oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee, @tin_can zulu alpha bravo charlie; delta echo foxtrot golf hotel india. Juliet.\nKilo: @apollo#ragged lima mike @tin_can november oscar papa quebec romeo sierra tango; uniform victor whiskey xray yankee zulu alpha bravo charlie; delta echo foxtrot golf hotel india juliet kilo; Lima mike 900044November.\nOscar: papa quebec romeo sierra tango, uniform victor whiskey xray, yankee zulu alpha bravo charlie; delta echo, foxtrot golf hotel.",
+      "dialogue": "",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_5",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900045 india, 900046juliet kilo, 900047:900048.\nLima mike november oscar, papa quebec romeo, sierra tango uniform, 900049 victor whiskey xray yankee, Zulu alpha 900050Bravo.\nCharlie:\nSHOT 1 [0:00-0:04] 900051 delta Echo, Foxtrot-Golf - hotel - @apollo#ragged india juliet kilo lima mike november @downtown_street#storefront oscar papa quebec @tin_can romeo sierra tango uniform victor, whiskey, xray yankee zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima mike november, oscar papa quebec romeo sierra tango uniform. Victor whiskey.\nSHOT 2 [0:04-0:07] 900052 xray Yankee, Zulu-Alpha - bravo - @apollo#ragged charlie delta echo foxtrot golf hotel india @tin_can juliet @downtown_street#storefront, kilo lima mike november oscar papa quebec romeo sierra, tango uniform victor; whiskey xray yankee zulu alpha. Bravo charlie.\nSHOT 3 [0:07-0:10] 900053 delta Echo, foxtrot Golf Hotel - india, juliet kilo lima mike november oscar papa - quebec romeo sierra tango uniform victor whiskey xray @apollo#ragged'yankee zulu alpha @downtown_street#storefront; bravo charlie delta, @apollo#ragged echo foxtrot golf hotel-india, juliet @tin_can kilo lima mike november, oscar papa; quebec romeo sierra tango uniform victor. Whiskey xray.\nSHOT 4 [0:10-0:12] 900054 yankee Zulu, Alpha-Bravo - charlie - delta echo foxtrot golf hotel india juliet kilo lima mike november @downtown_street#storefront oscar @apollo#ragged papa quebec romeo sierra-tango, uniform victor whiskey xray, yankee zulu alpha bravo charlie. Delta.\nEcho: @apollo#ragged foxtrot golf @tin_can hotel india juliet kilo lima mike november-oscar papa quebec romeo sierra tango uniform; victor whiskey xray yankee zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray yankee zulu; Alpha bravo 900055Charlie.\nDelta: echo foxtrot golf hotel india, juliet kilo lima mike -> november oscar papa quebec romeo sierra-tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta, echo foxtrot golf.",
+      "dialogue": "Apollo: [shot 1] Hotel india, juliet kilo lima mike november\nApollo: [shot 2] oscar Papa quebec romeo sierra tango uniform, victor?",
+      "voiceover": "",
+      "durationSec": 12,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_5df65b3e",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900056 whiskey, 900057xray yankee, 900058:900059.\nZulu alpha bravo charlie, delta echo foxtrot, golf hotel india, 900060 juliet kilo lima mike, November oscar 900061Papa.\nQuebec:\nSHOT 1 [0:00-0:04] 900062 romeo Sierra, Tango-Uniform - victor - @apollo#ragged whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot @downtown_street#storefront golf hotel india @tin_can juliet kilo, lima, mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel. India juliet.\nSHOT 2 [0:04-0:07] 900063 kilo Lima, Mike-November - oscar - @apollo#ragged papa quebec romeo, sierra tango uniform victor whiskey @tin_can xray @downtown_street#storefront, yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo; lima mike november oscar papa. Quebec romeo.\nSHOT 3 [0:07-0:10] 900064 sierra Tango-Uniform, Victor-Whiskey - xray - yankee zulu alpha bravo charlie @apollo#ragged delta echo foxtrot golf hotel india juliet kilo @downtown_street#storefront; lima @tin_can mike november oscar papa, quebec romeo, sierra tango uniform victor whiskey xray yankee. Zulu.\nAlpha: @apollo#ragged bravo charlie @tin_can delta echo foxtrot golf hotel india juliet-kilo lima mike november oscar papa quebec; romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india juliet kilo lima mike november oscar; papa quebec romeo sierra tango uniform victor whiskey; Xray yankee 900065Zulu.\nAlpha: bravo charlie delta, echo foxtrot golf hotel, india juliet kilo lima mike november oscar papa; quebec romeo, sierra tango uniform.",
+      "dialogue": "Apollo: [shot 1] Victor whiskey, xray yankee zulu alpha bravo charlie\nApollo: [shot 2] delta Echo foxtrot golf hotel india?",
+      "voiceover": "",
+      "durationSec": 10,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_1aada638",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900066 juliet, 900067kilo lima, 900068:900069.\nMike november oscar papa, quebec romeo sierra, tango uniform victor, 900070 whiskey xray yankee zulu, Alpha bravo 900071Charlie.\nDelta:\nSHOT 1 [0:00-0:04] 900072 echo Foxtrot, Golf-Hotel - india - @apollo#ragged juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform victor @downtown_street#storefront, whiskey xray @tin_can yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november oscar papa quebec, romeo sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 2 [0:04-0:06] 900073 alpha Bravo, charlie Delta Echo - foxtrot, golf hotel india juliet kilo lima mike - november oscar papa quebec romeo sierra tango uniform victor whiskey @apollo#ragged'xray yankee zulu @downtown_street#storefront; alpha bravo charlie delta, @apollo#ragged echo foxtrot golf hotel @tin_can india juliet kilo lima mike, november oscar papa quebec romeo sierra. Tango uniform.\nSHOT 3 [0:06-0:08] 900074 victor Whiskey, Xray Yankee 900075 zulu alpha - bravo charlie delta echo foxtrot, golf - hotel @tin_can india juliet kilo lima mike november @downtown_street#storefront oscar papa quebec romeo sierra tango uniform, @apollo#ragged'victor whiskey xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet. Kilo.\nLima: @apollo#ragged mike november @tin_can oscar papa quebec romeo sierra tango 900076, uniform-victor whiskey xray yankee zulu 900077; alpha bravo charlie delta echo foxtrot golf hotel india juliet; kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey; xray yankee zulu alpha bravo charlie delta echo; Foxtrot golf 900078Hotel.\nIndia: juliet kilo lima mike november, oscar papa quebec romeo -> sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf; hotel india, juliet kilo lima.",
+      "dialogue": "Apollo: [shot 1] Mike november, oscar papa quebec romeo sierra, tango?",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_6",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900079 uniform, 900080victor whiskey, 900081:900082.\nXray yankee zulu alpha, bravo charlie delta, echo foxtrot golf, Hotel india 900083Juliet.\nKilo:\nSHOT 1 [0:00-0:04] 900084 lima Mike-November, Oscar-Papa - quebec romeo sierra tango - @brandon uniform @jessica victor @downtown_street#storefront whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel india juliet kilo lima-mike november oscar papa, quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha; bravo charlie delta echo foxtrot golf. Hotel india.\nSHOT 2 [0:04-0:06] 900085 juliet Kilo, Lima-Mike - november - @jessica oscar papa quebec romeo @brandon sierra @downtown_street#storefront, tango, uniform victor whiskey, xray yankee zulu alpha bravo charlie. Delta echo.\nSHOT 3 [0:06-0:08] 900086 foxtrot Golf, Hotel India 900087 juliet kilo - lima - mike november oscar @apollo#ragged papa quebec romeo sierra tango uniform @downtown_street#storefront victor whiskey xray yankee zulu alpha @tin_can, bravo charlie delta, echo @brandon foxtrot golf hotel india juliet kilo lima mike november @jessica oscar papa-quebec. Romeo.\nSierra: @brandon tango uniform-victor whiskey @jessica xray-yankee zulu alpha 900088 bravo 900089; @apollo#ragged charlie delta echo foxtrot golf hotel india juliet 900090; kilo lima mike november oscar papa quebec, romeo sierra tango uniform victor; whiskey xray yankee zulu alpha bravo charlie delta; Echo foxtrot 900091Golf.\nHotel: india juliet kilo, lima mike november, oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu; alpha bravo, charlie delta echo.",
+      "dialogue": "Brandon: [shot 1] Foxtrot golf hotel india, juliet. Kilo lima mike november oscar papa quebec.\nJessica: [shot 2] Romeo sierra, tango?",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_ba80a05a",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900092 uniform, 900093victor whiskey, 900094:900095.\nXray yankee zulu alpha, bravo charlie delta, echo foxtrot golf, Hotel india 900096Juliet.\nKilo:\nSHOT 1 [0:00-0:06] 900097 lima Mike, november Oscar Papa - quebec - @brandon romeo sierra tango uniform @jessica victor @downtown_street#storefront whiskey xray yankee zulu alpha, bravo charlie, delta echo foxtrot golf hotel india-juliet kilo lima mike @apollo#ragged, november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha. Bravo charlie.\nSHOT 2 [0:06-0:09] 900098 delta Echo-Foxtrot-Golf hotel @brandon, India-Juliet - kilo - lima @brandon'mike november oscar @jessica papa @downtown_street#storefront, quebec romeo sierra tango uniform victor-whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot, golf hotel india juliet kilo. Lima mike.\nSHOT 3 [0:09-0:13] 900099 november Oscar, Papa Quebec 900100 romeo sierra - tango uniform victor - @brandon whiskey @jessica xray-yankee zulu @downtown_street#storefront, alpha bravo charlie, delta echo foxtrot @apollo#ragged golf hotel india juliet @tin_can kilo lima mike november, oscar papa quebec romeo sierra tango uniform victor whiskey-xray. Yankee.\nZulu: @brandon alpha bravo-charlie delta @jessica echo-foxtrot golf hotel 900101 india 900102; @apollo#ragged juliet kilo lima mike november oscar papa 900103 quebec 900104; romeo sierra tango uniform victor whiskey xray, yankee zulu alpha bravo charlie; delta echo foxtrot golf hotel india juliet kilo; Lima mike 900105November.\nOscar: papa quebec romeo, sierra tango uniform, victor whiskey xray, yankee zulu alpha bravo charlie delta echo foxtrot golf; hotel india, juliet kilo lima.",
+      "dialogue": "Brandon: [shot 1] Mike november oscar papa quebec romeo sierra tango. Uniform victor whiskey xray, yankee zulu alpha bravo charlie delta.\nBrandon: [shot 3] Echo foxtrot golf hotel india juliet kilo lima.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_7",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900106 mike, 900107november oscar, 900108:900109.\nPapa quebec romeo sierra, tango uniform victor, whiskey xray yankee, Zulu alpha 900110Bravo.\nCharlie:\nSHOT 1 [0:00-0:03] 900111 delta Echo, Foxtrot-Golf - hotel - @jessica india juliet @downtown_street#storefront, kilo lima mike november oscar papa @apollo#ragged, quebec romeo sierra tango uniform, victor whiskey xray yankee zulu alpha. Bravo charlie.\nSHOT 2 [0:03-0:06] 900112 delta Echo-Foxtrot-Golf hotel @jessica, India-Juliet - kilo - @brandon lima-mike november @jessica oscar @downtown_street#storefront, papa quebec, romeo-sierra, tango uniform victor whiskey. Xray yankee.\nSHOT 3 [0:06-0:12] 900113 zulu Alpha, bravo Charlie Delta - echo foxtrot - @jessica golf @downtown_street#storefront hotel india juliet, kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray, yankee zulu alpha bravo charlie. Delta echo.\nSHOT 4 [0:12-0:15] 900114 foxtrot Golf-Hotel, India-Juliet - kilo - @jessica lima mike november oscar papa quebec romeo sierra @brandon tango @downtown_street#storefront, uniform victor @apollo#ragged whiskey xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet, kilo lima mike. November.\nOscar: @jessica papa quebec-romeo sierra @brandon tango-uniform victor whiskey 900115 xray 900116; @apollo#ragged yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar papa quebec; romeo sierra tango uniform victor whiskey xray yankee; Zulu alpha 900117Bravo.\nCharlie: delta echo foxtrot, golf hotel, india juliet kilo lima, mike november oscar papa quebec romeo sierra tango uniform victor whiskey; xray yankee, zulu alpha bravo.",
+      "dialogue": "Jessica: [shot 1] Charlie delta echo, foxtrot golf Hotel India?\nBrandon: [shot 2] Juliet kilo?\nJessica: [shot 3] Lima mike november. Oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee,\nJessica: [shot 4] zulu Alpha bravo charlie delta echo.",
+      "voiceover": "",
+      "durationSec": 15,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_77add865",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900118 foxtrot, 900119golf hotel, 900120:900121.\nIndia juliet kilo lima, mike november oscar, papa quebec romeo, Sierra tango 900122Uniform.\nVictor:\nSHOT 1 [0:00-0:03] 900123 whiskey Xray-Yankee-Zulu alpha @jessica, Bravo-Charlie - delta, echo foxtrot golf - hotel @jessica'india juliet kilo lima-mike november @brandon oscar-papa quebec @downtown_street#storefront, romeo sierra tango uniform victor whiskey xray yankee zulu alpha-bravo; @brandon'charlie delta echo foxtrot @jessica, golf hotel india juliet kilo lima mike november oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta; echo foxtrot golf hotel india juliet, kilo lima mike november oscar papa quebec romeo sierra tango uniform. Victor whiskey.\nSHOT 2 [0:03-0:05] 900124 xray Yankee zulu alpha bravo @jessica, Charlie-Delta - echo - @jessica foxtrot @downtown_street#storefront golf hotel india, juliet kilo lima mike november oscar, papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo @brandon foxtrot-golf-hotel; india juliet kilo lima mike november. Oscar papa.\nSHOT 3 [0:05-0:08] 900125 quebec Romeo sierra-tango, uniform Victor Whiskey - xray yankee - zulu alpha bravo charlie @downtown_street#storefront, @brandon delta-echo foxtrot @jessica golf-hotel; @brandon india juliet kilo lima mike november oscar papa quebec romeo, sierra tango uniform victor-whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel india, juliet kilo lima mike. November oscar, papa quebec romeo sierra-tango.\nSHOT 4 [0:08-0:10] 900126 uniform Victor whiskey-xray, Yankee-Zulu - alpha - @jessica bravo charlie delta echo foxtrot golf hotel @brandon'india juliet kilo @downtown_street#storefront, lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray, @brandon'yankee zulu alpha bravo; charlie delta echo foxtrot golf, hotel india juliet kilo lima mike. November.\nOscar: @brandon papa quebec-romeo sierra @jessica tango-uniform victor whiskey xray; @brandon'yankee zulu alpha bravo @jessica charlie, delta echo foxtrot golf hotel india juliet kilo lima mike; november @brandon oscar @jessica papa quebec romeo sierra tango uniform victor-whiskey; xray @brandon yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india juliet; Kilo lima 900127Mike.\nNovember: oscar papa quebec, romeo sierra, tango uniform, victor whiskey xray yankee Zulu alpha bravo charlie delta echo; foxtrot golf, hotel india juliet.",
+      "dialogue": "Brandon: [shot 1] Kilo lima mike november oscar papa quebec romeo sierra tango uniform victor.\nBrandon: [shot 3] Whiskey xray yankee zulu alpha bravo.",
+      "voiceover": "",
+      "durationSec": 10,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_a46ace34",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900128 charlie, 900129delta echo, 900130:900131.\nFoxtrot golf hotel india, juliet kilo lima, mike november oscar, Papa quebec 900132Romeo.\nSierra:\nSHOT 1 [0:00-0:08] 900133 tango Uniform, victor Whiskey Xray - yankee - @brandon zulu @downtown_street#storefront alpha bravo charlie, delta echo foxtrot golf hotel-india juliet kilo, lima mike november oscar, papa quebec romeo sierra tango uniform victor @jessica whiskey xray yankee. Zulu alpha.\nSHOT 2 [0:08-0:11] 900134 bravo Charlie delta-echo, Foxtrot-Golf - hotel - @brandon india @jessica juliet kilo lima mike @downtown_street#storefront november oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu @apollo#ragged, alpha bravo charlie delta. Echo foxtrot.\nSHOT 3 [0:11-0:13] 900135 golf Hotel, India Juliet 900136 kilo lima - mike november oscar - @brandon papa @jessica quebec romeo sierra tango uniform victor whiskey xray yankee zulu @downtown_street#storefront alpha-bravo, charlie @apollo#ragged delta echo foxtrot golf @tin_can hotel india, juliet kilo lima mike november oscar papa. Quebec.\nRomeo: @brandon sierra tango-uniform victor @jessica whiskey-xray yankee zulu 900137 alpha 900138; @apollo#ragged bravo charlie delta echo; foxtrot @brandon golf hotel india juliet; kilo lima mike november oscar papa quebec romeo 900139, sierra tango uniform victor whiskey; xray yankee zulu alpha bravo charlie delta echo; Foxtrot golf 900140Hotel.\nIndia: juliet kilo lima, mike november, oscar papa, Quebec romeo sierra tango uniform victor whiskey xray; yankee zulu, alpha bravo charlie.",
+      "dialogue": "Brandon: [shot 1] Delta echo foxtrot golf hotel india juliet Kilo lima mike november oscar papa, Quebec romeo sierra tango uniform.\nBrandon: [shot 2] Victor whiskey, xray yankee zulu alpha bravo charlie.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_8",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900141 delta, 900142echo foxtrot, 900143:900144.\nGolf hotel india juliet, kilo lima mike, november oscar papa, Quebec romeo 900145Sierra.\nTango:\nSHOT 1 [0:00-0:04] 900146 uniform Victor whiskey-xray, Yankee-Zulu - alpha - @brandon bravo @jessica charlie delta echo foxtrot golf hotel india juliet @downtown_street#storefront, kilo lima mike november oscar papa quebec romeo @apollo#ragged sierra tango uniform victor whiskey xray yankee zulu alpha @tin_can, bravo charlie delta echo foxtrot golf hotel india-juliet, kilo lima mike; @jessica november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo, lima mike november oscar papa quebec romeo, @brandon sierra tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india, juliet kilo lima mike november oscar papa. Quebec romeo.\nSHOT 2 [0:04-0:06] 900147 sierra Tango uniform @jessica'victor whiskey xray yankee zulu, Alpha-Bravo - charlie - delta echo foxtrot golf-hotel india juliet @downtown_street#storefront: kilo lima mike november oscar papa @apollo#ragged quebec romeo @tin_can sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima mike-november oscar papa quebec romeo sierra tango uniform - victor whiskey. Xray yankee.\nSHOT 3 [0:06-0:09] 900148 zulu Alpha-Bravo, Charlie-Delta - echo foxtrot golf - @jessica hotel india juliet kilo lima mike november oscar papa @brandon quebec @downtown_street#storefront, romeo sierra tango uniform victor whiskey xray yankee, zulu alpha bravo charlie delta-echo, foxtrot golf hotel india @apollo#ragged juliet kilo lima mike november oscar @tin_can, papa quebec romeo, sierra tango uniform victor whiskey. Xray.\nYankee: @brandon zulu @jessica alpha bravo charlie delta echo foxtrot @apollo#ragged golf hotel india, juliet kilo lima mike; @apollo#ragged november oscar papa quebec romeo sierra tango uniform @tin_can, victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot golf hotel @jessica india @brandon; juliet kilo lima mike november oscar papa @jessica'quebec romeo sierra tango 900149; uniform @jessica victor whiskey xray yankee; zulu alpha bravo charlie delta echo foxtrot golf; Hotel india 900150Juliet.\nKilo: lima mike november, oscar papa, quebec romeo, sierra tango uniform victor-whiskey xray yankee zulu alpha; bravo charlie, delta echo foxtrot.",
+      "dialogue": "Jessica: [shot 1] Golf hotel india juliet, kilo lima mike november oscar papa.\nJessica: [shot 3] Quebec, romeo sierra tango.",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_9",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900151 uniform, 900152victor whiskey, 900153:900154.\nXray yankee zulu alpha, bravo charlie delta, echo foxtrot golf, Hotel india 900155Juliet.\nKilo:\nSHOT 1 [0:00-0:03] 900156 lima Mike, november Oscar Papa - quebec - @apollo#ragged romeo sierra tango uniform victor whiskey xray @downtown_street#storefront, yankee zulu alpha bravo charlie, delta @tin_can echo foxtrot golf hotel india, juliet kilo lima mike november oscar papa, quebec romeo sierra tango uniform-victor whiskey xray yankee; zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet. Kilo lima.\nSHOT 2 [0:03-0:06] 900157 mike November-Oscar, Papa-Quebec - romeo - @apollo#ragged sierra tango uniform @downtown_street#storefront, victor @tin_can whiskey xray yankee zulu, alpha bravo charlie delta echo @brandon foxtrot @jessica golf hotel india juliet kilo lima mike november oscar, papa quebec romeo sierra. Tango uniform.\nSHOT 3 [0:06-0:14] 900158 victor Whiskey-Xray, yankee Zulu Alpha - bravo charlie - @apollo#ragged delta @downtown_street#storefront, echo foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform, victor whiskey, xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india. Juliet kilo lima mike.\nNovember: @apollo#ragged oscar papa @tin_can quebec romeo sierra; @brandon tango @jessica uniform victor whiskey xray yankee zulu alpha bravo charlie delta 900159; echo @apollo#ragged foxtrot golf hotel, india juliet kilo lima 900160; mike november oscar papa quebec romeo sierra tango; Uniform victor 900161Whiskey.\nXray: yankee zulu alpha bravo charlie, delta echo, foxtrot golf hotel india juliet kilo lima mike november oscar; papa quebec, romeo sierra tango.",
+      "dialogue": "Apollo: [shot 1] Uniform victor whiskey, xray?\nApollo: VO: [shot 3] Yankee Zulu... alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo, lima mike november oscar papa quebec.",
+      "voiceover": "",
+      "durationSec": 14,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_10",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900162 romeo, 900163sierra tango, 900164:900165.\nUniform victor whiskey xray, yankee zulu alpha, bravo charlie delta, Echo foxtrot 900166Golf.\nHotel:\nSHOT 1 [0:00-0:05] 900167 india Juliet, kilo Lima Mike - november oscar papa quebec romeo sierra tango - @maya uniform victor whiskey xray yankee zulu alpha bravo charlie @downtown_street#wall delta echo foxtrot @apollo#ragged; golf hotel india juliet kilo lima mike november-oscar papa quebec romeo @tin_can, sierra tango uniform victor whiskey xray yankee zulu @apollo#ragged alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima mike november; oscar papa-quebec romeo sierra tango uniform victor, whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november oscar. Papa quebec.\nSHOT 2 [0:05-0:08] 900168 romeo Sierra, tango Uniform Victor - whiskey - @maya xray yankee zulu alpha bravo charlie delta echo foxtrot @downtown_street#wall, golf hotel, india juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india juliet. Kilo lima.\nSHOT 3 [0:08-0:11] 900169 mike November, oscar Papa Quebec - romeo sierra, tango uniform - @apollo#ragged victor @maya'whiskey xray yankee zulu @tin_can alpha @downtown_street#wall, bravo charlie delta echo foxtrot, golf hotel india juliet; kilo lima mike november oscar papa quebec. Romeo.\nSierra: @maya tango uniform-victor whiskey @apollo#ragged xray yankee-zulu alpha bravo charlie delta echo foxtrot golf hotel; india @tin_can juliet kilo @apollo#ragged'lima mike november oscar papa quebec romeo sierra; tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet, kilo lima mike november oscar papa; quebec romeo sierra tango uniform victor whiskey xray; Yankee zulu 900170Alpha.\nBravo: charlie delta echo, foxtrot golf hotel india juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie; delta echo, foxtrot golf hotel.",
+      "dialogue": "Apollo: [shot 1] India juliet kilo lima mike. November oscar papa quebec romeo?\nMaya: [shot 2] Sierra tango uniform? Victor whiskey xray yankee zulu alpha bravo charlie?",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_f482149b",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900171 delta, 900172echo foxtrot, 900173:900174.\nGolf hotel india juliet, kilo lima mike, november oscar papa, Quebec romeo 900175Sierra.\nTango:\nSHOT 1 [0:00-0:09] 900176 uniform Victor, whiskey Xray Yankee - zulu alpha bravo - @apollo#ragged charlie delta echo foxtrot golf @tin_can hotel india juliet kilo lima mike @downtown_street#wall, november oscar papa quebec romeo, sierra tango uniform, victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel india juliet kilo lima mike november; oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot golf. Hotel india, juliet kilo lima mike november.\nSHOT 2 [0:09-0:11] 900177 oscar Papa, Quebec-Romeo - sierra - @maya tango @apollo#ragged uniform @downtown_street#wall, victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf; hotel india juliet kilo lima mike november oscar. Papa quebec.\nSHOT 3 [0:11-0:14] 900178 romeo Sierra-Tango uniform-victor, Whiskey-Xray - yankee - @maya zulu alpha bravo-charlie delta echo foxtrot golf hotel india juliet kilo lima mike @tin_can november @apollo#ragged'oscar papa quebec @downtown_street#wall, romeo sierra tango, uniform victor whiskey xray; yankee zulu alpha bravo charlie delta echo foxtrot. Golf.\nHotel: @maya india juliet-kilo lima @apollo#ragged mike-november oscar papa quebec romeo sierra tango uniform victor; whiskey @tin_can xray yankee @apollo#ragged'zulu alpha, bravo charlie delta, echo foxtrot golf hotel india juliet kilo lima; mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel; india juliet kilo lima mike november oscar papa; Quebec romeo 900179Sierra.\nTango: uniform victor whiskey, xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo lima mike november oscar papa, quebec romeo sierra; tango uniform, victor whiskey xray.",
+      "dialogue": "Apollo: [shot 1] Yankee zulu alpha bravo charlie. Delta echo foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo. Sierra tango uniform victor whiskey.\nMaya: [shot 3] Xray yankee zulu.",
+      "voiceover": "",
+      "durationSec": 14,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_11",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900180 alpha, 900181bravo charlie, 900182:900183.\nDelta echo foxtrot golf, hotel india juliet, kilo lima mike, November oscar 900184Papa.\nQuebec:\nSHOT 1 [0:00-0:03] 900185 romeo Sierra, Tango-Uniform - victor whiskey - @maya xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel @downtown_street#wall india @apollo#ragged'juliet kilo lima mike november oscar papa, quebec @tin_can romeo sierra tango uniform, victor whiskey xray yankee zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima mike november oscar papa, quebec romeo sierra tango uniform victor whiskey. Xray yankee, zulu alpha bravo charlie delta echo.\nSHOT 2 [0:03-0:05] 900186 foxtrot Golf, Hotel-India - juliet - kilo lima @apollo#ragged'mike november oscar papa quebec romeo @cashiers_check sierra tango uniform victor-whiskey xray yankee zulu @downtown_street#wall, alpha bravo charlie delta echo foxtrot golf hotel india juliet; kilo lima mike november oscar papa quebec romeo. Sierra tango.\nSHOT 3 [0:05-0:07] 900187 uniform Victor, whiskey Xray Yankee - zulu alpha - @apollo#ragged bravo @downtown_street#wall, charlie delta echo foxtrot golf hotel, india @cashiers_check juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo @maya; charlie delta echo foxtrot golf hotel. India.\nJuliet: @maya kilo lima-mike november @apollo#ragged oscar-papa quebec romeo sierra; @apollo#ragged tango uniform victor whiskey 900188, xray yankee zulu alpha bravo charlie 900189 delta 900190; echo @cashiers_check foxtrot golf hotel india juliet kilo lima mike 900191 november; oscar @tin_can papa quebec romeo @apollo#ragged'sierra tango uniform victor 900192; whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray yankee zulu; Alpha bravo 900193Charlie.\nDelta: echo foxtrot golf, hotel india juliet kilo lima mike, november oscar papa quebec romeo sierra, tango uniform victor; whiskey xray, yankee zulu alpha.",
+      "dialogue": "Apollo: [shot 1] Bravo charlie. Delta, echo foxtrot!",
+      "voiceover": "",
+      "durationSec": 7,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_e3239afd",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900194 golf, 900195hotel india, 900196:900197.\nJuliet kilo lima mike, november oscar papa, quebec romeo sierra, Tango uniform 900198Victor.\nWhiskey:\nSHOT 1 [0:00-0:03] 900199 xray Yankee zulu alpha bravo @maya, Charlie-Delta - echo - @maya foxtrot golf hotel india juliet kilo lima mike november oscar @downtown_street#wall papa quebec @apollo#ragged romeo, sierra @cashiers_check tango uniform victor whiskey xray, yankee zulu alpha bravo charlie delta echo foxtrot golf; hotel india juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee. Zulu alpha, bravo charlie delta echo.\nSHOT 2 [0:03-0:07] 900200 foxtrot Golf, hotel India Juliet - kilo lima - mike november oscar papa quebec romeo sierra @apollo#ragged tango @downtown_street#wall, uniform victor, whiskey @cashiers_check xray yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel @maya india juliet kilo; lima mike november oscar papa quebec romeo, sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 3 [0:07-0:13] 900201 alpha Bravo, Charlie-Delta - echo foxtrot - @apollo#ragged golf hotel @cashiers_check india juliet kilo lima @downtown_street#wall mike november oscar papa, quebec romeo sierra, tango uniform victor whiskey xray yankee zulu alpha; bravo charlie delta echo foxtrot golf hotel india. Juliet.\nKilo: @maya lima mike-november oscar @apollo#ragged papa-quebec romeo sierra tango; uniform @cashiers_check victor whiskey xray yankee zulu alpha bravo @apollo#ragged'charlie delta echo; @maya foxtrot golf hotel india 900202 juliet @apollo#ragged kilo lima mike 900203 november 900204, oscar papa quebec romeo; sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november; oscar papa quebec romeo sierra tango uniform victor; Whiskey xray 900205Yankee.\nZulu: alpha bravo charlie, delta echo foxtrot golf hotel india, juliet kilo lima mike november oscar, papa quebec, romeo sierra tango uniform victor; whiskey xray, yankee zulu alpha.",
+      "dialogue": "Maya: [shot 1] Bravo charlie delta echo?\nApollo: [shot 2] Foxtrot golf hotel india juliet kilo lima.\nApollo: [shot 3] Mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray Yankee Zulu Alpha.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_8dbc68ff",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900206 bravo, 900207charlie delta, 900208:900209.\nEcho foxtrot golf hotel, india juliet kilo, lima mike november, Oscar papa 900210Quebec.\nRomeo:\nSHOT 1 [0:00-0:04] 900211 sierra Tango, uniform Victor Whiskey - xray yankee - @apollo#ragged zulu alpha bravo charlie delta echo @downtown_street#wall, foxtrot golf hotel india juliet kilo lima, mike @cashiers_check november oscar papa quebec romeo, sierra tango uniform victor whiskey @maya xray yankee zulu alpha bravo, charlie delta echo; foxtrot golf hotel india juliet kilo lima, mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 2 [0:04-0:07] 900212 alpha Bravo charlie-delta, Echo-Foxtrot - golf - @apollo#ragged hotel india @cashiers_check juliet kilo lima mike @maya november @downtown_street#wall, oscar papa, quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima mike. November.\nOscar: @maya papa quebec-romeo sierra @apollo#ragged tango-uniform victor whiskey xray; yankee @cashiers_check zulu alpha bravo charlie delta echo foxtrot @apollo#ragged'golf hotel india @maya juliet kilo lima mike 900213; november @apollo#ragged oscar papa quebec romeo, sierra tango 900214; uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet, kilo lima mike november oscar papa; quebec romeo sierra tango uniform victor whiskey xray; Yankee zulu 900215Alpha.\nBravo: charlie delta echo, foxtrot golf hotel india juliet kilo, lima mike november oscar papa quebec, romeo sierra, tango uniform victor whiskey xray; yankee zulu, alpha bravo charlie.",
+      "dialogue": "Apollo: [shot 1] Delta echo foxtrot golf hotel india juliet kilo lima.",
+      "voiceover": "",
+      "durationSec": 7,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_12",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900216 mike, 900217november oscar, 900218:900219.\nPapa quebec romeo sierra, tango uniform victor, whiskey xray yankee, Zulu alpha 900220Bravo.\nCharlie:\nSHOT 1 [0:00-0:05] 900221 delta Echo-Foxtrot, Golf-Hotel - india juliet - @maya kilo lima @cashiers_check mike november oscar papa quebec romeo sierra tango @downtown_street#wall, uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima mike november; oscar papa quebec romeo sierra tango, uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot. Golf hotel.\nSHOT 2 [0:05-0:07] 900222 india Juliet, Kilo-Lima - mike - november oscar papa @cashiers_check quebec @maya'romeo sierra tango @downtown_street#wall, uniform victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf; hotel india juliet kilo lima mike november oscar. Papa quebec.\nSHOT 3 [0:07-0:11] 900223 romeo Sierra, tango Uniform Victor - whiskey-xray - @apollo#ragged yankee @maya zulu @downtown_street#wall alpha bravo charlie, delta echo foxtrot golf hotel india juliet, kilo lima mike november oscar papa; quebec romeo sierra tango uniform victor. Whiskey xray.\nYankee: @maya zulu alpha-bravo charlie @apollo#ragged delta-echo foxtrot golf hotel; india @cashiers_check juliet kilo @maya'lima mike november oscar 900224 papa; quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima; mike november oscar papa quebec romeo sierra tango; Uniform victor 900225Whiskey.\nXray: yankee zulu alpha, bravo charlie delta echo foxtrot golf, hotel india juliet, kilo lima, mike november oscar papa quebec romeo; sierra tango, uniform victor whiskey.",
+      "dialogue": "Maya: [shot 1] Xray yankee-zulu-alpha-bravo-charlie delta echo Foxtrot? Golf hotel india juliet kilo?\nApollo: [shot 3] Lima mike november. Oscar papa quebec romeo sierra tango.",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_286e51b4",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900226 uniform, 900227victor whiskey, 900228:900229.\nXray yankee zulu alpha, bravo charlie delta, echo foxtrot golf, Hotel india 900230Juliet.\nKilo:\nSHOT 1 [0:00-0:05] 900231 lima Mike, November-Oscar - papa - @maya quebec romeo @cashiers_check sierra tango uniform victor whiskey xray yankee zulu alpha @downtown_street#wall bravo charlie delta echo foxtrot golf hotel india @apollo#ragged, juliet kilo lima mike november oscar; papa quebec romeo sierra tango uniform, victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf. Hotel india.\nSHOT 2 [0:05-0:10] 900232 juliet Kilo lima-mike, November-Oscar - papa quebec - @maya romeo sierra tango-uniform victor whiskey @apollo#ragged xray @downtown_street#wall, yankee zulu alpha, bravo @cashiers_check charlie delta echo foxtrot golf; hotel india juliet kilo lima mike november oscar papa. Quebec romeo.\nSHOT 3 [0:10-0:13] 900233 sierra Tango, uniform Victor Whiskey - xray - @maya yankee @downtown_street#wall, zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet @apollo#ragged, kilo lima; mike november oscar papa quebec romeo sierra tango. Uniform.\nVictor: @maya whiskey xray-yankee zulu @apollo#ragged alpha-bravo charlie delta echo; foxtrot @cashiers_check golf hotel @maya'india juliet kilo; lima @maya mike november oscar papa; quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima; mike november oscar papa quebec romeo sierra tango; Uniform victor 900234Whiskey.\nXray: yankee zulu alpha, bravo charlie delta echo foxtrot golf, hotel india juliet, kilo lima; mike november, oscar papa quebec.",
+      "dialogue": "Maya: [shot 1] Romeo sierra tango uniform Victor whiskey xray.\nMaya: [shot 2] Yankee zulu Alpha bravo charlie delta echo foxtrot golf hotel india juliet.\nMaya: [shot 3] Kilo lima mike november oscar papa?",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_9911eb9f",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900235 quebec, 900236romeo sierra, 900237:900238.\nTango uniform victor whiskey, xray yankee zulu, alpha bravo charlie, Delta echo 900239Foxtrot.\nGolf:\nSHOT 1 [0:00-0:06] 900240 hotel India, juliet Kilo Lima - mike november - @apollo#ragged oscar papa quebec romeo sierra tango @downtown_street#wall uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot @maya, golf hotel, india juliet kilo lima mike november oscar papa quebec, romeo sierra tango; uniform victor whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf hotel india juliet kilo lima mike. November oscar.\nSHOT 2 [0:06-0:08] 900241 papa Quebec romeo-sierra, Tango-Uniform - victor - @maya whiskey xray yankee @downtown_street#wall, zulu @cashiers_check alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima; mike november oscar papa quebec romeo sierra tango. Uniform.\nVictor: @maya whiskey xray-yankee zulu @apollo#ragged alpha-bravo charlie delta echo; foxtrot @cashiers_check golf hotel @maya'india juliet; kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot; golf hotel india juliet kilo lima mike november; Oscar papa 900242Quebec.\nRomeo: sierra tango uniform, victor whiskey xray yankee zulu alpha, bravo charlie, delta echo foxtrot golf hotel; india juliet, kilo lima mike.",
+      "dialogue": "Apollo: [shot 1] November oscar papa quebec romeo, sierra tango uniform victor Whiskey xray yankee zulu alpha bravo charlie?",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_13",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900243 delta, 900244echo foxtrot, 900245:900246.\nGolf hotel india juliet, kilo lima mike, november oscar papa, Quebec romeo 900247Sierra.\nTango:\nSHOT 1 [0:00-0:03] 900248 uniform Victor, Whiskey-Xray - yankee - @maya zulu alpha bravo charlie delta echo foxtrot golf hotel india @downtown_street#wall, juliet @cashiers_check kilo lima mike november, oscar @apollo#ragged papa quebec romeo, sierra tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november oscar papa quebec romeo sierra tango. Uniform victor.\nSHOT 2 [0:03-0:05] 900249 whiskey Xray, yankee Zulu Alpha - bravo-charlie - @apollo#ragged delta @maya echo @downtown_street#wall foxtrot golf hotel, india juliet, kilo lima mike, november oscar papa quebec romeo sierra; tango uniform victor whiskey xray yankee. Zulu alpha.\nSHOT 3 [0:05-0:09] 900250 bravo Charlie, Delta-Echo - foxtrot golf hotel india juliet - @maya'kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha @downtown_street#wall; bravo charlie delta, echo foxtrot golf hotel india juliet @apollo#ragged, kilo lima mike november oscar papa quebec; romeo sierra tango uniform victor whiskey xray yankee zulu. Alpha bravo, charlie delta echo foxtrot golf.\nHotel: @maya india juliet-kilo lima @apollo#ragged mike-november oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu alpha 900251; bravo @cashiers_check charlie delta echo @maya'foxtrot golf; hotel india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey, xray yankee zulu alpha bravo charlie; delta echo foxtrot golf hotel india juliet kilo; Lima mike 900252November.\nOscar: papa quebec romeo, sierra tango uniform victor whiskey xray, yankee zulu, alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima; mike november, oscar papa quebec.",
+      "dialogue": "Maya: [shot 1] Romeo... sierra tango uniform victor?\nApollo: [shot 2] Whiskey xray.\nMaya: [shot 3] Yankee, zulu?",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_9b8724bf",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900253 alpha, 900254bravo charlie, 900255:900256.\nDelta echo foxtrot golf, hotel india juliet, kilo lima mike, November oscar 900257Papa.\nQuebec:\nSHOT 1 [0:00-0:06] 900258 romeo Sierra, tango-uniform, Victor-Whiskey - xray yankee - zulu alpha bravo charlie delta echo @maya'foxtrot golf hotel india juliet kilo lima mike @downtown_street#wall, november oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot; @apollo#ragged golf hotel india juliet kilo lima mike november oscar; papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie. Delta echo.\nSHOT 2 [0:06-0:12] 900259 foxtrot Golf, hotel-india juliet, Kilo-Lima - mike - @maya november @downtown_street#wall oscar papa quebec, romeo sierra tango, uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo, lima @cashiers_check mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 3 [0:12-0:15] 900260 alpha Bravo, Charlie-Delta - echo - @maya foxtrot golf hotel india juliet kilo lima @downtown_street#wall, mike november oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu, alpha bravo charlie; delta echo foxtrot golf. Hotel.\nIndia: @maya juliet kilo-lima mike @apollo#ragged november-oscar papa quebec romeo sierra tango uniform victor whiskey xray; @maya'yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india 900261 juliet 900262, kilo lima mike november oscar papa-quebec romeo; sierra tango uniform victor @maya'whiskey xray yankee zulu 900263 alpha 900264 bravo charlie delta echo 900265; foxtrot @cashiers_check golf hotel india @maya'juliet kilo lima; mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel; india juliet kilo lima mike november oscar papa; Quebec romeo 900266Sierra.\nTango: uniform victor whiskey, xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar-papa quebec, romeo sierra; tango uniform, victor whiskey xray.",
+      "dialogue": "Mom: VO: [shot 1] Yankee zulu alpha bravo charlie delta 900267echo foxtrot golf hotel india.\nMom: VO: [shot 2] Juliet kilo lima mike november oscar, papa quebec romeo sierra tango uniform victor whiskey. Xray yankee zulu?\nMaya: [shot 3] Alpha, bravo... Charlie? Delta?",
+      "voiceover": "",
+      "durationSec": 15,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_14",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900268 echo, 900269foxtrot golf, 900270:900271.\nHotel india juliet kilo, lima mike november, oscar papa quebec, Romeo sierra 900272Tango.\nUniform:\nSHOT 1 [0:00-0:03] 900273 victor Whiskey, Xray-Yankee - zulu alpha - bravo charlie delta echo foxtrot golf @downtown_street#wall hotel india juliet kilo @maya'lima mike november oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu, alpha-bravo charlie, delta echo foxtrot golf hotel india juliet kilo @apollo#ragged; lima mike november oscar papa quebec, romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta. Echo foxtrot, golf hotel india juliet kilo.\nSHOT 2 [0:03-0:06] 900274 lima Mike november-oscar, Papa-Quebec - romeo - @maya sierra tango uniform @apollo#ragged victor @downtown_street#wall, whiskey xray yankee-zulu alpha bravo charlie delta, echo foxtrot golf hotel india juliet kilo, lima mike, november oscar papa quebec romeo sierra tango uniform; victor whiskey xray yankee zulu. Alpha bravo.\nSHOT 3 [0:06-0:10] 900275 charlie Delta-Echo, foxtrot Golf Hotel - india juliet - @apollo#ragged kilo @downtown_street#wall lima mike-november, oscar papa quebec romeo sierra tango uniform victor, whiskey xray yankee zulu alpha bravo charlie delta; echo foxtrot golf hotel india juliet kilo lima mike november oscar. Papa quebec romeo sierra.\nTango: @maya uniform victor-whiskey xray @apollo#ragged yankee-zulu alpha bravo 900276 charlie 900277, delta echo-foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra; tango uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot golf hotel india juliet kilo lima mike november oscar, papa quebec; romeo sierra tango uniform victor whiskey xray yankee; Zulu alpha 900278Bravo.\nCharlie: delta echo foxtrot, golf hotel india juliet kilo lima mike november oscar, papa quebec-romeo sierra, tango uniform victor whiskey xray yankee zulu; alpha bravo, charlie delta echo.",
+      "dialogue": "Maya: [shot 1] Foxtrot golf hotel india.\nMaya: [shot 2] Juliet kilo lima mike november oscar papa quebec romeo sierra tango?\nApollo: [shot 3] Uniform victor whiskey xray yankee?",
+      "voiceover": "",
+      "durationSec": 10,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_1",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900279 alpha, 900280bravo charlie, 900281:900282.\nDelta echo foxtrot golf, hotel india juliet, kilo lima mike, November oscar 900283Papa.\nQuebec:\nSHOT 1 [0:00-0:05] 900284 romeo Sierra tango-uniform, Victor-Whiskey - xray yankee - Zulu @downtown_street alpha bravo charlie delta, echo foxtrot golf hotel india juliet, @maya kilo-lima mike @apollo#ragged november-oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu; @maya alpha bravo charlie delta echo foxtrot golf hotel, @tin_can india juliet @apollo#ragged'kilo lima, mike november oscar papa quebec romeo, sierra tango uniform victor whiskey xray yankee zulu alpha. Bravo charlie.\nSHOT 2 [0:05-0:09] 900285 delta Echo foxtrot @maya, Golf-Hotel - india - @maya juliet @downtown_street kilo lima mike, november oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot; golf hotel india juliet kilo. Lima mike.\nSHOT 3 [0:09-0:13] 900286 november Oscar papa @maya, quebec Romeo Sierra - tango - @maya uniform @downtown_street victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf, hotel india; juliet kilo lima mike november, oscar papa quebec romeo. Sierra.\nTango: @maya uniform victor-whiskey xray @apollo#ragged yankee-zulu alpha bravo charlie; @apollo#ragged delta @tin_can echo foxtrot golf hotel; india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform, victor whiskey xray yankee zulu alpha; bravo charlie delta echo foxtrot golf hotel india; Juliet kilo 900287Lima.\nMike: november oscar papa, quebec romeo sierra tango uniform victor, whiskey xray yankee zulu alpha, bravo charlie delta echo foxtrot golf; hotel india, juliet kilo lima.",
+      "dialogue": "Maya: [shot 1] Mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee. [shot 2] Zulu alpha bravo, [shot 3] Charlie delta echo foxtrot golf hotel.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_2",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900288 india, 900289juliet kilo, 900290:900291.\nLima mike november oscar, papa quebec romeo, sierra tango uniform, Victor whiskey 900292Xray.\nYankee:\nSHOT 1 [0:00-0:05] 900293 zulu Alpha bravo-charlie, Delta-Echo - foxtrot golf - @maya hotel-india juliet @downtown_street kilo lima mike november @apollo#ragged oscar-papa, quebec romeo sierra tango uniform victor, whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf-hotel india juliet kilo; @tin_can lima mike @apollo#ragged'november oscar, papa quebec romeo sierra tango uniform, victor whiskey xray yankee zulu. Alpha bravo.\nSHOT 2 [0:05-0:08] 900294 charlie Delta echo @maya, foxtrot @apollo#ragged'golf hotel india-juliet, Kilo-Lima - mike - @maya november @downtown_street oscar @apollo#ragged'papa quebec romeo sierra Tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo, foxtrot golf hotel, india juliet kilo lima mike; november oscar papa quebec romeo. Sierra.\nTango: @maya uniform victor-whiskey xray @apollo#ragged yankee-zulu; @maya'alpha bravo charlie delta echo @apollo#ragged'foxtrot golf hotel india juliet, kilo lima mike, november oscar papa quebec romeo sierra tango uniform victor; whiskey @maya xray; @apollo#ragged yankee @tin_can zulu alpha bravo charlie; delta echo foxtrot golf hotel india juliet kilo lima mike november, oscar papa quebec romeo sierra tango; uniform victor whiskey xray yankee zulu alpha bravo; Charlie delta 900295Echo.\nFoxtrot: golf hotel india, juliet kilo lima mike november oscar, papa quebec romeo, sierra tango uniform victor whiskey xray; yankee zulu, alpha bravo charlie.",
+      "dialogue": "Maya: [shot 1] Delta echo foxtrot golf hotel india juliet kilo lima mike november oscar. [shot 2] Papa?",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_3",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900296 quebec, 900297romeo sierra, 900298:900299.\nTango uniform victor whiskey, xray yankee zulu, alpha bravo charlie, Delta echo 900300Foxtrot.\nGolf:\nSHOT 1 [0:00-0:05] 900301 hotel India juliet-kilo, Lima-Mike - november oscar - @maya papa-quebec romeo sierra tango @apollo#ragged uniform-victor whiskey @downtown_street xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar; @tin_can papa quebec romeo sierra, tango uniform victor whiskey xray, yankee zulu alpha bravo charlie. Delta echo, foxtrot golf hotel india juliet.\nSHOT 2 [0:05-0:10] 900302 kilo Lima mike-november, Oscar-Papa - quebec romeo - @maya sierra @downtown_street tango uniform victor whiskey xray @apollo#ragged, yankee zulu alpha bravo charlie delta echo foxtrot, golf hotel india juliet kilo; lima mike november, oscar, papa quebec romeo sierra tango. Uniform.\nVictor: @maya whiskey xray-yankee zulu @apollo#ragged alpha-bravo; charlie @maya delta; @apollo#ragged echo @tin_can foxtrot golf hotel india; juliet kilo lima mike november oscar papa quebec romeo sierra tango, uniform victor whiskey xray yankee zulu; alpha bravo charlie delta echo foxtrot golf hotel; India juliet 900303Kilo.\nLima: mike november oscar, papa quebec romeo sierra tango uniform, victor whiskey xray; yankee zulu, alpha bravo charlie.",
+      "dialogue": "Maya: [shot 1] Delta, echo foxtrot golf hotel india juliet kilo lima mike, [shot 2] november oscar papa quebec romeo.",
+      "voiceover": "",
+      "durationSec": 10,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_4",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900304 sierra, 900305tango uniform, 900306:900307.\nVictor whiskey xray yankee, zulu alpha bravo, charlie delta echo, Foxtrot golf 900308Hotel.\nIndia:\nSHOT 1 [0:00-0:06] 900309 juliet Kilo lima-mike, November-Oscar - papa quebec romeo - @maya sierra-tango uniform @downtown_street victor whiskey xray yankee zulu alpha bravo @apollo#ragged charlie-delta, echo foxtrot golf hotel india juliet kilo, lima mike november oscar; @tin_can papa quebec romeo sierra, tango uniform victor whiskey xray yankee, zulu alpha bravo charlie delta. Echo foxtrot.\nSHOT 2 [0:06-0:11] 900310 golf Hotel india @maya, juliet Kilo Lima - mike - @maya november @downtown_street oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu; alpha bravo charlie delta echo. Foxtrot.\nGolf: @maya hotel india-juliet kilo @apollo#ragged lima-mike; november @maya oscar; @apollo#ragged papa @tin_can quebec romeo sierra tango; uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo, foxtrot golf hotel india juliet kilo; lima mike november oscar papa quebec romeo sierra; Tango uniform 900311Victor.\nWhiskey: xray yankee zulu, alpha bravo charlie delta echo foxtrot, golf hotel india; juliet kilo, lima mike november.",
+      "dialogue": "Maya: [shot 1] Oscar Papa quebec romeo sierra tango uniform victor whiskey xray yankee, [shot 2] zulu alpha bravo charlie delta echo.",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_5",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900312 foxtrot, 900313golf hotel, 900314:900315.\nIndia juliet kilo lima, mike november oscar, papa quebec romeo, Sierra tango 900316Uniform.\nVictor:\nSHOT 1 [0:00-0:03] 900317 whiskey Xray yankee @maya, Zulu-Alpha - bravo - @maya charlie @downtown_street delta echo foxtrot golf hotel india juliet kilo lima @apollo#ragged, mike, november oscar; papa quebec romeo sierra tango, uniform victor whiskey xray. Yankee zulu.\nSHOT 2 [0:03-0:06] 900318 alpha Bravo charlie @apollo#ragged, delta Echo Foxtrot - golf, hotel india - @apollo#ragged juliet @downtown_street kilo lima mike, november oscar papa quebec romeo, sierra tango uniform victor whiskey xray; @tin_can yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel india. Juliet.\nKilo: @maya lima mike-november oscar @apollo#ragged papa-quebec; @maya romeo sierra tango 900319, @apollo#ragged uniform victor 900320; @apollo#ragged whiskey @tin_can xray yankee zulu alpha; bravo charlie delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray yankee zulu; Alpha bravo 900321Charlie.\nDelta: echo foxtrot golf, hotel india juliet kilo lima mike, november oscar papa; quebec romeo, sierra tango uniform.",
+      "dialogue": "Maya: [shot 1] Victor, whiskey xray yankee zulu alpha? Apollo: [shot 2] Bravo...",
+      "voiceover": "",
+      "durationSec": 6,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_6",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900322 charlie, 900323delta echo, 900324:900325.\nFoxtrot golf hotel india, juliet kilo lima, mike november oscar, Papa quebec 900326Romeo.\nSierra:\nSHOT 1 [0:00-0:04] 900327 tango Uniform victor @maya, Whiskey-Xray - yankee - @maya zulu @downtown_street alpha bravo charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november oscar papa quebec romeo sierra tango; uniform victor whiskey xray, yankee zulu alpha bravo charlie. Delta echo.\nSHOT 2 [0:04-0:09] 900328 foxtrot Golf hotel @apollo#ragged, india Juliet Kilo - lima mike - @apollo#ragged november @downtown_street oscar papa quebec, romeo sierra, tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf; @tin_can hotel india juliet kilo, lima mike november oscar papa. Quebec.\nRomeo: @maya sierra tango-uniform victor @apollo#ragged whiskey-xray; @maya yankee zulu alpha 900329, @apollo#ragged bravo charlie 900330; @apollo#ragged delta @tin_can echo foxtrot golf hotel; india juliet kilo lima mike november oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee; zulu alpha bravo charlie delta echo foxtrot golf; Hotel india 900331Juliet.\nKilo: lima mike november, oscar papa quebec romeo sierra tango, uniform victor whiskey; xray yankee, zulu alpha bravo.",
+      "dialogue": "Maya: [shot 1] Charlie delta echo foxtrot golf hotel india. Apollo: [shot 2] Juliet kilo lima mike november oscar?",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_7",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900332 papa, 900333quebec romeo, 900334:900335.\nSierra tango uniform victor, whiskey xray yankee, zulu alpha bravo, Charlie delta 900336Echo.\nFoxtrot:\nSHOT 1 [0:00-0:04] 900337 golf Hotel india-juliet, Kilo-Lima - mike november - @maya oscar-papa quebec @downtown_street romeo sierra tango @apollo#ragged uniform-victor, whiskey xray yankee-zulu, alpha bravo charlie delta echo foxtrot golf hotel india; @tin_can juliet kilo lima mike, november oscar papa quebec romeo sierra, tango uniform victor whiskey xray. Yankee zulu.\nSHOT 2 [0:04-0:09] 900338 alpha Bravo charlie @maya, Delta-Echo - foxtrot - @maya golf @downtown_street hotel india juliet kilo lima mike november, oscar papa quebec; romeo sierra tango uniform victor. Whiskey xray.\nSHOT 3 [0:09-0:13] 900339 yankee Zulu alpha @maya, bravo Charlie Delta - echo - @maya foxtrot @downtown_street golf hotel india juliet kilo lima mike november, oscar papa quebec romeo; sierra tango uniform victor. Whiskey.\nXray: @maya yankee zulu-alpha bravo @apollo#ragged charlie-delta echo foxtrot golf; hotel @maya india; @apollo#ragged juliet @tin_can kilo lima mike november; oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee, zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima mike; November oscar 900340Papa.\nQuebec: romeo sierra tango, uniform victor whiskey xray yankee zulu, alpha bravo charlie; delta echo, foxtrot golf hotel.",
+      "dialogue": "Maya: [shot 1] India juliet kilo lima mike november - [shot 2] oscar papa quebec romeo sierra tango, [shot 3] uniform victor whiskey xray yankee zulu alpha bravo.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_8",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900341 charlie, 900342delta echo, 900343:900344.\nFoxtrot golf hotel india, juliet kilo lima, mike november oscar, Papa quebec 900345Romeo.\nSierra:\nSHOT 1 [0:00-0:04] 900346 tango Uniform victor-whiskey xray @maya, Yankee-Zulu - alpha - @maya bravo-charlie delta @downtown_street echo foxtrot golf hotel @apollo#ragged, india juliet-kilo lima, mike november oscar papa; @tin_can quebec romeo sierra tango, uniform victor whiskey xray, yankee zulu alpha bravo charlie. Delta echo.\nSHOT 2 [0:04-0:09] 900347 foxtrot Golf-Hotel india @apollo#ragged, Juliet-Kilo - lima mike - @apollo#ragged november @downtown_street oscar papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo lima. Mike.\nNovember: @maya oscar papa-quebec romeo @apollo#ragged sierra-tango; @maya uniform victor whiskey 900348, @apollo#ragged xray yankee 900349; @apollo#ragged zulu @tin_can alpha bravo charlie delta; echo foxtrot golf hotel india juliet kilo lima mike november oscar, papa quebec romeo sierra tango uniform; victor whiskey xray yankee zulu alpha bravo charlie; Delta echo 900350Foxtrot.\nGolf: hotel india juliet, kilo lima mike november oscar papa, quebec romeo sierra; tango uniform, victor whiskey xray.",
+      "dialogue": "Maya: [shot 1] Yankee, zulu alpha bravo charlie? Apollo: [shot 2] Delta echo foxtrot golf hotel india juliet kilo.",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_9",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900351 lima, 900352mike november, 900353:900354.\nOscar papa quebec romeo, sierra tango uniform, victor whiskey xray, Yankee zulu 900355Alpha.\nBravo:\nSHOT 1 [0:00-0:06] 900356 charlie Delta echo-foxtrot, Golf-Hotel - india - @maya juliet-kilo lima @downtown_street mike november oscar papa quebec romeo sierra tango @apollo#ragged uniform-victor, whiskey xray yankee, zulu alpha bravo charlie; @tin_can delta echo foxtrot golf, hotel india juliet kilo, lima mike november oscar papa. Quebec romeo.\nSHOT 2 [0:06-0:11] 900357 sierra Tango uniform @maya, victor Whiskey Xray - yankee - @maya zulu @downtown_street alpha bravo charlie, delta echo, foxtrot golf hotel india juliet kilo; lima mike november oscar papa, quebec romeo sierra tango. Uniform.\nVictor: @maya whiskey xray-yankee zulu @apollo#ragged alpha-bravo; charlie @maya delta; @apollo#ragged echo @tin_can foxtrot golf hotel india; juliet kilo lima mike november oscar papa quebec romeo sierra tango, uniform victor whiskey xray yankee zulu; alpha bravo charlie delta echo foxtrot golf hotel; India juliet 900358Kilo.\nLima: mike november oscar, papa quebec romeo sierra tango uniform, victor whiskey xray; yankee zulu, alpha bravo charlie.",
+      "dialogue": "Maya: [shot 1] Delta echo! Foxtrot golf hotel, india juliet, kilo lima mike november - [shot 2] oscar papa quebec romeo sierra.",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_10",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900359 tango, 900360uniform victor, 900361:900362.\nWhiskey xray yankee zulu, alpha bravo charlie, delta echo foxtrot, 900363 golf hotel india juliet, Kilo lima 900364Mike.\nNovember:\nSHOT 1 [0:00-0:04] 900365 oscar Papa quebec @apollo#ragged, Romeo-Sierra - tango - @apollo#ragged uniform @downtown_street victor whiskey xray, yankee-zulu alpha bravo charlie delta, echo foxtrot golf hotel india juliet kilo lima @maya; @tin_can mike november oscar papa quebec, romeo sierra tango uniform victor, whiskey xray yankee zulu alpha. Bravo charlie, delta echo foxtrot golf hotel.\nSHOT 2 [0:04-0:06] 900366 india Juliet, Kilo-Lima - mike - november oscar @maya papa-quebec romeo @apollo#ragged sierra-tango uniform victor whiskey xray yankee zulu alpha @downtown_street, bravo charlie delta echo, foxtrot golf; hotel india juliet kilo. Lima mike.\nSHOT 3 [0:06-0:08] 900367 november Oscar papa-quebec, Romeo-Sierra - tango uniform - victor whiskey xray yankee @downtown_street, @apollo#ragged zulu alpha bravo charlie @maya delta echo foxtrot, golf hotel india juliet kilo lima; mike november oscar papa. Quebec.\nRomeo: @maya sierra tango-uniform victor @apollo#ragged whiskey-xray yankee zulu alpha; bravo @apollo#ragged charlie, delta echo 900368 foxtrot 900369; golf hotel india juliet kilo lima, mike november oscar papa 900370 quebec; romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel; india juliet kilo lima mike november oscar papa; Quebec romeo 900371Sierra.\nTango: uniform victor whiskey, xray yankee zulu alpha bravo charlie, delta echo foxtrot, golf hotel india juliet kilo lima mike; november oscar, papa quebec romeo.",
+      "dialogue": "Apollo: [shot 1] Sierra, tango uniform victor whiskey xray yankee, Zulu alpha bravo charlie. [shot 3] Delta.",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_11",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900372 echo, 900373foxtrot golf, 900374:900375.\nHotel india juliet kilo, lima mike november, oscar papa quebec, Romeo sierra 900376Tango.\nUniform:\nSHOT 1 [0:00-0:05] 900377 victor Whiskey xray-yankee, Zulu-Alpha - bravo charlie - @maya delta-echo foxtrot @downtown_street golf hotel india juliet, kilo lima, mike november @apollo#ragged oscar-papa quebec romeo sierra; @tin_can tango uniform victor whiskey, xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel. India juliet.\nSHOT 2 [0:05-0:11] 900378 kilo Lima mike @maya, November-Oscar - papa - @maya quebec @downtown_street romeo sierra tango uniform victor whiskey xray yankee zulu alpha, bravo charlie delta @apollo#ragged echo foxtrot golf hotel india juliet kilo lima; mike november oscar papa quebec, romeo sierra tango uniform. Victor.\nWhiskey: @maya xray yankee-zulu alpha @apollo#ragged bravo-charlie; delta @maya echo; @apollo#ragged foxtrot @tin_can golf hotel india juliet; kilo lima mike november oscar papa quebec romeo sierra tango uniform, victor whiskey xray yankee zulu alpha; bravo charlie delta echo foxtrot golf hotel india; Juliet kilo 900379Lima.\nMike: november oscar papa, quebec romeo sierra tango uniform victor, whiskey xray yankee; zulu alpha, bravo charlie delta.",
+      "dialogue": "Maya: [shot 1] Echo! Foxtrot golf hotel india juliet. [shot 2] Kilo Lima mike november oscar papa, quebec romeo sierra tango uniform,",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_12",
+      "locationId": "downtown_street",
+      "scenePrompt": "",
+      "motionPrompt": "900380 victor, 900381whiskey xray, 900382:900383.\nYankee zulu alpha bravo, charlie delta echo, foxtrot golf hotel, India juliet 900384Kilo.\nLima:\nSHOT 1 [0:00-0:05] 900385 mike November-Oscar papa-quebec, Romeo-Sierra - tango - @maya uniform-victor whiskey @apollo#ragged xray-yankee zulu alpha bravo charlie @downtown_street, delta echo foxtrot golf hotel, @maya india juliet kilo lima mike november oscar papa quebec romeo; @tin_can sierra tango uniform victor, whiskey xray yankee zulu alpha. Bravo charlie.\nSHOT 2 [0:05-0:08] 900386 delta Echo foxtrot @maya, Golf-Hotel - india - @maya juliet @downtown_street kilo lima mike november oscar papa quebec romeo sierra tango, uniform victor whiskey; xray yankee zulu alpha bravo. Charlie delta.\nSHOT 3 [0:08-0:12] 900387 echo Foxtrot golf-hotel, India-Juliet - kilo lima mike november oscar papa - @apollo#ragged quebec @downtown_street romeo sierra tango uniform victor @maya, whiskey xray yankee zulu alpha bravo-charlie delta echo foxtrot golf, hotel india juliet. Kilo, lima mike november oscar papa.\nQuebec: @maya romeo sierra-tango uniform @apollo#ragged victor-whiskey xray yankee zulu alpha bravo charlie delta 900388; @maya echo foxtrot golf 900389 hotel 900390, @apollo#ragged india juliet 900391; @apollo#ragged kilo @tin_can lima mike november oscar; papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot; golf hotel india juliet kilo lima mike november; Oscar papa 900392Quebec.\nRomeo: sierra tango uniform, victor whiskey xray yankee zulu alpha, bravo charlie delta, echo foxtrot golf hotel india juliet; kilo lima, mike november oscar.",
+      "dialogue": "Maya: [shot 1] papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo. Apollo: [shot 3] Charlie delta. Echo foxtrot.",
+      "voiceover": "",
+      "durationSec": 12,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_13",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900393 golf, 900394hotel india, 900395:900396.\nJuliet kilo lima mike, november oscar papa, quebec romeo sierra, tango uniform victor, Whiskey xray 900397Yankee.\nZulu:\nSHOT 1 [0:00-0:03] 900398 alpha Bravo-Charlie, delta Echo Foxtrot - golf hotel - India @boutique#fitting, juliet kilo lima mike november: @apollo#sharp oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo, foxtrot, golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform. Victor whiskey, xray yankee zulu alpha bravo charlie.\nSHOT 2 [0:03-0:06] 900399 delta Echo foxtrot @maya, Golf-Hotel - india - @maya juliet-kilo lima @boutique#fitting mike november oscar papa quebec, romeo sierra, tango uniform victor whiskey xray yankee, zulu alpha bravo charlie delta echo; foxtrot golf hotel india juliet kilo. Lima mike.\nSHOT 3 [0:06-0:09] 900400 november Oscar papa @apollo#sharp, quebec Romeo Sierra - tango uniform - @apollo#sharp victor-whiskey xray @boutique#fitting yankee zulu alpha, bravo charlie delta echo-foxtrot golf hotel india juliet kilo lima @maya mike november oscar papa; quebec romeo sierra tango uniform, victor whiskey xray yankee. Zulu.\nAlpha: @maya bravo charlie-delta echo @apollo#sharp foxtrot-golf hotel india 900401 juliet; @apollo#sharp kilo lima mike november oscar-papa quebec romeo, sierra tango-uniform victor whiskey xray yankee zulu alpha; @maya bravo charlie delta 900402, @apollo#sharp echo foxtrot 900403; golf hotel india juliet kilo lima mike november; Oscar papa 900404Quebec.\nRomeo: sierra tango uniform victor, whiskey xray yankee zulu alpha bravo charlie, delta echo foxtrot golf, hotel india juliet; kilo lima, mike november oscar.",
+      "dialogue": "Maya: [shot 2] Papa! Quebec romeo sierra! Apollo: [shot 3] Tango, uniform victor whiskey Xray yankee zulu alpha?",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_14",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900405 bravo, 900406charlie delta, 900407:900408.\nEcho foxtrot golf hotel, india juliet kilo, lima mike november, oscar papa quebec, Romeo sierra 900409Tango.\nUniform:\nSHOT 1 [0:00-0:04] 900410 victor Whiskey xray-yankee, Zulu-Alpha - bravo - @maya charlie-delta echo @boutique#fitting foxtrot golf hotel india juliet @apollo#sharp'kilo lima mike november oscar papa quebec romeo, sierra tango, uniform victor whiskey; xray yankee zulu alpha bravo, charlie delta echo foxtrot. Golf hotel.\nSHOT 2 [0:04-0:08] 900411 india Juliet kilo @apollo#sharp, lima Mike November - oscar papa - @apollo#sharp quebec @boutique#fitting romeo sierra tango uniform victor whiskey, xray yankee zulu alpha bravo charlie delta echo foxtrot; golf hotel india juliet kilo. Lima mike, november oscar papa quebec romeo.\nSHOT 3 [0:08-0:11] 900412 sierra Tango-Uniform victor-whiskey xray, Yankee-Zulu - alpha, bravo charlie - @maya delta @apollo#sharp echo foxtrot golf hotel @boutique#fitting, india juliet kilo, lima mike november oscar papa quebec romeo sierra tango uniform, victor whiskey xray; yankee zulu alpha bravo charlie delta. Echo foxtrot.\nSHOT 4 [0:11-0:14] 900413 golf Hotel india @maya, Juliet-Kilo - lima - @maya mike @boutique#fitting november oscar papa quebec romeo sierra tango uniform victor, whiskey xray yankee zulu alpha bravo charlie; delta echo foxtrot golf hotel. India.\nJuliet: @maya kilo lima-mike november @apollo#sharp oscar-papa quebec romeo sierra; @maya'tango uniform victor whiskey xray @apollo#sharp'yankee zulu alpha bravo charlie delta echo 900414 foxtrot 900415; @maya golf hotel india 900416 juliet 900417, @apollo#sharp kilo lima 900418, mike 900419 november; @apollo#sharp oscar papa quebec romeo sierra-tango uniform; victor whiskey xray yankee zulu alpha bravo charlie; Delta echo 900420Foxtrot.\nGolf: hotel india juliet kilo, lima mike november oscar, papa quebec romeo sierra tango, uniform victor whiskey; xray yankee, zulu alpha bravo.",
+      "dialogue": "Maya: [shot 1] Charlie delta echo. Foxtrot golf hotel india juliet. Apollo: [shot 2] Kilo lima mike november oscar papa quebec romeo sierra tango? Maya: [shot 4] Uniform victor whiskey.",
+      "voiceover": "",
+      "durationSec": 14,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_15",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900421 xray, 900422yankee zulu, 900423:900424.\nAlpha bravo charlie delta, echo foxtrot golf, hotel india juliet, kilo lima mike, November oscar 900425Papa.\nQuebec:\nSHOT 1 [0:00-0:04] 900426 romeo Sierra tango-uniform, Victor-Whiskey - xray yankee zulu - @maya alpha-bravo charlie delta echo foxtrot golf hotel india @boutique#shelves juliet @apollo#sharp kilo-lima, mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray, yankee zulu alpha; bravo charlie delta echo foxtrot golf, @apollo#sharp hotel india juliet. Kilo lima.\nSHOT 2 [0:04-0:08] 900427 mike November-Oscar papa @maya, quebec Romeo Sierra - tango, uniform victor - @maya whiskey @boutique#shelves xray yankee zulu alpha bravo, charlie delta; echo foxtrot golf hotel india, juliet kilo lima mike. November.\nOscar: @maya papa quebec-romeo sierra @apollo#sharp tango-uniform; victor @maya whiskey; @apollo#sharp xray yankee zulu alpha bravo-charlie delta; echo foxtrot golf hotel india juliet kilo; lima mike november oscar papa quebec romeo sierra; Tango uniform 900428Victor.\nWhiskey: xray yankee zulu alpha, bravo charlie delta echo, foxtrot golf hotel india juliet, kilo lima mike; november oscar, papa quebec romeo.",
+      "dialogue": "Maya: [shot 1] Sierra tango uniform Victor whiskey xray [shot 2] yankee zulu Alpha bravo Charlie.",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_16",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900429 delta, 900430echo foxtrot, 900431:900432.\nGolf hotel india juliet, kilo lima mike, november oscar papa, quebec romeo sierra, Tango uniform 900433Victor.\nWhiskey:\nSHOT 1 [0:00-0:06] 900434 xray Yankee zulu @maya, alpha Bravo Charlie - delta - @maya echo @boutique#shelves foxtrot golf hotel, india juliet kilo lima mike, november oscar papa; quebec romeo sierra tango uniform victor, @apollo#sharp whiskey xray-yankee. Zulu alpha.\nSHOT 2 [0:06-0:11] 900435 bravo Charlie delta-echo, Foxtrot-Golf - hotel india - @maya juliet-kilo lima mike november oscar papa @apollo#sharp quebec-romeo sierra @boutique#shelves, tango, uniform victor whiskey xray yankee zulu alpha bravo; charlie delta echo foxtrot. Golf.\nHotel: @maya india juliet-kilo lima @apollo#sharp mike-november oscar papa quebec; romeo @maya sierra; @apollo#sharp tango uniform victor whiskey xray-yankee zulu; alpha bravo charlie delta echo foxtrot golf; hotel india juliet kilo lima mike november oscar; Papa quebec 900436Romeo.\nSierra: tango uniform victor whiskey, xray yankee zulu alpha, bravo charlie delta echo foxtrot, golf hotel india; juliet kilo, lima mike november.",
+      "dialogue": "Maya: [shot 1] Oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee, [shot 2] zulu alpha bravo charlie delta echo-foxtrot,",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_17",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900437 golf, 900438hotel india, 900439:900440.\nJuliet kilo lima mike, november oscar papa, quebec romeo sierra, tango uniform victor, Whiskey xray 900441Yankee.\nZulu:\nSHOT 1 [0:00-0:06] 900442 alpha Bravo charlie-delta, Echo-Foxtrot - golf hotel - @maya india-juliet kilo @boutique#shelves lima mike november oscar papa, quebec romeo sierra tango uniform victor whiskey, xray yankee; @apollo#sharp zulu-alpha bravo charlie delta echo foxtrot golf hotel india juliet, kilo, lima mike november oscar papa quebec romeo; sierra tango uniform victor whiskey xray. Yankee zulu.\nSHOT 2 [0:06-0:09] 900443 alpha Bravo-Charlie delta @maya, echo Foxtrot Golf - hotel, india juliet - @maya kilo @boutique#shelves lima mike november oscar papa quebec romeo, sierra-tango uniform victor whiskey xray yankee Zulu Alpha; bravo charlie delta echo foxtrot. Golf hotel.\nSHOT 3 [0:09-0:14] 900444 india Juliet kilo @apollo#sharp, lima Mike November - oscar papa quebec - @apollo#sharp romeo @boutique#shelves sierra tango uniform victor @maya, whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec; romeo sierra tango uniform victor, whiskey xray yankee zulu. Alpha bravo charlie delta.\nEcho: @maya foxtrot golf-hotel india @apollo#sharp juliet-kilo; @apollo#sharp'lima mike november oscar @maya'papa quebec romeo, sierra tango uniform victor whiskey, xray yankee zulu; @maya alpha bravo charlie delta echo 900445 foxtrot 900446, @apollo#sharp golf hotel india juliet kilo lima mike november oscar 900447 papa quebec romeo sierra-tango uniform victor; @apollo#sharp whiskey xray yankee zulu alpha-bravo charlie; delta echo foxtrot golf hotel india juliet kilo; Lima mike 900448November.\nOscar: papa quebec romeo sierra, tango uniform victor whiskey, xray yankee zulu alpha bravo, charlie delta echo; foxtrot golf, hotel india juliet.",
+      "dialogue": "Maya: [shot 1] kilo lima mike november oscar-papa, quebec romeo sierra tango uniform victor whiskey xray Yankee Zulu. [shot 2] Alpha bravo Charlie Delta. Apollo: VO: [shot 3] Echo foxtrot golf hotel india juliet kilo? Lima.",
+      "voiceover": "",
+      "durationSec": 14,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_18",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900449 mike, 900450november oscar, 900451:900452.\nPapa quebec romeo sierra, tango uniform victor, whiskey xray yankee, zulu alpha bravo, Charlie delta 900453Echo.\nFoxtrot:\nSHOT 1 [0:00-0:07] 900454 golf Hotel india @apollo#sharp, Juliet-Kilo - lima mike - @apollo#sharp november @boutique#shelves oscar papa quebec romeo sierra tango uniform victor whiskey xray, yankee zulu alpha bravo charlie delta echo, foxtrot; golf hotel india juliet kilo lima, @maya mike november-oscar. Papa quebec.\nSHOT 2 [0:07-0:13] 900455 romeo Sierra tango-uniform, Victor-Whiskey - xray - @apollo#sharp yankee-zulu alpha bravo charlie @maya delta-echo foxtrot @boutique#shelves, golf hotel india juliet kilo lima mike november; oscar papa quebec romeo sierra tango. Uniform.\nVictor: @maya whiskey xray-yankee zulu @apollo#sharp alpha-bravo charlie delta echo; foxtrot @apollo#sharp golf; @apollo#sharp hotel india juliet kilo lima-mike november; oscar papa quebec romeo sierra tango uniform victor; Whiskey xray 900456Yankee.\nZulu: alpha bravo charlie delta, echo foxtrot golf hotel, india juliet kilo lima mike, november oscar papa; quebec romeo, sierra tango uniform.",
+      "dialogue": "Apollo: [shot 1] Victor. Whiskey xray yankee zulu alpha bravo Charlie, Delta echo foxtrot golf hotel. [shot 2] India juliet kilo lima mike november.",
+      "voiceover": "",
+      "durationSec": 13,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_19",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900457 oscar, 900458papa quebec, 900459:900460.\nRomeo sierra tango uniform, victor whiskey xray, yankee zulu alpha, bravo charlie delta, Echo foxtrot 900461Golf.\nHotel:\nSHOT 1 [0:00-0:05] 900462 india Juliet kilo @maya, lima Mike November - oscar - @maya papa-quebec romeo @boutique#shelves sierra tango uniform victor whiskey @apollo#sharp, xray-yankee, zulu alpha bravo; charlie delta echo foxtrot golf hotel, india juliet kilo. Lima mike, november oscar papa quebec romeo sierra.\nSHOT 2 [0:05-0:11] 900463 tango Uniform victor-whiskey, Xray-Yankee - zulu alpha - @maya bravo-charlie delta echo foxtrot golf hotel @apollo#sharp'india juliet kilo-lima mike november oscar papa @boutique#shelves, quebec romeo sierra tango; @apollo#sharp uniform victor whiskey xray yankee zulu alpha, bravo charlie delta echo. Foxtrot.\nGolf: @maya hotel india-juliet kilo @apollo#sharp lima-mike november oscar papa; quebec @maya romeo; @apollo#sharp sierra tango uniform victor whiskey-xray yankee; zulu alpha bravo charlie delta echo foxtrot golf; Hotel india 900464Juliet.\nKilo: lima mike november oscar, papa quebec romeo sierra, tango uniform victor whiskey xray, yankee zulu alpha; bravo charlie, delta echo foxtrot.",
+      "dialogue": "Maya: [shot 1] Golf hotel india juliet kilo lima mike november, [shot 2] oscar papa quebec romeo sierra tango uniform victor whiskey xray.",
+      "voiceover": "",
+      "durationSec": 11,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_20",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900465 yankee, 900466zulu alpha, 900467:900468.\nBravo charlie delta echo, foxtrot golf hotel, india juliet kilo, lima mike november, Oscar papa 900469Quebec.\nRomeo:\nSHOT 1 [0:00-0:03] 900470 sierra Tango uniform @apollo#sharp, Victor-Whiskey - xray - @apollo#sharp yankee-zulu alpha @boutique#shelves bravo charlie delta echo foxtrot golf, hotel india juliet kilo lima mike november @maya, oscar papa quebec; romeo sierra tango uniform victor. Whiskey xray, yankee zulu alpha bravo charlie.\nSHOT 2 [0:03-0:06] 900471 delta Echo, Foxtrot-Golf - hotel, india juliet - kilo lima mike @maya'november oscar papa quebec @apollo#sharp'romeo sierra tango uniform @boutique#shelves, victor whiskey xray, yankee zulu alpha bravo charlie delta echo foxtrot; golf hotel india juliet kilo lima mike, november oscar papa quebec romeo sierra tango uniform. Victor whiskey.\nSHOT 3 [0:06-0:09] 900472 xray Yankee zulu @maya, Alpha-Bravo - charlie - @maya delta @boutique#shelves echo foxtrot golf hotel india juliet, kilo lima, mike november oscar papa quebec romeo sierra; tango uniform victor whiskey xray. Yankee.\nZulu: @maya alpha bravo-charlie delta @apollo#sharp echo-foxtrot; @apollo#sharp golf hotel india 900473, @maya juliet kilo 900474, lima 900475 mike; november oscar papa quebec romeo sierra 900476 tango; @apollo#sharp uniform victor whiskey xray yankee-zulu alpha; bravo charlie delta echo foxtrot golf hotel india; Juliet kilo 900477Lima.\nMike: november oscar papa quebec, romeo sierra tango uniform, victor whiskey xray yankee zulu, alpha bravo charlie; delta echo, foxtrot golf hotel.",
+      "dialogue": "Apollo: [shot 1] India, juliet. Kilo lima mike november oscar papa? Maya: [shot 3] Quebec romeo sierra tango.",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_21",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900478 uniform, 900479victor whiskey, 900480:900481.\nXray yankee zulu alpha, bravo charlie delta, echo foxtrot golf, hotel india juliet, Kilo lima 900482Mike.\nNovember:\nSHOT 1 [0:00-0:03] 900483 oscar Papa quebec-romeo, Sierra-Tango - uniform victor - @maya whiskey-xray yankee @apollo#sharp zulu-alpha bravo @boutique#shelves charlie delta echo foxtrot golf hotel, india juliet kilo lima mike november oscar papa quebec romeo - sierra tango uniform victor whiskey, xray yankee zulu alpha bravo - charlie delta echo foxtrot golf; hotel india juliet kilo lima mike november oscar papa quebec, romeo sierra tango uniform-victor whiskey-xray yankee zulu @maya'alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo. Lima mike november oscar papa quebec romeo sierra tango uniform. Victor whiskey.\nSHOT 2 [0:03-0:06] 900484 xray Yankee zulu @maya, Alpha-Bravo - charlie - @maya delta @boutique#shelves echo foxtrot golf hotel india @apollo#sharp'juliet, kilo lima mike november, oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie, delta echo, foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra; tango uniform victor whiskey xray, @apollo#sharp yankee zulu-alpha. Bravo charlie, delta echo foxtrot golf hotel india.\nSHOT 3 [0:06-0:09] 900485 juliet Kilo lima-mike-november oscar @apollo#sharp papa-quebec romeo @maya sierra-tango, Uniform-Victor - whiskey xray - @maya yankee @boutique#shelves zulu alpha bravo charlie delta echo @apollo#sharp, foxtrot golf hotel india juliet kilo lima, mike november oscar papa quebec romeo sierra tango uniform victor whiskey; xray yankee zulu alpha bravo charlie. Delta echo foxtrot golf hotel india.\nJuliet: @maya kilo lima-mike november @apollo#sharp oscar-papa; @maya'quebec romeo sierra tango @apollo#sharp'uniform victor whiskey @apollo#sharp'xray yankee zulu alpha @maya, bravo charlie delta echo foxtrot golf; hotel india juliet kilo - lima mike november oscar papa, quebec romeo sierra tango uniform - victor whiskey 900486 xray yankee zulu alpha bravo 900487 charlie delta echo foxtrot golf; @apollo#sharp hotel india juliet kilo lima-mike november; oscar papa quebec romeo sierra tango uniform victor; Whiskey xray 900488Yankee.\nZulu: alpha bravo charlie delta echo foxtrot Golf Hotel india (Juliet Kilo); lima Mike november oscar papa quebec.\nRomeo: sierra tango uniform victor, whiskey xray yankee zulu-alpha, bravo charlie delta echo foxtrot golf hotel india juliet, kilo lima mike november, oscar papa quebec; romeo sierra, tango uniform victor.",
+      "dialogue": "Maya: [shot 2] Whiskey xray yankee zulu alpha bravo charlie delta echo - [shot 3] foxtrot golf hotel india juliet-kilo.",
+      "voiceover": "",
+      "durationSec": 9,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_22",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900489 lima, 900490mike november, 900491:900492.\nOscar papa quebec romeo, sierra tango uniform, victor whiskey xray, yankee zulu alpha, Bravo charlie 900493Delta.\nEcho:\nSHOT 1 [0:00-0:03] 900494 foxtrot Golf-Hotel, India-Juliet - kilo lima - @maya mike november oscar @boutique#shelves papa quebec romeo sierra tango, uniform victor whiskey, xray yankee zulu alpha bravo, charlie @apollo#sharp delta echo-foxtrot golf hotel india; juliet kilo lima mike november. Oscar papa, quebec romeo sierra tango uniform.\nSHOT 2 [0:03-0:06] 900495 victor Whiskey xray @apollo#sharp, yankee Zulu Alpha - bravo charlie - delta echo foxtrot golf hotel @apollo#sharp india @boutique#shelves; juliet kilo lima mike november, oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha. Bravo charlie, delta echo foxtrot golf hotel india.\nSHOT 3 [0:06-0:08] 900496 juliet Kilo, Lima-Mike - november - oscar papa @apollo#sharp'quebec romeo sierra @boutique#shelves, tango uniform victor whiskey xray yankee zulu alpha bravo charlie, delta echo foxtrot golf hotel india juliet kilo lima mike. November.\nOscar: @apollo#sharp papa quebec-romeo, @maya sierra tango uniform victor whiskey; @apollo#sharp xray yankee zulu alpha bravo-charlie delta; echo foxtrot golf hotel india juliet kilo; lima mike november oscar papa quebec; romeo sierra tango uniform victor whiskey xray yankee; Zulu alpha 900497Bravo.\nCharlie: delta echo foxtrot golf, @maya'hotel india juliet kilo lima mike, november oscar papa quebec romeo, sierra tango uniform victor-whiskey; xray yankee, zulu alpha bravo.",
+      "dialogue": "",
+      "voiceover": "",
+      "durationSec": 8,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_23",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900498 charlie, 900499delta echo, 900500:900501.\nFoxtrot golf hotel india, juliet kilo lima, mike november oscar, papa quebec romeo, Sierra tango 900502Uniform.\nVictor:\nSHOT 1 [0:00-0:03] 900503 whiskey Xray yankee-zulu alpha @apollo#sharp, Bravo-Charlie - delta - @apollo#sharp echo @boutique#shelves foxtrot golf hotel india juliet kilo lima mike november oscar papa-quebec, romeo sierra, tango uniform victor whiskey xray yankee zulu alpha; bravo charlie delta echo foxtrot golf, @maya hotel india juliet kilo lima mike November oscar papa, quebec romeo sierra tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet. Kilo lima.\nSHOT 2 [0:03-0:08] 900504 mike November-Oscar papa @apollo#sharp, quebec Romeo Sierra - tango uniform - @apollo#sharp victor @boutique#shelves whiskey xray yankee zulu alpha bravo, charlie Delta echo foxtrot golf hotel, india juliet kilo lima; mike november oscar papa quebec, @maya romeo sierra tango-uniform victor whiskey, xray yankee zulu alpha bravo charlie delta echo. Foxtrot golf.\nSHOT 3 [0:08-0:12] 900505 hotel India juliet kilo @apollo#sharp, Lima-Mike - november oscar papa - @apollo#sharp quebec romeo sierra @boutique#shelves tango uniform victor whiskey xray yankee zulu alpha bravo-charlie, delta echo foxtrot golf hotel, india juliet kilo lima mike; november oscar papa quebec romeo sierra, @maya tango uniform-victor whiskey xray yankee zulu, alpha bravo charlie delta. Echo.\nFoxtrot: @apollo#sharp golf hotel-india juliet kilo lima mike november oscar papa quebec; @maya romeo sierra tango uniform victor whiskey xray Yankee zulu alpha bravo, charlie delta echo foxtrot golf hotel india juliet, kilo lima mike november; oscar 900506 papa quebec romeo sierra-tango uniform victor whiskey @apollo#sharp'xray yankee zulu, @apollo#sharp alpha bravo charlie delta echo 900507 foxtrot 900508; @apollo#sharp golf hotel india juliet kilo-lima mike; november oscar papa quebec romeo sierra tango uniform; Victor whiskey 900509Xray.\nYankee: zulu alpha bravo charlie delta echo foxtrot golf hotel india Juliet Kilo lima (Mike November); oscar Papa quebec romeo sierra tango.\nUniform: victor whiskey xray yankee, zulu alpha bravo charlie delta echo foxtrot golf hotel india juliet kilo lima, mike november oscar, papa quebec romeo; sierra tango, uniform victor whiskey.",
+      "dialogue": "Kara: VO: [shot 1] Xray, yankee? Apollo: [shot 2] Zulu alpha bravo charlie delta echo foxtrot golf hotel india [shot 3] juliet Kilo Lima Mike november,",
+      "voiceover": "",
+      "durationSec": 12,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    },
+    {
+      "id": "sc_24",
+      "locationId": "boutique",
+      "scenePrompt": "",
+      "motionPrompt": "900510 oscar, 900511papa quebec, 900512:900513.\nRomeo sierra tango uniform, victor whiskey xray, yankee zulu alpha, bravo charlie delta, echo foxtrot golf, Hotel india 900514Juliet.\nKilo:\nSHOT 1 [0:00-0:04] 900515 lima Mike november @apollo#sharp, oscar Papa Quebec - romeo sierra - @apollo#sharp tango @boutique#shelves uniform victor whiskey xray, yankee zulu alpha, bravo charlie delta echo foxtrot, golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform; victor whiskey xray yankee zulu, @maya alpha bravo charlie delta echo foxtrot Golf hotel india, juliet kilo lima mike november oscar. Papa quebec.\nSHOT 2 [0:04-0:07] 900516 romeo Sierra-Tango uniform @apollo#sharp, Victor-Whiskey - xray, yankee zulu - @apollo#sharp alpha @boutique#shelves bravo charlie delta echo, foxtrot golf hotel india juliet, kilo lima mike november oscar papa, quebec romeo sierra tango uniform; victor whiskey xray yankee, zulu alpha bravo charlie delta, @maya echo-foxtrot golf hotel india juliet. Kilo lima.\nSHOT 3 [0:07-0:10] 900517 mike November oscar-papa quebec @apollo#sharp, Romeo-Sierra - tango - @apollo#sharp uniform @boutique#shelves victor whiskey xray yankee zulu alpha bravo charlie delta echo, foxtrot golf, hotel india juliet kilo lima mike november oscar papa quebec romeo sierra; tango uniform victor whiskey xray, @maya yankee zulu-alpha bravo charlie delta echo. Foxtrot golf.\nSHOT 4 [0:10-0:12] 900518 hotel India-Juliet kilo @apollo#sharp, lima Mike November - oscar papa quebec - @apollo#sharp romeo @boutique#shelves sierra tango uniform victor whiskey xray yankee zulu, alpha bravo charlie delta, echo foxtrot golf hotel india juliet kilo lima mike november oscar papa quebec romeo sierra tango uniform victor whiskey xray yankee; zulu alpha bravo charlie delta echo. Foxtrot golf hotel india.\nJuliet: @apollo#sharp kilo lima-mike november oscar; @maya papa quebec romeo sierra tango uniform victor Whiskey xray yankee zulu, alpha bravo charlie delta echo foxtrot, golf hotel india juliet; @apollo#sharp kilo lima mike november oscar papa quebec romeo sierra 900519 tango 900520 uniform victor whiskey xray yankee zulu 900521; @apollo#sharp alpha bravo charlie delta echo 900522 foxtrot 900523, golf hotel india juliet kilo lima mike november 900524 oscar papa quebec romeo-sierra tango uniform, victor whiskey xray yankee zulu 900525; @apollo#sharp alpha bravo charlie delta echo-foxtrot golf; hotel india juliet kilo lima mike november oscar; Papa quebec 900526Romeo.\nSierra: tango uniform victor whiskey xray yankee zulu alpha bravo charlie Delta Echo foxtrot (Golf Hotel); india Juliet kilo lima mike november.\nOscar: papa quebec romeo sierra, tango uniform victor whiskey xray yankee zulu alpha bravo charlie delta echo 900527, foxtrot golf hotel, india juliet kilo lima mike november oscar; papa quebec, romeo sierra tango.",
+      "dialogue": "Apollo: [shot 1] uniform victor whiskey xray yankee zulu Alpha bravo charlie Delta Echo [shot 2] foxtrot golf hotel india. Kara: VO: [shot 3] Juliet kilo, lima.",
+      "voiceover": "",
+      "durationSec": 12,
+      "generateAudio": true,
+      "aspect": "9:16",
+      "loop": false,
+      "banned": ""
+    }
+  ]
+}

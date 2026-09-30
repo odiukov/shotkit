@@ -1,0 +1,10 @@
+photoreal cinematic, soft natural light, 35mm
+OUTPUT FORMAT — the single most important thing to get right: render ONE photographic frame, a single continuous image edge to edge. A reference image here IS a multi-panel character sheet (one large hero portrait, a grid of head angles, a row of full-body turnaround poses) or an object sheet — it is a REFERENCE for identity ONLY. Read a character sheet only for the person's face, hair and wardrobe; read an object sheet only for the object's shape, colour and material. Do NOT reproduce its layout in ANY form: no grid, no panels, no gutters or dividers, no insets, no split-screen, no diptych, no contact sheet, no collage, no thumbnail strip, no repeated angles of the same subject, no character-sheet layout. Render exactly ONE instance of each character and each object, posed naturally inside the single scene.
+Theatrical movie poster key art, vertical 9:16 portrait composition. Skye alone in the Church, the Red Key in her fist.
+A single polished poster image with a clear focal hierarchy and dramatic cinematic lighting.
+Composition constraint — the story-list card crops this poster to a horizontal band: only 17%–56% of the frame height is ever on screen, and the lower part of that band is covered by a title gradient. Place the subject's face and every key detail between 17% and 40% from the top, and keep that area free of text or empty sky. The top 17% and bottom 44% are cropped away — put only atmosphere there.
+Setting: Church: A cold stone chapel, empty pews, tall narrow windows. Lighting: Grey overcast daylight through the windows, no warm sources..
+Props: Red Key: A small brass key with a red enamel bow, scratched.
+Maintain identity: Skye: Woman, 29, sharp cheekbones, dark brown eyes, black hair cut to the jaw, slim athletic build..
+Keep the frame clean of any on-screen text, captions, subtitles, watermarks, logos or UI overlays.
+Avoid: text, watermark, extra fingers

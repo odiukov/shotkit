@@ -1,0 +1,5 @@
+photoreal cinematic, soft natural light, 35mm
+Single cinematic keyframe. An empty road at dawn.
+A single photograph from one camera angle, one continuous image that fills the whole frame edge to edge.
+A single frozen instant — the state at this exact moment, no motion blur, no before-and-after, no transition.
+Keep the frame clean of any on-screen text, captions, subtitles, watermarks, logos or UI overlays.

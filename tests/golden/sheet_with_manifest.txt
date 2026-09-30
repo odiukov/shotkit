@@ -1,0 +1,16 @@
+photoreal cinematic, soft natural light, 35mm.
+9:16 character reference sheet showing the same person from multiple distinct angles and poses.
+REFERENCE MANIFEST — the attached reference images are NOT interchangeable. Each supplies exactly what its entry names and nothing more; never blend them, and never carry a trait from an image whose entry does not name that trait.
+the first image is the FACE of the subject: take its bone structure, eyes, nose, mouth, skin tone and skin texture, and NOTHING else. Ignore its clothing, background, pose and framing. specifically: neutral expression.
+the second image is the subject's BODY build and proportions ONLY. Ignore its clothing, and ignore its face — the face comes from the first image.
+the third image is the GARMENT, read as a catalogue product shot: reproduce its cut, colour, fabric and details exactly, and treat whoever is wearing it as a mannequin. The person wearing it is NOT the subject: ignore their face, body and hair — the face comes from the first image. specifically: charcoal wool, no scarf.
+Across the whole sheet: the garment and object images above are PRODUCT references — whoever wears or holds them is a mannequin and contributes no face, no hair, no body build and no pose to any panel. In every panel without exception the face is the face from the first image. And the build in every panel is the build from the second image.
+Same person in every panel — identical face, hair, body and outfit. No redesign, no reinterpretation.
+Top section (identity focus): one very large hero face/head close-up spanning ~50-60% width as the main visual anchor, beside a compact head rotation grid showing the SAME head at DISTINCT angles — never repeat the frontal view: front, three-quarter left, left profile, rear / back of head, looking up, looking down — plus one supporting portrait crop. This top row must immediately establish facial identity.
+Middle section: three evenly spaced full-body panels — T-pose front, T-pose back, front neutral.
+Lower section: side-left, side-right, 3/4 front, 3/4 back, full back, and a relaxed walking pose, in clean stacked rows with balanced spacing. Do NOT include any top-down / overhead view (it distorts into blobs).
+Full-body panels stay large enough to preserve proportions and outfit detail while the face sheet stays prioritised at the top; the composition must fully utilise the tall 9:16 frame.
+Strong hierarchy: face identity first, body turnaround second. Every panel shows a genuinely different camera angle or pose — do NOT draw every panel facing forward; the rotation must actually rotate.
+Style: photoreal cinematic, soft natural light, 35mm, applied consistently to every panel.
+Layout: vertical 9:16 portrait canvas, laid out as a clean multi-panel reference sheet. Neutral warm-grey backdrop, soft even illumination, no harsh shadows, thin white gutters separating panels. Keep proportions, colors and details identical across every panel — no redesign, no reinterpretation. no text, no labels, no watermarks.
+Avoid: text, watermark, extra fingers

@@ -1,0 +1,7 @@
+{
+  "name": "shotkit",
+  "version": "0.1.0",
+  "description": "Cinematic prompt craft for any text-to-image / text-to-video generator — grounded shot direction, role-labelled character references that keep a face stable across shots, motion and dialogue discipline, and a CLI that assembles the finished prompt plus an ordered reference file list.",
+  "author": { "name": "Oleksandr Diukov" },
+  "keywords": ["prompt-craft", "cinematic", "t2i", "t2v", "references", "storyboard"]
+}
