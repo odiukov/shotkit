@@ -44,10 +44,10 @@ class TestEndToEnd(unittest.TestCase):
             frame = run("--project", str(project), "frame", "s01")
             self.assertEqual(frame.returncode, 0, frame.stderr)
             self.assertTrue(frame.stdout.strip())
-            self.assertTrue((project / "out" / "s01.frame.txt").exists())
+            self.assertTrue((project / "out" / "scenes" / "s01" / "frame.txt").exists())
 
             refs = (
-                (project / "out" / "s01.frame.refs.txt")
+                (project / "out" / "scenes" / "s01" / "frame.refs.txt")
                 .read_text(encoding="utf-8")
                 .splitlines()
             )
@@ -57,7 +57,9 @@ class TestEndToEnd(unittest.TestCase):
 
             motion = run("--project", str(project), "motion", "s01", "--mode", "t2v")
             self.assertEqual(motion.returncode, 0, motion.stderr)
-            self.assertTrue((project / "out" / "s01.motion.txt").exists())
+            self.assertTrue(
+                (project / "out" / "scenes" / "s01" / "motion.txt").exists()
+            )
 
             # The template's motionPrompt ("She walks forward across the floor,
             # glancing back once") names nobody — every @mention lives in scenePrompt
@@ -65,7 +67,7 @@ class TestEndToEnd(unittest.TestCase):
             # attach the cast, not ship an unanchored t2v clip with an empty refs
             # file (see shotkit/project.py::render_motion's mention-union comment).
             motion_refs = (
-                (project / "out" / "s01.motion.refs.txt")
+                (project / "out" / "scenes" / "s01" / "motion.refs.txt")
                 .read_text(encoding="utf-8")
                 .splitlines()
             )

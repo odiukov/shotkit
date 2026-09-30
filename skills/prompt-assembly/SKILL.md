@@ -93,7 +93,7 @@ interchangeable:
    is true.
 7. Every `@mention` is stripped to its plain display name for the final text sent to
    the generator (the reference images resolved from those same mentions are what's
-   listed in `out/<stem>.refs.txt`).
+   listed in `out/scenes/<scene-id>/motion.refs.txt`).
 
 See `references/engines.md` for how to choose between the three modes for a given
 generator.
@@ -133,39 +133,57 @@ inside a project directory (a directory holding `bible.json` and `scenes/`).
 
 - `init <dir>` — scaffold a new project from the template.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" init my-project`
-- `frame <scene>` — render a scene's opening keyframe prompt.
+- `frame <scene> [--handoff]` — render a scene's opening keyframe prompt.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" frame s01`
-- `poster <scene>` — render a scene's poster/key-art prompt.
+- `poster <scene> [--handoff]` — render a scene's poster/key-art prompt.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" poster s01`
-- `motion <scene> --mode i2v|t2v|ref-anchored [--keyframe PATH]` — render a scene's
-  motion prompt (`--mode` is required; `ref-anchored` also requires `--keyframe`).
+- `motion <scene> --mode i2v|t2v|ref-anchored [--keyframe PATH] [--handoff]` — render a
+  scene's motion prompt (`--mode` is required; `ref-anchored` also requires
+  `--keyframe`).
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" motion s01 --mode t2v`
-- `sheet <character> [--look LABEL]` — render a character reference-sheet prompt
-  (`--look` defaults to `primary`).
+- `sheet <character> [--look LABEL] [--handoff]` — render a character reference-sheet
+  prompt (`--look` defaults to `primary`).
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" sheet hero --look primary`
-- `location <location> [--view LABEL]` — render a location-view prompt (no `--view`
-  renders the primary view).
+- `location <location> [--view LABEL] [--handoff]` — render a location-view prompt (no
+  `--view` renders the primary view).
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" location warehouse --view night`
-- `prop <prop>` — render a prop hero-shot prompt.
+- `prop <prop> [--handoff]` — render a prop hero-shot prompt.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" prop case`
 - `lint <scene>` — check a scene for broken or missing references, music/singing words,
   dialogue/voiceover that won't fit the clip, and `[shot N]` anchors pointing at shots
   the motion prompt never declares. Writes nothing to `out/`; exits 1 if it found
   anything, 0 if clean.
+- `status` — print a read-only inventory: every character/location/prop with a mark for
+  whether its reference image exists on disk, and every scene with a mark for whether
+  `out/` already holds its rendered artifacts. No scene argument; writes nothing to
+  `out/`; always exits 0 once the project loads (a report, not a gate).
+  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" status`
 - `styles` — list the six shipped style presets (id, name, preamble, banned) to copy
   into a project's `style.globalPreamble` / `style.banned`. No `--project` needed;
   writes nothing to `out/`.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" styles`
 
-## The `out/*.txt` + `out/*.refs.txt` contract
+## The `out/` file contract
 
-Every generating command writes exactly two files to `out/`, named from the command and
-its target (`s01.frame.txt` / `s01.frame.refs.txt`, `hero.primary.sheet.txt` /
-`hero.primary.sheet.refs.txt`, and so on):
+Every generating command (`frame`, `poster`, `motion`, `sheet`, `location`, `prop`)
+writes exactly two files, nested under `out/` by KIND and then by the entity's own id —
+not a flat directory of compound stems — so a project with many scenes and a full cast
+doesn't dump hundreds of files into one place:
 
-- `out/<stem>.txt` — the finished prompt text, exactly as it will be sent to a
+```
+out/scenes/<scene-id>/frame.txt            out/scenes/<scene-id>/frame.refs.txt
+out/scenes/<scene-id>/poster.txt           out/scenes/<scene-id>/poster.refs.txt
+out/scenes/<scene-id>/motion.txt           out/scenes/<scene-id>/motion.refs.txt
+out/characters/<character-id>/<look>.sheet.txt
+out/characters/<character-id>/<look>.sheet.refs.txt
+out/locations/<location-id>/<view>.view.txt
+out/locations/<location-id>/<view>.view.refs.txt
+out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
+```
+
+- The `.txt` file — the finished prompt text, exactly as it will be sent to a
   generator, no trailing newline added.
-- `out/<stem>.refs.txt` — the reference image paths this render resolved, one absolute
+- The `.refs.txt` file — the reference image paths this render resolved, one absolute
   path per line, in the exact order `@mention` resolution (or, for `sheet`, the
   `refKit` manifest) produced them.
 
@@ -179,3 +197,24 @@ not the prompt spells that order out in words — reorder the attachments on any
 and the reference that lands on a given role silently changes, with no error from
 anything: the generator has no way to know your attachment order doesn't match the
 resolution it was given.
+
+## `--handoff` — the copy-paste form of the same two files
+
+Every generating command above also accepts `--handoff`. It changes **stdout only** —
+the two `out/` files above are still written exactly the same either way — and replaces
+the plain prompt echo with one block a person can act on without opening anything:
+
+```
+=== PROMPT — paste this into your generator ===
+<the full prompt text>
+
+=== ATTACH THESE IMAGES, IN THIS ORDER ===
+1. /abs/path/refs/mira.png
+2. /abs/path/refs/vale.png
+3. /abs/path/refs/lobby.png
+```
+
+The numbered list is exactly the resolved `.refs.txt` order, unchanged. When a render
+needs no references, the heading still prints, followed by a plain line saying none are
+needed — never an empty heading with nothing under it, which a reader can't tell apart
+from something having silently broken. Warnings still go to stderr either way.

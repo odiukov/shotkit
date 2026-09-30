@@ -1,21 +1,38 @@
 """shotkit/cli.py — the operator-facing surface.
 
 Each generating command loads the project, resolves one render via
-`shotkit.project`, and writes exactly two files under `out/`:
+`shotkit.project`, and writes exactly two files nested under `out/`, grouped by
+entity so a project with many scenes/characters doesn't dump hundreds of files
+into one flat directory:
 
-    out/<stem>.txt        the finished prompt (no trailing newline added)
-    out/<stem>.refs.txt   `Render.refs`, one absolute path per line, untouched
+    out/scenes/<scene_id>/frame.txt            out/scenes/<scene_id>/frame.refs.txt
+    out/scenes/<scene_id>/poster.txt           out/scenes/<scene_id>/poster.refs.txt
+    out/scenes/<scene_id>/motion.txt           out/scenes/<scene_id>/motion.refs.txt
+    out/characters/<character_id>/<look>.sheet.txt
+    out/characters/<character_id>/<look>.sheet.refs.txt
+    out/locations/<location_id>/<view>.view.txt
+    out/locations/<location_id>/<view>.view.refs.txt
+    out/props/<prop_id>/prop.txt               out/props/<prop_id>/prop.refs.txt
 
-The prompt is also echoed to stdout; warnings go to stderr. Every refusal
-(a --project with no bible.json, an unknown scene/character/location/prop id, a
-missing --mode, ref-anchored with no --keyframe, a non-primary `sheet --look`
-with no primary look reference to anchor on, `init` into a non-empty
-directory) prints a message naming the offending thing to stderr and returns 1
-— never an uncaught traceback, and never a message blaming the wrong one of
-those when more than one could be at fault (a bad --project is never reported
-as an unknown scene id, and vice versa). `lint` returns 1 when it found
-anything, 0 when clean, and never writes to `out/`. `styles` needs no project
-at all and always returns 0.
+The `.txt` file is the finished prompt (no trailing newline added); the
+`.refs.txt` file is `Render.refs`, one absolute path per line, untouched.
+
+The prompt is also echoed to stdout, unless `--handoff` is given — see
+`_handoff_block` for the paste-ready form that replaces it in that case.
+Warnings always go to stderr, `--handoff` or not.
+
+Every refusal (a --project with no bible.json, an unknown scene/character/
+location/prop id, a missing --mode, ref-anchored with no --keyframe, a
+non-primary `sheet --look` with no primary look reference to anchor on, `init`
+into a non-empty directory) prints a message naming the offending thing to
+stderr and returns 1 — never an uncaught traceback, and never a message
+blaming the wrong one of those when more than one could be at fault (a bad
+--project is never reported as an unknown scene id, and vice versa). `lint`
+returns 1 when it found anything, 0 when clean, and never writes to `out/`.
+`status` prints a read-only inventory and always returns 0 once the project
+loads (it is a report, not a gate) — it only returns 1 the same way every
+other command does, when `--project` has no `bible.json`. `styles` needs no
+project at all and always returns 0.
 """
 
 from __future__ import annotations
@@ -38,15 +55,60 @@ _MOTION_MODES = ("i2v", "t2v", "ref-anchored")
 # ---------------------------------------------------------------------------
 
 
-def _write_render(root: pathlib.Path, stem: str, render: project_mod.Render) -> int:
-    out_dir = root / "out"
-    out_dir.mkdir(parents=True, exist_ok=True)
-    (out_dir / f"{stem}.txt").write_text(render.prompt, encoding="utf-8")
+def _render_paths(
+    root: pathlib.Path, category: str, entity_id: str, leaf: str
+) -> tuple[pathlib.Path, pathlib.Path]:
+    """Where a render's two output files live: `out/<category>/<entity_id>/<leaf>.*`.
+
+    The entity's own id is the directory, so everything about one scene/
+    character/location/prop lands in one place instead of hundreds of
+    compound-stem files in a single flat `out/`; the leaf names the KIND of
+    artifact (`frame`, `motion`, `<look>.sheet`, `<view>.view`, `prop`).
+    """
+    out_dir = root / "out" / category / entity_id
+    return out_dir / f"{leaf}.txt", out_dir / f"{leaf}.refs.txt"
+
+
+def _handoff_block(render: project_mod.Render) -> str:
+    """The copy-paste handoff: one prompt to paste, images to attach in order.
+
+    `render.refs` is `Render.refs` **in order, untouched** — no sorting, no
+    de-duplication. For a character sheet, the ordinals a `refKit` manifest
+    writes into the prompt text itself ("the third image is the GARMENT...")
+    are computed from that exact same list (see
+    `project.render_sheet`'s ordering invariant) — reordering, filtering or
+    inserting into this list here would silently mislabel every image after
+    the change, with nothing to catch it.
+    """
+    lines = [
+        "=== PROMPT — paste this into your generator ===",
+        render.prompt,
+        "",
+        "=== ATTACH THESE IMAGES, IN THIS ORDER ===",
+    ]
+    if render.refs:
+        lines.extend(f"{i}. {p}" for i, p in enumerate(render.refs, start=1))
+    else:
+        lines.append("(none needed — this render has no reference images to attach)")
+    return "\n".join(lines)
+
+
+def _write_render(
+    prompt_path: pathlib.Path,
+    refs_path: pathlib.Path,
+    render: project_mod.Render,
+    handoff: bool = False,
+) -> int:
+    prompt_path.parent.mkdir(parents=True, exist_ok=True)
+    prompt_path.write_text(render.prompt, encoding="utf-8")
     refs_text = "\n".join(render.refs)
     if refs_text:
         refs_text += "\n"
-    (out_dir / f"{stem}.refs.txt").write_text(refs_text, encoding="utf-8")
-    print(render.prompt)
+    refs_path.write_text(refs_text, encoding="utf-8")
+    if handoff:
+        print(_handoff_block(render))
+    else:
+        print(render.prompt)
     for w in render.warnings:
         print(w, file=sys.stderr)
     return 0
@@ -118,7 +180,8 @@ def cmd_frame(root: pathlib.Path, args: argparse.Namespace) -> int:
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
     render = project_mod.render_frame(project, scene)
-    return _write_render(root, f"{args.scene_id}.frame", render)
+    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "frame")
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_poster(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -130,7 +193,8 @@ def cmd_poster(root: pathlib.Path, args: argparse.Namespace) -> int:
     except FileNotFoundError as exc:
         return _refuse(f"unknown scene id: {args.scene_id!r} ({exc})")
     render = project_mod.render_poster(project, scene)
-    return _write_render(root, f"{args.scene_id}.poster", render)
+    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "poster")
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_motion(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -153,7 +217,8 @@ def cmd_motion(root: pathlib.Path, args: argparse.Namespace) -> int:
         )
     except ValueError as exc:
         return _refuse(str(exc))
-    return _write_render(root, f"{args.scene_id}.motion", render)
+    prompt_path, refs_path = _render_paths(root, "scenes", args.scene_id, "motion")
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_sheet(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -166,7 +231,10 @@ def cmd_sheet(root: pathlib.Path, args: argparse.Namespace) -> int:
         return _refuse(_key_error_message(exc))
     except ValueError as exc:
         return _refuse(str(exc))
-    return _write_render(root, f"{args.character_id}.{args.look}.sheet", render)
+    prompt_path, refs_path = _render_paths(
+        root, "characters", args.character_id, f"{args.look}.sheet"
+    )
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_location(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -177,8 +245,9 @@ def cmd_location(root: pathlib.Path, args: argparse.Namespace) -> int:
         render = project_mod.render_location(project, args.location_id, args.view)
     except KeyError as exc:
         return _refuse(_key_error_message(exc))
-    stem = f"{args.location_id}.{args.view or 'primary'}.view"
-    return _write_render(root, stem, render)
+    leaf = f"{args.view or 'primary'}.view"
+    prompt_path, refs_path = _render_paths(root, "locations", args.location_id, leaf)
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_prop(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -189,7 +258,8 @@ def cmd_prop(root: pathlib.Path, args: argparse.Namespace) -> int:
         render = project_mod.render_prop(project, args.prop_id)
     except KeyError as exc:
         return _refuse(_key_error_message(exc))
-    return _write_render(root, f"{args.prop_id}.prop", render)
+    prompt_path, refs_path = _render_paths(root, "props", args.prop_id, "prop")
+    return _write_render(prompt_path, refs_path, render, args.handoff)
 
 
 def cmd_lint(root: pathlib.Path, args: argparse.Namespace) -> int:
@@ -204,6 +274,58 @@ def cmd_lint(root: pathlib.Path, args: argparse.Namespace) -> int:
     for issue in issues:
         print(issue, file=sys.stderr)
     return 1 if issues else 0
+
+
+def _presence_mark(paths: list) -> tuple[str, str]:
+    """(" " | "x", note) for one entity's status line.
+
+    The ONLY question "is this reference present on disk" answers to is
+    `project_mod.missing_ref_files` — the same function `render_frame` et al.
+    already use to warn. This does not re-decide presence; it only decides
+    WHICH path(s) to ask that function about (`project_mod.status_ref_paths`).
+    """
+    if not paths:
+        return " ", "no reference image configured"
+    if project_mod.missing_ref_files(paths):
+        return " ", f"missing: {paths[0]}"
+    return "x", paths[0]
+
+
+def cmd_status(root: pathlib.Path, args: argparse.Namespace) -> int:
+    """A read-only inventory — never a gate. Exit 0 once the project loads."""
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
+
+    ref_paths = project_mod.status_ref_paths(project)
+
+    print("characters:")
+    for c in project.characters:
+        mark, note = _presence_mark(ref_paths.get(c.id, []))
+        print(f"  [{mark}] {c.id}  {note}")
+
+    print("locations:")
+    for loc in project.locations:
+        mark, note = _presence_mark(ref_paths.get(loc.id, []))
+        print(f"  [{mark}] {loc.id}  {note}")
+
+    print("props:")
+    for p in project.props:
+        mark, note = _presence_mark(ref_paths.get(p.id, []))
+        print(f"  [{mark}] {p.id}  {note}")
+
+    print("scenes:")
+    scenes_dir = root / "scenes"
+    if scenes_dir.is_dir():
+        for scene_path in sorted(scenes_dir.glob("*.json")):
+            scene_id = scene_path.stem
+            scene_out_dir = root / "out" / "scenes" / scene_id
+            has_output = scene_out_dir.is_dir() and any(scene_out_dir.iterdir())
+            mark = "x" if has_output else " "
+            note = "out/ has rendered artifacts" if has_output else "no output yet"
+            print(f"  [{mark}] {scene_id}  {note}")
+
+    return 0
 
 
 # ---------------------------------------------------------------------------
@@ -221,30 +343,46 @@ def _build_parser() -> argparse.ArgumentParser:
     p_init = sub.add_parser("init", help="scaffold a new project from the template")
     p_init.add_argument("dir")
 
+    _HANDOFF_HELP = (
+        "print one paste-ready block (prompt + numbered image list) to stdout "
+        "instead of echoing the prompt; the two out/ files are written either way"
+    )
+
     p_frame = sub.add_parser("frame", help="render a scene's opening keyframe prompt")
     p_frame.add_argument("scene_id")
+    p_frame.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_poster = sub.add_parser("poster", help="render a scene's poster-frame prompt")
     p_poster.add_argument("scene_id")
+    p_poster.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_motion = sub.add_parser("motion", help="render a scene's motion/video prompt")
     p_motion.add_argument("scene_id")
     p_motion.add_argument("--mode", default=None, help="i2v | t2v | ref-anchored")
     p_motion.add_argument("--keyframe", default=None, help="path to the anchor frame")
+    p_motion.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_sheet = sub.add_parser("sheet", help="render a character reference sheet prompt")
     p_sheet.add_argument("character_id")
     p_sheet.add_argument("--look", default="primary")
+    p_sheet.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_location = sub.add_parser("location", help="render a location view prompt")
     p_location.add_argument("location_id")
     p_location.add_argument("--view", default=None)
+    p_location.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_prop = sub.add_parser("prop", help="render a prop hero-shot prompt")
     p_prop.add_argument("prop_id")
+    p_prop.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_lint = sub.add_parser("lint", help="check a scene for broken/missing references")
     p_lint.add_argument("scene_id")
+
+    sub.add_parser(
+        "status",
+        help="print a read-only project inventory (cast/locations/props refs, scene output)",
+    )
 
     sub.add_parser("styles", help="list the shipped style presets")
 
@@ -259,6 +397,7 @@ _ROOT_HANDLERS = {
     "location": cmd_location,
     "prop": cmd_prop,
     "lint": cmd_lint,
+    "status": cmd_status,
 }
 
 

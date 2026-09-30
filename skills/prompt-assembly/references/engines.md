@@ -22,7 +22,7 @@ down to one question: **what shape of input does your target video generator exp
 - **`ref-anchored --keyframe PATH`** — the hybrid, for a generator that has **no**
   separate seed-frame input but does accept a flat list of reference images. Generate
   the keyframe exactly as you would for `i2v`, then pass it as `--keyframe`; `shotkit`
-  puts that frame first in `out/<stem>.refs.txt` and writes an explicit instruction into
+  puts that frame first in `out/scenes/<scene-id>/motion.refs.txt` and writes an explicit instruction into
   the prompt that reference #1 IS frame 0 to reproduce and animate onward from. Without
   that instruction, a reference-only generator has no way to know one of its several
   peer reference images is supposed to be the exact opening frame rather than one more
@@ -66,5 +66,6 @@ or blends the surplus, and you get a render that looks plausible but is missing
 something you attached. `shotkit` has no built-in catalog of per-model caps (there's no
 single generator it assumes), so it can't enforce this for you automatically; when you
 know your target generator's real numbers, check your scene's resolved reference count
-against them yourself (`out/<stem>.refs.txt` is the ground truth for what actually got
-attached) before spending a render on a kit you suspect is oversized.
+against them yourself (`out/scenes/<scene-id>/motion.refs.txt` — or `frame.refs.txt` /
+`poster.refs.txt` — is the ground truth for what actually got attached) before spending
+a render on a kit you suspect is oversized.

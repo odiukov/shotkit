@@ -300,6 +300,27 @@ def _character_has_image(c: Character) -> bool:
     return bool(uri)
 
 
+def status_ref_paths(project: Project) -> dict:
+    """One resolved, absolute reference-image path per entity id, keyed by id.
+
+    An id maps to `[]` when nothing is configured for it. Used only by `shotkit
+    status`'s inventory to know WHICH path to check; whether that path exists on
+    disk is decided exclusively by `missing_ref_files` — this function never makes
+    that call itself, so there is exactly one place "is this reference present"
+    is answered (the same one `render_frame`/`render_motion`/etc. already use).
+    """
+    out: dict = {}
+    for c in project.characters:
+        uri, _warns = _select_character_look(c, "primary")
+        out[c.id] = [str(project.root / uri)] if uri else []
+    for loc in project.locations:
+        uris, _warns = _select_location_views(loc, "primary")
+        out[loc.id] = [str(project.root / u) for u in uris]
+    for p in project.props:
+        out[p.id] = [str(project.root / p.uri)] if p.uri else []
+    return out
+
+
 def ref_dicts(project: Project) -> list[dict]:
     """{"id", "name", "has_image"} for every entity in the project, for mentions.py."""
     out = []

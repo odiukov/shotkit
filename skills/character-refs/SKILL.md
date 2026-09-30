@@ -85,8 +85,9 @@ back built for a humanoid: a dog standing upright with arms. See
    anatomy in `bodyPlan`, wardrobe/state variants in `looks`, and any role-labelled
    reference photos in `refKit`.
 2. Run `shotkit sheet <character-id> --look <label>` (default label is `primary`). This
-   writes `out/<character-id>.<label>.sheet.txt` (the prompt) and
-   `out/<character-id>.<label>.sheet.refs.txt` (the reference image paths, in order).
+   writes `out/characters/<character-id>/<label>.sheet.txt` (the prompt) and
+   `out/characters/<character-id>/<label>.sheet.refs.txt` (the reference image paths,
+   in order) — or, with `--handoff`, prints both as one paste-ready block instead.
 3. Generate that prompt in an image model, attaching the listed reference images **in
    the listed order** — see `prompt-assembly`'s contract for why the order is load-bearing.
 4. Save the approved result and point the look's `refImage` at it in `bible.json`.

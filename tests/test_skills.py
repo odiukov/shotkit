@@ -11,6 +11,7 @@ EXPECTED = {
     "short-drama-structure",
     "character-refs",
     "prompt-assembly",
+    "scene-from-scratch",
 }
 
 # Anything naming the tool this craft was extracted from.
@@ -27,7 +28,7 @@ TOOL_WORDS = re.compile(
 
 
 class TestSkillLayout(unittest.TestCase):
-    def test_all_five_skills_exist(self):
+    def test_all_six_skills_exist(self):
         found = {p.name for p in SKILLS.iterdir() if p.is_dir()}
         self.assertEqual(found, EXPECTED)
 

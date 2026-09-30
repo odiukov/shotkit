@@ -14,10 +14,12 @@ numbers every attached image in order — and that only works if the reference i
 actually attach to the render arrive in **exactly** the order the manifest numbered
 them. Get the order right, or every role is talking about the wrong photo.
 
-**This is why `shotkit sheet`'s two output files are a matched pair: `out/<id>.<look>.sheet.txt`
-is the prompt with the numbered manifest baked in, and `out/<id>.<look>.sheet.refs.txt` is the
-reference list in that same order.** Attach them to your image model in the file's order,
-not the order you happen to have the images open in.
+**This is why `shotkit sheet`'s two output files are a matched pair:
+`out/characters/<id>/<look>.sheet.txt` is the prompt with the numbered manifest baked in,
+and `out/characters/<id>/<look>.sheet.refs.txt` is the reference list in that same
+order** (or, with `--handoff`, the same pairing printed as one block instead of two
+files). Attach them to your image model in the file's order, not the order you happen
+to have the images open in.
 
 ## The six roles
 
