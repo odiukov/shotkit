@@ -4,3 +4,4 @@ out/
 .DS_Store
 .pytest_cache/
 .superpowers/
+.DS_Store

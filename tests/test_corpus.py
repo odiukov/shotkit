@@ -12,7 +12,8 @@ location/prop descriptions — is deterministic filler with the SAME word count 
 replaced run as the original, so the two lints that fire on word-count-vs-duration
 arithmetic (`lint_dialogue_fit`) still fire on exactly the scenes they fired on
 against the real text. See `tools/redact_corpus.py`'s module docstring for the full
-rationale and `docs/plans/2026-09-30-shotkit.md` Task 14 Step 2b for the spec.
+rationale, which is the authoritative description of what the redaction keeps
+and what it replaces.
 
 The test bible defines only a "primary" look/view for every character and location —
 same as the real project this was captured against — so every `#label` selector in
