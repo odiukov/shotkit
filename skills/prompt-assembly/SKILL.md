@@ -152,6 +152,10 @@ inside a project directory (a directory holding `bible.json` and `scenes/`).
   dialogue/voiceover that won't fit the clip, and `[shot N]` anchors pointing at shots
   the motion prompt never declares. Writes nothing to `out/`; exits 1 if it found
   anything, 0 if clean.
+- `styles` — list the six shipped style presets (id, name, preamble, banned) to copy
+  into a project's `style.globalPreamble` / `style.banned`. No `--project` needed;
+  writes nothing to `out/`.
+  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" styles`
 
 ## The `out/*.txt` + `out/*.refs.txt` contract
 
@@ -162,12 +166,16 @@ its target (`s01.frame.txt` / `s01.frame.refs.txt`, `hero.primary.sheet.txt` /
 - `out/<stem>.txt` — the finished prompt text, exactly as it will be sent to a
   generator, no trailing newline added.
 - `out/<stem>.refs.txt` — the reference image paths this render resolved, one absolute
-  path per line, in the exact order the prompt's own manifest or `@mention` resolution
-  numbered them.
+  path per line, in the exact order `@mention` resolution (or, for `sheet`, the
+  `refKit` manifest) produced them.
 
-**Attach the images to your generator in that file's order.** Any ordinal language in
-the prompt — "the third image is the GARMENT," a character's turnaround sheet, a
-location's stored views — was computed from this list's order, not from the order the
-images happen to sit in your folder or your upload dialog. Reorder the attachments and
-every image after the change is mislabelled, with no error from anything: the generator
-has no way to know your attachment order doesn't match the prompt it was given.
+**Attach the images to your generator in that file's order — on every command, not just
+`sheet`.** Only `sheet`'s `refKit` manifest actually numbers references by position in
+the prompt text ("the third image is the GARMENT..."); `reference_layout_clause` (the
+frame/poster guard for two or more characters) states a *count*, not an ordering, and
+`location`/`prop` carry no ordinal language in the prompt at all. But every command's
+`.refs.txt` still reflects the real order its references were resolved in, whether or
+not the prompt spells that order out in words — reorder the attachments on any of them
+and the reference that lands on a given role silently changes, with no error from
+anything: the generator has no way to know your attachment order doesn't match the
+resolution it was given.

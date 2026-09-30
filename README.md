@@ -12,19 +12,28 @@ never talks to a generator itself — it writes text and lists files; you paste 
 Pick whichever matches how you work. All three end up at the same place: five Claude
 Code skills plus a `shotkit` CLI, available next session.
 
+Every command below names this repo's own clone directory by its **absolute path** —
+deliberately, not `./shotkit` or a bare `shotkit`. This repo's root directory and the
+Python package inside it (`shotkit/project.py` etc.) share the same name, `shotkit`. Run
+`cp -R shotkit ...` from inside the repo and the shell resolves `shotkit` to that INNER
+package directory: the command still exits 0, but it installs a folder of `.py` files
+with no `.claude-plugin/`, no `skills/`, no `template/` — silently the wrong thing, with
+nothing to say so. Replace `/path/to/shotkit` below with wherever you cloned this repo
+(e.g. the output of `pwd` when run from this file's directory).
+
 **1. Copy the folder.** Drop this whole directory at `~/.claude/skills/shotkit/`. Claude
 Code auto-loads anything under `~/.claude/skills/` as a plugin — no install step, no
 restart beyond starting a new session.
 
 ```bash
-cp -R shotkit ~/.claude/skills/shotkit
+cp -R /path/to/shotkit ~/.claude/skills/shotkit
 ```
 
 **2. Install from a local marketplace.** Registers this folder as a plugin marketplace,
 then installs the one plugin in it:
 
 ```bash
-claude plugin marketplace add ./shotkit
+claude plugin marketplace add /path/to/shotkit
 claude plugin install shotkit@shotkit
 ```
 
@@ -34,7 +43,7 @@ at the repo root. Commit that file and everyone who opens the repo in Claude Cod
 plugin with no per-person install step:
 
 ```bash
-claude plugin marketplace add ./shotkit --scope project
+claude plugin marketplace add /path/to/shotkit --scope project
 claude plugin install shotkit@shotkit --scope project
 git add .claude/settings.json
 git commit -m "chore: add shotkit plugin"
@@ -80,9 +89,11 @@ generate.
 
 `python3 shotkit.py --project my-film lint s01` checks a scene for broken or missing
 references and dialogue that won't fit its clip length, before you spend anything on a
-render. Run `python3 shotkit.py --help` for the full command list — `frame`, `poster`,
-`motion`, `sheet`, `location`, `prop`, `lint` each write their own `out/<stem>.txt` +
-`out/<stem>.refs.txt` pair.
+render. `python3 shotkit.py styles` lists the six shipped style presets (id, name,
+preamble, banned) to copy into a project's `style.globalPreamble` / `style.banned` —
+no `--project` needed, nothing written to disk. Run `python3 shotkit.py --help` for the
+full command list — `frame`, `poster`, `motion`, `sheet`, `location`, `prop`, `lint` each
+write their own `out/<stem>.txt` + `out/<stem>.refs.txt` pair.
 
 ## The five skills
 
@@ -100,11 +111,15 @@ render. Run `python3 shotkit.py --help` for the full command list — `frame`, `
 
 ## The reference-order rule
 
-> **Attach images in exactly the order `.refs.txt` lists them.** The prompt shotkit
-> writes numbers its references ("the third image is the GARMENT...") based on that
-> same order. Attach them out of order — or add, drop, or re-sort one along the way —
-> and every image after the change is mislabelled. The generator will not complain;
-> it will simply act on the wrong image for a given role, silently.
+> **Attach images in exactly the order `.refs.txt` lists them.** Only `sheet` (a
+> character reference sheet built from a `refKit`) numbers its references by
+> position in the prompt itself ("the third image is the GARMENT...") — there, the
+> order is exact and load-bearing by name. Every other command's `.refs.txt` still
+> reflects a real, meaningful order — the sequence its `@mentions` resolved in —
+> even though the prompt text doesn't spell that order out in words. Attach out of
+> order on any of them — or add, drop, or re-sort one along the way — and every
+> image after the change is mislabelled. The generator will not complain; it will
+> simply act on the wrong image for a given role, silently.
 
 ## Not included
 
