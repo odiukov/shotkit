@@ -215,3 +215,14 @@ class TestLints(ProjectCase):
         self.assertTrue(
             [w for w in lint_scene(self.project, self.scene) if "Skye" in w]
         )
+
+    def test_a_deleted_reference_file_is_reported_by_path(self):
+        # bible.json still names refs/skye-primary.png for skye's primary look — the
+        # FIELD stays populated. Only the file on disk is gone. prompt_ref_issues
+        # can't see this at all: it only checks whether the field is populated, never
+        # whether the path it names exists. This is the case that distinguishes the
+        # two checks — a populated field pointing at nothing.
+        missing_path = str(self.root / "refs" / "skye-primary.png")
+        (self.root / "refs" / "skye-primary.png").unlink()
+        warnings = lint_scene(self.project, self.scene)
+        self.assertTrue(any(missing_path in w for w in warnings), warnings)

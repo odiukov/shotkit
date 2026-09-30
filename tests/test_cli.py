@@ -131,3 +131,28 @@ class TestInit(unittest.TestCase):
                 code = main(["init", str(target)])
             self.assertEqual(code, 1)
             self.assertTrue((target / "keep.txt").exists())
+
+    def test_freshly_initialized_template_lints_non_clean_naming_its_missing_files(
+        self,
+    ):
+        # The template's reference filenames deliberately point at files that do not
+        # exist under refs/ yet (only .gitkeep is there). This is the first lesson a
+        # new user should see: lint on the fresh scaffold is NOT clean, and it names
+        # exactly which files are missing.
+        with tempfile.TemporaryDirectory() as tmp:
+            target = pathlib.Path(tmp) / "fresh-film"
+            with (
+                contextlib.redirect_stdout(io.StringIO()),
+                contextlib.redirect_stderr(io.StringIO()),
+            ):
+                init_code = main(["init", str(target)])
+            self.assertEqual(init_code, 0)
+
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = main(["--project", str(target), "lint", "s01"])
+            self.assertEqual(code, 1)
+            err_text = err.getvalue()
+            self.assertIn("hero-primary.png", err_text)
+            self.assertIn("case.png", err_text)
+            self.assertIn("ally-primary.png", err_text)

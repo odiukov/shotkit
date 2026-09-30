@@ -385,6 +385,28 @@ def _combined_banned(project: Project, scene: Scene) -> str:
 
 
 # ---------------------------------------------------------------------------
+# On-disk reference checks
+# ---------------------------------------------------------------------------
+
+
+def missing_ref_files(paths: list) -> list:
+    """Warn for every resolved reference path that does not exist on disk.
+
+    `prompt_ref_issues` (mentions.py) checks the FIELD: whether bible.json names a
+    reference image at all. This checks the FILE: whether the path that field names
+    actually exists. In the tool this was ported from, references live in an asset
+    store, so a populated field always resolves — the two checks were the same
+    question. In shotkit a reference is a path on a filesystem, so a populated field
+    can point at nothing (deleted, renamed, never added), and the two checks fail
+    independently. Callers pass already-resolved, absolute paths — a Render's own
+    `refs`, or a scene's resolved mentions; nothing here reads bible.json.
+    """
+    return [
+        f"missing reference file: {p}" for p in paths if not pathlib.Path(p).exists()
+    ]
+
+
+# ---------------------------------------------------------------------------
 # Render builders
 # ---------------------------------------------------------------------------
 
@@ -403,6 +425,7 @@ def render_frame(project: Project, scene: Scene) -> Render:
         _combined_banned(project, scene),
         look_desc_by_char,
     )
+    warnings = warnings + missing_ref_files(refs)
     return Render(prompt=prompt, refs=refs, warnings=warnings)
 
 
@@ -426,6 +449,7 @@ def render_poster(project: Project, scene: Scene) -> Render:
         look_desc_by_char,
         focus_y,
     )
+    warnings = warnings + missing_ref_files(refs)
     return Render(prompt=prompt, refs=refs, warnings=warnings)
 
 
@@ -450,6 +474,7 @@ def render_motion(
     )
     if mode == "ref-anchored":
         refs = [keyframe] + refs
+    warnings = warnings + missing_ref_files(refs)
     return Render(prompt=prompt, refs=refs, warnings=warnings)
 
 
@@ -480,7 +505,7 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
         has_identity_photos=bool(character.identity_refs),
         ref_manifest=manifest,
     )
-    return Render(prompt=prompt, refs=refs, warnings=[])
+    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 
 
 def render_location(
@@ -494,14 +519,14 @@ def render_location(
     # their architecture, materials, colours and lighting EXACTLY") — every existing
     # angle is consistency reference for the one being created.
     refs = [str(project.root / v.uri) for v in loc.views]
-    return Render(prompt=prompt, refs=refs, warnings=[])
+    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 
 
 def render_prop(project: Project, prop_id: str) -> Render:
     p = _find(project.props, prop_id, "prop")
     prompt = build_prop_view(project.style, p)
     refs = [str(project.root / p.uri)] if p.uri else []
-    return Render(prompt=prompt, refs=refs, warnings=[])
+    return Render(prompt=prompt, refs=refs, warnings=missing_ref_files(refs))
 
 
 # ---------------------------------------------------------------------------
@@ -540,5 +565,14 @@ def lint_scene(project: Project, scene: Scene) -> list:
     msg = lint_shot_anchors(scene.dialogue, scene.motion_prompt)
     if msg:
         out.append(msg)
+
+    # A field can be populated and still point at nothing (see missing_ref_files).
+    # Resolve both prompts' mentions the same way render_frame/render_motion do, and
+    # check the union of what they attach — deduped, order preserved, since the same
+    # file can be mentioned in both prompts.
+    scene_refs = _resolve_mentions(project, scene.scene_prompt)[4]
+    motion_refs = _resolve_mentions(project, scene.motion_prompt)[4]
+    all_refs = list(dict.fromkeys(scene_refs + motion_refs))
+    out.extend(missing_ref_files(all_refs))
 
     return out
