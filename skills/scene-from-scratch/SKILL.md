@@ -114,12 +114,11 @@ intake form.
 
 Ask everything you need in **one message**, not one question at a time:
 
-- **Character** — age, face, build, hair. **Never clothing** — wardrobe is a *look*
-  (`looks[]` in `bible.json`), not identity (`canonicalDescription`). Folding a garment
-  into identity is the single most common way a project loses face consistency across
-  renders: `character-refs` explains why a reference image, not prose, is what actually
-  holds a face steady, and a `canonicalDescription` is read at every render regardless
-  of what the character is wearing that scene.
+- **Character** — two pieces of information, kept separate:
+  1. **Identity**: age, face, build, hair. This becomes `canonicalDescription` — the person themselves, unchanged across scenes.
+  2. **Default look** (wardrobe/state): what they're wearing when we first meet them. This becomes the `primary` entry in the character's `looks[]` array.
+  
+  **Why split them?** Folding a garment into identity is the single most common way a project loses face consistency across renders. A `canonicalDescription` is read at every render regardless of what the character is wearing that scene — if wardrobe is baked there, you've locked the character's face to one outfit and lost the ability for costume changes or scene variations. `character-refs` explains why a reference image, not prose, is what holds a face steady; the wardrobe lives in a separate `look` so a character can be recast in different costumes and still hold the same face.
 - **Location** — what kind of place, and the light.
 - **Prop** — what the object is.
 
