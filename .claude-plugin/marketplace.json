@@ -6,7 +6,7 @@
     {
       "name": "shotkit",
       "source": "./",
-      "description": "Cinematic prompt craft for any t2i/t2v generator: cinematic-scenes (grounded shot direction), pov-scenes (subjective camera), short-drama-structure (retention beats), character-refs (role-labelled references and looks), prompt-assembly (the finished prompt and its reference order).",
+      "description": "Cinematic prompt craft for any t2i/t2v generator: cinematic-scenes (grounded shot direction), pov-scenes (subjective camera), short-drama-structure (retention beats), character-refs (role-labelled references and looks), prompt-assembly (the finished prompt and its reference order), scene-from-scratch (the cold-start workflow and copy-paste handoff).",
       "keywords": ["prompt-craft", "cinematic", "t2i", "t2v", "references"]
     }
   ]

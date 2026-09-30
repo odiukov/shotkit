@@ -9,7 +9,7 @@ never talks to a generator itself — it writes text and lists files; you paste 
 
 ## Install — three ways
 
-Pick whichever matches how you work. All three end up at the same place: five Claude
+Pick whichever matches how you work. All three end up at the same place: six Claude
 Code skills plus a `shotkit` CLI, available next session.
 
 Every command below names this repo's own clone directory by its **absolute path** —
@@ -49,9 +49,10 @@ git add .claude/settings.json
 git commit -m "chore: add shotkit plugin"
 ```
 
-Verify any of the three with `claude plugin details shotkit` — it should list five
+Verify any of the three with `claude plugin details shotkit` — it should list six
 skills (`cinematic-scenes`, `pov-scenes`, `short-drama-structure`, `character-refs`,
-`prompt-assembly`). Fewer than five means something didn't load; re-check the copy.
+`prompt-assembly`, `scene-from-scratch`). Fewer than six means something didn't load;
+re-check the copy.
 
 ## Requirements
 
@@ -81,21 +82,39 @@ under `my-film/refs/`.
 python3 shotkit.py --project my-film frame s01
 ```
 
-This writes `my-film/out/s01.frame.txt` (the finished keyframe prompt — also echoed to
-your terminal) and `my-film/out/s01.frame.refs.txt` (the reference images to attach, one
-absolute path per line, in the order the prompt numbers them). Paste the `.txt` into your
-generator's prompt box, attach every file `.refs.txt` lists — **in that order** — and
-generate.
+This writes `my-film/out/scenes/s01/frame.txt` (the finished keyframe prompt — also
+echoed to your terminal) and `my-film/out/scenes/s01/frame.refs.txt` (the reference
+images to attach, one absolute path per line, in the order the prompt numbers them).
+Paste the `.txt` into your generator's prompt box, attach every file `.refs.txt` lists
+— **in that order** — and generate. Add `--handoff` to any generating command and
+stdout carries one paste-ready block (the prompt, then a numbered image list in that
+same order) instead of the plain echo — the two `out/` files are written either way.
 
 `python3 shotkit.py --project my-film lint s01` checks a scene for broken or missing
 references and dialogue that won't fit its clip length, before you spend anything on a
-render. `python3 shotkit.py styles` lists the six shipped style presets (id, name,
-preamble, banned) to copy into a project's `style.globalPreamble` / `style.banned` —
-no `--project` needed, nothing written to disk. Run `python3 shotkit.py --help` for the
-full command list — `frame`, `poster`, `motion`, `sheet`, `location`, `prop`, `lint` each
-write their own `out/<stem>.txt` + `out/<stem>.refs.txt` pair.
+render. `python3 shotkit.py --project my-film status` prints a read-only inventory of
+the whole project — every character/location/prop with a mark for whether its
+reference image exists on disk, every scene with a mark for whether it already has
+rendered output — without opening any of the individual files by hand.
+`python3 shotkit.py styles` lists the six shipped style presets (id, name, preamble,
+banned) to copy into a project's `style.globalPreamble` / `style.banned` — no
+`--project` needed, nothing written to disk. Run `python3 shotkit.py --help` for the
+full command list — `frame`, `poster`, `motion`, `sheet`, `location`, `prop` each accept
+`--handoff` and write their own prompt + refs pair nested under `out/` by kind and
+entity id:
 
-## The five skills
+```
+out/scenes/<scene-id>/frame.txt            out/scenes/<scene-id>/frame.refs.txt
+out/scenes/<scene-id>/poster.txt           out/scenes/<scene-id>/poster.refs.txt
+out/scenes/<scene-id>/motion.txt           out/scenes/<scene-id>/motion.refs.txt
+out/characters/<character-id>/<look>.sheet.txt
+out/characters/<character-id>/<look>.sheet.refs.txt
+out/locations/<location-id>/<view>.view.txt
+out/locations/<location-id>/<view>.view.refs.txt
+out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
+```
+
+## The six skills
 
 - **cinematic-scenes** — grounded, photorealistic shot direction: body weight,
   environmental force, motivated camera movement, and why a clip reads flat or gets
@@ -108,6 +127,10 @@ write their own `out/<stem>.txt` + `out/<stem>.refs.txt` pair.
   role-labelled reference images and named looks, including non-human body plans.
 - **prompt-assembly** — what shotkit actually emits: the fixed clause order in a frame,
   poster or motion prompt, and the CLI's file contract.
+- **scene-from-scratch** — the entry point: what to do when someone asks for a scene and
+  the project may not have the cast, location or props yet — the cold-start question
+  pass, writing the bible, generating references before the scene, and the final
+  copy-paste handoff.
 
 ## The reference-order rule
 

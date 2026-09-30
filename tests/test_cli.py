@@ -26,8 +26,8 @@ class TestCli(unittest.TestCase):
     def test_frame_writes_both_files_and_echoes_the_prompt(self):
         code, out, _ = self.run_cli("frame", "s01")
         self.assertEqual(code, 0)
-        prompt_file = self.root / "out" / "s01.frame.txt"
-        refs_file = self.root / "out" / "s01.frame.refs.txt"
+        prompt_file = self.root / "out" / "scenes" / "s01" / "frame.txt"
+        refs_file = self.root / "out" / "scenes" / "s01" / "frame.refs.txt"
         self.assertTrue(prompt_file.exists())
         self.assertTrue(refs_file.exists())
         self.assertEqual(prompt_file.read_text(encoding="utf-8"), out.rstrip("\n"))
@@ -35,7 +35,7 @@ class TestCli(unittest.TestCase):
     def test_refs_file_is_one_absolute_path_per_line(self):
         self.run_cli("frame", "s01")
         lines = (
-            (self.root / "out" / "s01.frame.refs.txt")
+            (self.root / "out" / "scenes" / "s01" / "frame.refs.txt")
             .read_text(encoding="utf-8")
             .splitlines()
         )
@@ -47,7 +47,7 @@ class TestCli(unittest.TestCase):
     def test_sheet_writes_refs_in_slot_order(self):
         self.run_cli("sheet", "skye")
         lines = (
-            (self.root / "out" / "skye.primary.sheet.refs.txt")
+            (self.root / "out" / "characters" / "skye" / "primary.sheet.refs.txt")
             .read_text(encoding="utf-8")
             .splitlines()
         )
@@ -87,13 +87,13 @@ class TestCli(unittest.TestCase):
     def test_poster_writes_its_own_stem(self):
         code, _, _ = self.run_cli("poster", "s01")
         self.assertEqual(code, 0)
-        self.assertTrue((self.root / "out" / "s01.poster.txt").exists())
+        self.assertTrue((self.root / "out" / "scenes" / "s01" / "poster.txt").exists())
 
     def test_location_view_selects_the_labelled_view(self):
         code, _, _ = self.run_cli("location", "church", "--view", "night")
         self.assertEqual(code, 0)
         refs = (
-            (self.root / "out" / "church.night.view.refs.txt")
+            (self.root / "out" / "locations" / "church" / "night.view.refs.txt")
             .read_text(encoding="utf-8")
             .splitlines()
         )
@@ -102,7 +102,7 @@ class TestCli(unittest.TestCase):
     def test_prop_writes_its_own_stem(self):
         code, _, _ = self.run_cli("prop", "key")
         self.assertEqual(code, 0)
-        self.assertTrue((self.root / "out" / "key.prop.txt").exists())
+        self.assertTrue((self.root / "out" / "props" / "key" / "prop.txt").exists())
 
 
 class TestCliRefusalMessages(unittest.TestCase):
@@ -202,6 +202,166 @@ class TestCliRefusalMessages(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("skye", err)
         self.assertIn("primary", err.lower())
+
+
+class TestHandoff(unittest.TestCase):
+    """--handoff replaces stdout with one paste-ready block; files are unaffected."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = make_project(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def run_cli(self, *args):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = main(["--project", str(self.root), *args])
+        return code, out.getvalue(), err.getvalue()
+
+    def test_handoff_still_writes_both_out_files(self):
+        code, _, _ = self.run_cli("sheet", "skye", "--handoff")
+        self.assertEqual(code, 0)
+        out_dir = self.root / "out" / "characters" / "skye"
+        self.assertTrue((out_dir / "primary.sheet.txt").exists())
+        self.assertTrue((out_dir / "primary.sheet.refs.txt").exists())
+
+    def test_handoff_block_exact_shape_with_references(self):
+        code, out, _ = self.run_cli("sheet", "skye", "--handoff")
+        self.assertEqual(code, 0)
+
+        out_dir = self.root / "out" / "characters" / "skye"
+        prompt_text = (out_dir / "primary.sheet.txt").read_text(encoding="utf-8")
+        refs = (
+            (out_dir / "primary.sheet.refs.txt")
+            .read_text(encoding="utf-8")
+            .splitlines()
+        )
+        self.assertTrue(refs)
+
+        self.assertIn("=== PROMPT — paste this into your generator ===", out)
+        self.assertIn(prompt_text, out)
+        self.assertIn("=== ATTACH THESE IMAGES, IN THIS ORDER ===", out)
+        for i, path in enumerate(refs, start=1):
+            self.assertIn(f"{i}. {path}", out)
+        # Nothing that looks like a prompt-file echo without the handoff headers.
+        self.assertNotEqual(out.strip(), prompt_text.strip())
+
+    def test_handoff_with_no_references_says_so_plainly_not_an_empty_heading(self):
+        bible = {
+            "style": {"globalPreamble": "photoreal cinematic, 35mm", "banned": ""},
+            "characters": [],
+            "locations": [],
+            "props": [
+                {
+                    "id": "ghost",
+                    "name": "Unphotographed Prop",
+                    "canonicalDescription": "A plain grey box.",
+                }
+            ],
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            (root / "scenes").mkdir(parents=True)
+            (root / "refs").mkdir()
+            (root / "bible.json").write_text(json.dumps(bible), encoding="utf-8")
+
+            out, err = io.StringIO(), io.StringIO()
+            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                code = main(["--project", str(root), "prop", "ghost", "--handoff"])
+
+            self.assertEqual(code, 0)
+            refs_file = root / "out" / "props" / "ghost" / "prop.refs.txt"
+            self.assertEqual(refs_file.read_text(encoding="utf-8"), "")
+
+            text = out.getvalue()
+            self.assertIn("=== ATTACH THESE IMAGES, IN THIS ORDER ===", text)
+            # Says plainly that none are needed, rather than an empty heading with
+            # nothing under it.
+            heading_idx = text.index("=== ATTACH THESE IMAGES, IN THIS ORDER ===")
+            after_heading = text[heading_idx:].strip()
+            self.assertNotEqual(
+                after_heading, "=== ATTACH THESE IMAGES, IN THIS ORDER ==="
+            )
+            self.assertIn("none", after_heading.lower())
+
+    def test_handoff_still_writes_warnings_to_stderr(self):
+        (self.root / "refs" / "key.png").unlink()
+        code, _, err = self.run_cli("prop", "key", "--handoff")
+        self.assertEqual(code, 0)
+        self.assertIn("missing reference file", err)
+
+
+class TestStatusCommand(unittest.TestCase):
+    """`shotkit status` — a read-only inventory, never a gate (exit 0 unless the
+    project itself can't be loaded)."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = make_project(pathlib.Path(self._tmp.name))
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def run_cli(self, *args):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = main(["--project", str(self.root), *args])
+        return code, out.getvalue(), err.getvalue()
+
+    def test_status_marks_present_reference_scene_without_output_and_writes_nothing(
+        self,
+    ):
+        # key's reference file exists on disk (make_project wrote it); a second
+        # scene with no rendered output yet.
+        scene2 = dict(SCENE, id="s02")
+        (self.root / "scenes" / "s02.json").write_text(
+            json.dumps(scene2), encoding="utf-8"
+        )
+
+        code, out, _ = self.run_cli("status")
+        self.assertEqual(code, 0)
+        self.assertIn("[x] skye", out)
+        self.assertIn("[x] church", out)
+        self.assertIn("[x] key", out)
+        self.assertIn("[ ] s02", out)
+        self.assertFalse((self.root / "out").exists())
+
+    def test_status_marks_a_missing_reference_file_and_a_rendered_scene(self):
+        (self.root / "refs" / "key.png").unlink()
+        self.run_cli("frame", "s01")  # populates out/ for s01
+
+        code, out, _ = self.run_cli("status")
+        self.assertEqual(code, 0)
+        self.assertIn("[ ] key", out)
+        self.assertIn("[x] s01", out)
+
+    def test_status_refuses_a_bad_project_naming_bible_json(self):
+        bad = pathlib.Path(self._tmp.name) / "does-not-exist"
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = main(["--project", str(bad), "status"])
+        self.assertEqual(code, 1)
+        self.assertIn("bible.json", err.getvalue())
+
+    def test_status_uses_same_output_path_as_render_paths(self):
+        """Regression test: status and _render_paths must agree on where scene output
+        lives. If the output layout ever changes, they must change together."""
+        from shotkit.cli import _render_paths, SCENES_CATEGORY
+
+        # Generate a frame to populate out/
+        self.run_cli("frame", "s01")
+
+        # Ask _render_paths where it put the output
+        prompt_path, _ = _render_paths(self.root, SCENES_CATEGORY, "s01", "frame")
+        expected_out_dir = prompt_path.parent
+
+        # Verify that status sees the output in the same place
+        code, out, _ = self.run_cli("status")
+        self.assertEqual(code, 0)
+        # The "x" mark means status found output for s01
+        self.assertIn("[x] s01", out)
 
 
 class TestStylesCommand(unittest.TestCase):
