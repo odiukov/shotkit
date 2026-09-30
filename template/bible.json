@@ -1,0 +1,82 @@
+{
+  "style": {
+    "globalPreamble": "photoreal cinematic, 35mm film look, natural light, shallow depth of field",
+    "banned": "text, watermark, logo, extra limbs, blurry, low quality"
+  },
+  "characters": [
+    {
+      "id": "hero",
+      "name": "Alex Rivera",
+      "canonicalDescription": "Woman, early 30s, short dark hair, athletic build, wears a weathered leather jacket.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "weathered leather jacket over a grey tee",
+          "refImage": "refs/hero-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [
+        {
+          "role": "face",
+          "uri": "refs/hero-face.png",
+          "note": "neutral expression, front-on, even lighting"
+        },
+        {
+          "role": "body",
+          "uri": "refs/hero-body.png",
+          "note": "full body, neutral pose, plain background"
+        },
+        {
+          "role": "outfit",
+          "uri": "refs/hero-jacket.png",
+          "note": "jacket laid flat, no wrinkles"
+        }
+      ],
+      "referenceImages": []
+    },
+    {
+      "id": "ally",
+      "name": "Jordan Blake",
+      "canonicalDescription": "Man, late 20s, curly brown hair, glasses, wears a navy wool coat.",
+      "bodyPlan": "humanoid",
+      "looks": [
+        {
+          "label": "primary",
+          "description": "navy wool coat over a white shirt",
+          "refImage": "refs/ally-primary.png"
+        }
+      ],
+      "identityRefs": [],
+      "refKit": [
+        {
+          "role": "face",
+          "uri": "refs/ally-face.png",
+          "note": "neutral expression, front-on, even lighting"
+        }
+      ],
+      "referenceImages": []
+    }
+  ],
+  "locations": [
+    {
+      "id": "warehouse",
+      "name": "Old Warehouse",
+      "canonicalDescription": "A cavernous brick warehouse, rusted girders overhead, shafts of dusty light through broken windows.",
+      "lightingProfile": "Late afternoon sun through high broken windows, warm shafts cutting through dust.",
+      "views": [
+        {"label": "primary", "uri": "refs/warehouse-day.png"},
+        {"label": "night", "uri": "refs/warehouse-night.png"}
+      ]
+    }
+  ],
+  "props": [
+    {
+      "id": "case",
+      "name": "Metal Briefcase",
+      "canonicalDescription": "Scuffed aluminium briefcase with two brass latches and a worn leather handle.",
+      "uri": "refs/case.png"
+    }
+  ]
+}
