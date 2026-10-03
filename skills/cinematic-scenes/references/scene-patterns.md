@@ -24,10 +24,9 @@ settled body, environmental force in frame) and keep the rest as the `motionProm
 HELD patterns MUST keep their "ONE continuous shot, NO cuts, no zoom" opener — most engines
 default to cutting and will split the take without it.
 
-**Voiceover budget:** the `voiceover` field is tempo-fit to the scene and only compresses
-up to ~1.15× — budget ≈ `durationSec × 2.3` words (~2.3 words/sec at natural pace). Size any
-narration you add to these templates to their stated duration; a longer, richer `motionPrompt`
-doesn't earn the VO more room.
+**Speech budget:** put narration in `dialogue` as `VO:` with `generateAudio: true`.
+Budget all spoken and narrated words together at roughly `durationSec × 2` words.
+A longer, richer `motionPrompt` does not give narration more time.
 
 ---
 
@@ -151,7 +150,7 @@ Earned because the beat plays at **low amplitude** — but it still turns, and i
 Earned because the car is the motion — the camera locks so the world moves past.
 
 - **motionPrompt**: `ONE continuous shot, NO cuts, no zoom, 8s, 9:16. 35mm anamorphic, naturalistic skin tones, low-key interior with passing exterior light, WB locked 3800K, shallow depth of field. 29° FOV, locked-off frame with slight handheld breathing, eye-level from the passenger side. @driver alone behind the wheel of @car on a two-lane highway at dusk, holding a steady 90 km/h; hands at 9 and 3, grip relaxed, jaw set. He glances at the rearview mirror once, then back to the road; then his hand leaves the wheel, kills the radio, and returns. Light from passing streetlamps and oncoming headlights sweeps across his face in slow rhythmic bands; dust motes in the side-window light; the highway behind the glass out of focus, moving at speed. Ambient: tire roar on asphalt, faint heater fan, a radio talk-voice low under the noise floor → the radio cuts dead and the tire roar floods the cabin; no score, no dialogue.`
-- **dialogue**: empty. **voiceover**: optional narration. **generateAudio**: true.
+- **dialogue**: empty, or `VO: <narration>` (remove the motion prompt's "no dialogue" phrase when adding narration). **generateAudio**: true.
 - Critical: lock the frame or use gentle handheld breathing only — an aggressive cabin camera is a music video, not film. Without the NO-cuts opener the engine will cut the cabin into angles. Note the radio kill: even a locked driving hold gets one WORLD event, and the ambient arc rides it.
 
 ### Environmental interaction (weather as character, held truck)

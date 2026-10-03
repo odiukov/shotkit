@@ -7,7 +7,7 @@
     {
       "id": "hero",
       "name": "Alex Rivera",
-      "canonicalDescription": "Woman, early 30s, short dark hair, athletic build, wears a weathered leather jacket.",
+      "canonicalDescription": "Woman, early 30s, short dark hair, athletic build.",
       "bodyPlan": "humanoid",
       "looks": [
         {
@@ -17,29 +17,13 @@
         }
       ],
       "identityRefs": [],
-      "refKit": [
-        {
-          "role": "face",
-          "uri": "refs/hero-face.png",
-          "note": "neutral expression, front-on, even lighting"
-        },
-        {
-          "role": "body",
-          "uri": "refs/hero-body.png",
-          "note": "full body, neutral pose, plain background"
-        },
-        {
-          "role": "outfit",
-          "uri": "refs/hero-jacket.png",
-          "note": "jacket laid flat, no wrinkles"
-        }
-      ],
+      "refKit": [],
       "referenceImages": []
     },
     {
       "id": "ally",
       "name": "Jordan Blake",
-      "canonicalDescription": "Man, late 20s, curly brown hair, glasses, wears a navy wool coat.",
+      "canonicalDescription": "Man, late 20s, curly brown hair, glasses.",
       "bodyPlan": "humanoid",
       "looks": [
         {
@@ -49,13 +33,7 @@
         }
       ],
       "identityRefs": [],
-      "refKit": [
-        {
-          "role": "face",
-          "uri": "refs/ally-face.png",
-          "note": "neutral expression, front-on, even lighting"
-        }
-      ],
+      "refKit": [],
       "referenceImages": []
     }
   ],

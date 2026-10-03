@@ -26,7 +26,6 @@ from shotkit.guards import (
     lint_dialogue_fit,
     lint_music_words,
     lint_shot_anchors,
-    lint_vo_fit,
     narrator_voice_map,
 )
 from shotkit.mentions import (
@@ -56,6 +55,7 @@ from shotkit.types import (
     Style,
     norm_label,
 )
+from shotkit.validation import SCENE, path_component, validate, validate_bible
 
 
 # ---------------------------------------------------------------------------
@@ -70,7 +70,6 @@ class Scene:
     scene_prompt: str
     motion_prompt: str
     dialogue: str
-    voiceover: str
     duration_sec: float
     generate_audio: bool
     aspect: str | None
@@ -94,14 +93,14 @@ class Render:
     refs: list[str]
     warnings: list[str]
     # Set only by render_sheet/render_location/render_prop — the three renders whose
-    # OWN output becomes a reference image, rather than attaching @mentions of other
-    # entities. _handoff_block reads these only when `refs` is empty, to tell the two
-    # "nothing to attach" cases apart: a creator render with nothing needed yet (name
-    # the save path, when bible.json already names one) versus a mention-based render
-    # (frame/poster/motion) whose empty list means the prompt mentions nothing, or
-    # mentions something with no image configured.
+    # OWN output becomes a reference image. The handoff shows its destination
+    # independently of whether any existing images are used as inputs.
     creates_reference: bool = False
     save_to: str | None = None
+    aspect: str | None = None
+    duration_sec: float | None = None
+    mode: str | None = None
+    start_frame: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -172,13 +171,15 @@ def _prop_from_json(d: dict) -> Prop:
 
 
 def _scene_from_json(d: dict) -> Scene:
+    # Empty legacy fields remain readable; authored narration must use dialogue VO:.
+    if d.get("voiceover", "").strip():
+        raise ValueError("voiceover is removed; move narration to dialogue as 'VO: ...' and set generateAudio to true")
     return Scene(
         id=d["id"],
         location_id=d.get("locationId", ""),
         scene_prompt=d.get("scenePrompt", ""),
         motion_prompt=d.get("motionPrompt", ""),
         dialogue=d.get("dialogue", ""),
-        voiceover=d.get("voiceover", ""),
         duration_sec=d.get("durationSec", 0),
         generate_audio=d.get("generateAudio", True),
         aspect=d.get("aspect"),
@@ -195,11 +196,12 @@ def _scene_from_json(d: dict) -> Scene:
 
 def load_project(root) -> Project:
     """Load bible.json under *root* into a Project. Raises FileNotFoundError if absent."""
-    root = pathlib.Path(root)
+    root = pathlib.Path(root).absolute()
     bible_path = root / "bible.json"
     if not bible_path.exists():
         raise FileNotFoundError(f"bible.json not found: {bible_path}")
     data = json.loads(bible_path.read_text(encoding="utf-8"))
+    validate_bible(data, str(bible_path))
     return Project(
         root=root,
         style=_style_from_json(data.get("style", {})),
@@ -211,10 +213,16 @@ def load_project(root) -> Project:
 
 def load_scene(project: Project, scene_id: str) -> Scene:
     """Load scenes/<scene_id>.json. Raises FileNotFoundError if absent."""
+    path_component(scene_id, "scene id")
     scene_path = project.root / "scenes" / f"{scene_id}.json"
     if not scene_path.exists():
         raise FileNotFoundError(f"scene file not found: {scene_path}")
     data = json.loads(scene_path.read_text(encoding="utf-8"))
+    validate(data, SCENE, str(scene_path))
+    if data["id"] != scene_id:
+        raise ValueError(f"{scene_path}: id must match filename ({scene_id!r})")
+    if data.get("locationId"):
+        _find(project.locations, data["locationId"], "location")
     return _scene_from_json(data)
 
 
@@ -434,7 +442,7 @@ def missing_ref_files(paths: list) -> list:
     `refs`, or a scene's resolved mentions; nothing here reads bible.json.
     """
     return [
-        f"missing reference file: {p}" for p in paths if not pathlib.Path(p).exists()
+        f"missing reference file: {p}" for p in paths if not pathlib.Path(p).is_file()
     ]
 
 
@@ -443,9 +451,18 @@ def missing_ref_files(paths: list) -> list:
 # ---------------------------------------------------------------------------
 
 
+def _scene_mentions(project: Project, scene: Scene, text: str) -> str:
+    """Use locationId as the default location; an explicit view selector wins."""
+    if scene.location_id:
+        _find(project.locations, scene.location_id, "location")
+        if scene.location_id not in mentioned_ref_ids(text, ref_dicts(project)):
+            return f"{text} @{scene.location_id}"
+    return text
+
+
 def render_frame(project: Project, scene: Scene) -> Render:
     chars, locations, props, look_desc_by_char, refs, warnings = _resolve_mentions(
-        project, scene.scene_prompt
+        project, _scene_mentions(project, scene, scene.scene_prompt)
     )
     clean_prompt = strip_mentions(scene.scene_prompt, ref_dicts(project))
     prompt = build_scene_frame_prompt(
@@ -458,12 +475,13 @@ def render_frame(project: Project, scene: Scene) -> Render:
         look_desc_by_char,
     )
     warnings = warnings + missing_ref_files(refs)
-    return Render(prompt=prompt, refs=refs, warnings=warnings)
+    return Render(prompt=prompt, refs=refs, warnings=warnings,
+                  aspect=scene.aspect or project.style.aspect)
 
 
 def render_poster(project: Project, scene: Scene) -> Render:
     chars, locations, props, look_desc_by_char, refs, warnings = _resolve_mentions(
-        project, scene.scene_prompt
+        project, _scene_mentions(project, scene, scene.scene_prompt)
     )
     clean_prompt = strip_mentions(scene.scene_prompt, ref_dicts(project))
     # None (no posterFocusY on the scene) means "this project has no story-card crop
@@ -482,7 +500,7 @@ def render_poster(project: Project, scene: Scene) -> Render:
         scene.poster_focus_y,
     )
     warnings = warnings + missing_ref_files(refs)
-    return Render(prompt=prompt, refs=refs, warnings=warnings)
+    return Render(prompt=prompt, refs=refs, warnings=warnings, aspect="9:16")
 
 
 def _project_narrator_voices(project: Project) -> dict:
@@ -509,19 +527,16 @@ def render_motion(
 ) -> Render:
     if mode == "ref-anchored" and not keyframe:
         raise ValueError("ref-anchored mode requires a keyframe")
+    if mode == "t2v" and keyframe:
+        raise ValueError("t2v has no start frame; use i2v or ref-anchored with --keyframe")
+    if keyframe:
+        keyframe = str((project.root / keyframe).absolute())
 
-    # The mention set (and therefore the reference list and the who-is-who >=2
-    # threshold) is resolved from motionPrompt UNION scenePrompt, exactly like the
-    # tool's `present` (scene_request.py:573-582) and `_build_scene_ref_budget`. The
-    # shipped template is the demonstration: scenePrompt names the cast, motionPrompt
-    # is bare camera direction — resolving from motion_prompt alone left every t2v
-    # render unanchored while lint stayed clean (lint already unions the two prompts
-    # independently in `lint_scene` below). The assembled STRING still comes from
-    # motion_prompt alone (`build_motion_prompt` below) — scenePrompt only ever
-    # widens which characters/locations/props count, never what text is sent.
+    # Resolve motion mentions first, then still-only mentions and the default location.
+    # scenePrompt contributes references, not shot prose. The project style is shared.
     mention_text = " ".join(filter(None, [scene.motion_prompt, scene.scene_prompt]))
     chars, _locations, _props, _look_desc_by_char, refs, warnings = _resolve_mentions(
-        project, mention_text
+        project, _scene_mentions(project, scene, mention_text)
     )
     prompt = build_motion_prompt(
         scene.motion_prompt,
@@ -533,10 +548,20 @@ def render_motion(
         refs_for_strip=ref_dicts(project),
         voices=_project_narrator_voices(project),
     )
+    if project.style.global_preamble:
+        prompt = project.style.global_preamble + "\n" + prompt
     if mode == "ref-anchored":
         refs = [keyframe] + refs
     warnings = warnings + missing_ref_files(refs)
-    return Render(prompt=prompt, refs=refs, warnings=warnings)
+    if mode == "i2v":
+        if keyframe:
+            warnings += missing_ref_files([keyframe])
+        else:
+            warnings.append("i2v needs a start-frame image in the generator; pass --keyframe to include its path in the handoff")
+    return Render(prompt=prompt, refs=refs, warnings=warnings,
+                  aspect=scene.aspect or project.style.aspect,
+                  duration_sec=scene.duration_sec or None, mode=mode,
+                  start_frame=keyframe if mode == "i2v" else None)
 
 
 def _character_bases(project: Project, character: Character) -> list:
@@ -554,9 +579,12 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
 
     bases = _character_bases(project, character)
     look_label = norm_label(look)
+    path_component(look, "look")
     look_obj = next(
         (lk for lk in character.looks if norm_label(lk.label) == look_label), None
     )
+    if look_obj is None and look_label != "primary":
+        raise ValueError(f"character {character_id!r}: unknown look {look!r}; add it to looks in bible.json first")
     # Mirrors the tool's generate_character_look (app/application/
     # ensure_references.py:240-259): once the requested look resolves to an
     # EXISTING, non-primary Look, both `bases` and `identity_refs` are dropped
@@ -615,9 +643,7 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
 
         refs = identity_paths + base_paths
 
-    # This sheet's OWN destination, straight from bible.json — never guessed from the
-    # stem. Populated whenever the requested look already names a refImage, whether or
-    # not refs (above) ended up empty; _handoff_block only reads it in the empty case.
+    # The destination is separate from input refs, and comes directly from the bible.
     save_to = (
         str(project.root / look_obj.ref_image)
         if look_obj and look_obj.ref_image
@@ -629,6 +655,7 @@ def render_sheet(project: Project, character_id: str, look: str = "primary") -> 
         warnings=missing_ref_files(refs),
         creates_reference=True,
         save_to=save_to,
+        aspect="9:16",
     )
 
 
@@ -636,31 +663,33 @@ def render_location(
     project: Project, location_id: str, view: str | None = None
 ) -> Render:
     loc = _find(project.locations, location_id, "location")
+    if view:
+        path_component(view, "view")
     prompt = build_location_view(project.style, loc, view)
-    # Deliberate: attach every stored view, not just the primary. This is generating a
-    # NEW view of the location, and build_location_view's own prompt text asks for
-    # exactly this ("this is the SAME place from a different camera angle — match
-    # their architecture, materials, colours and lighting EXACTLY") — every existing
-    # angle is consistency reference for the one being created.
-    refs = [str(project.root / v.uri) for v in loc.views]
-    # Every `views[]` entry that exists already contributed its own uri to refs above,
-    # so refs is empty only when the location has NO views at all yet — nothing in
-    # bible.json names a destination for any label in that case, this one included.
+    # Existing angles condition the new view; ungenerated paths are destinations.
+    refs = [
+        str(project.root / v.uri) for v in loc.views
+        if (project.root / v.uri).is_file()
+    ]
+    selected = (
+        next((v for v in loc.views if norm_label(v.label) == norm_label(view)), None)
+        if view and norm_label(view) != "primary"
+        else next(iter(loc.views), None)
+    )
     return Render(
         prompt=prompt,
         refs=refs,
         warnings=missing_ref_files(refs),
         creates_reference=True,
-        save_to=None,
+        save_to=str(project.root / selected.uri) if selected else None,
+        aspect="9:16",
     )
 
 
 def render_prop(project: Project, prop_id: str) -> Render:
     p = _find(project.props, prop_id, "prop")
     prompt = build_prop_view(project.style, p)
-    refs = [str(project.root / p.uri)] if p.uri else []
-    # p.uri IS the destination; when it's set, refs above is already non-empty (the
-    # unchanged case), so refs is empty here only when bible.json names no uri at all.
+    refs = [str(project.root / p.uri)] if p.uri and (project.root / p.uri).is_file() else []
     save_to = str(project.root / p.uri) if p.uri else None
     return Render(
         prompt=prompt,
@@ -668,6 +697,7 @@ def render_prop(project: Project, prop_id: str) -> Render:
         warnings=missing_ref_files(refs),
         creates_reference=True,
         save_to=save_to,
+        aspect="9:16",
     )
 
 
@@ -680,7 +710,8 @@ def lint_scene(project: Project, scene: Scene) -> list:
     refs = ref_dicts(project)
     out: list = []
 
-    scene_issues = prompt_ref_issues(scene.scene_prompt, refs)
+    scene_text = _scene_mentions(project, scene, scene.scene_prompt)
+    scene_issues = prompt_ref_issues(scene_text, refs)
     for tok in scene_issues["unknown"]:
         out.append(f"scenePrompt: unknown reference {tok}")
     for name in scene_issues["missing"]:
@@ -700,9 +731,8 @@ def lint_scene(project: Project, scene: Scene) -> list:
     if msg:
         out.append(msg)
 
-    msg = lint_vo_fit(scene.voiceover, scene.duration_sec)
-    if msg:
-        out.append(msg)
+    if scene.dialogue.strip() and not scene.generate_audio:
+        out.append("dialogue (including VO:) is ignored when generateAudio is false")
 
     msg = lint_shot_anchors(scene.dialogue, scene.motion_prompt)
     if msg:
@@ -712,7 +742,7 @@ def lint_scene(project: Project, scene: Scene) -> list:
     # Resolve both prompts' mentions the same way render_frame/render_motion do, and
     # check the union of what they attach — deduped, order preserved, since the same
     # file can be mentioned in both prompts.
-    scene_refs = _resolve_mentions(project, scene.scene_prompt)[4]
+    scene_refs = _resolve_mentions(project, scene_text)[4]
     motion_refs = _resolve_mentions(project, scene.motion_prompt)[4]
     all_refs = list(dict.fromkeys(scene_refs + motion_refs))
     out.extend(missing_ref_files(all_refs))

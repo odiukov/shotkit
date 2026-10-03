@@ -51,13 +51,10 @@ STORY = json.loads((CORPUS_DIR / "story.json").read_text(encoding="utf-8"))
 # The real export's own scene ids are NOT unique across its two episodes (both
 # episodes number scenes sc_1, sc_2, ... independently) — story.json is a flat list
 # in the real export's own order, so scenes are identified by LIST POSITION, never by
-# id alone. These three positions are the exact scenes (by index) that legitimately
-# trip `lint_dialogue_fit` against the real word counts and real durationSec values —
-# established once, directly against the real export, before redaction (see the Task
-# 14 report for the reproduction). Word-for-word filler substitution never touches
-# whitespace, so every word count — and therefore this set — survives redaction
-# unchanged.
-_EXPECTED_DIALOGUE_FIT_HITS = {13: "sc_9", 16: "sc_11", 23: "sc_9b8724bf"}
+# id alone. Filler substitution preserves word counts for the combined speech budget.
+# Combined baked speech (spoken + VO), at 2 words/sec:
+# 13: 23 words / 14s fits; 16: 5 / 7s underfills; 23: 32 / 15s and 41: 29 / 14s overrun.
+_EXPECTED_DIALOGUE_FIT_HITS = {16: "sc_11", 23: "sc_9b8724bf", 41: "sc_17"}
 
 
 def _load_project() -> Project:

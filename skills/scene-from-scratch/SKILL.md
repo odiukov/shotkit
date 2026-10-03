@@ -156,7 +156,8 @@ for either file; they're plain JSON you create directly (field shapes verified a
 - Prop: `id`, `name`, `canonicalDescription`, a `uri` under `refs/` that doesn't exist
   yet.
 - Scene: `id`, `locationId`, plus the prompt fields `cinematic-scenes` teaches you to
-  fill (`motionPrompt` primarily, `dialogue`/`voiceover`/`generateAudio`/`durationSec`).
+  fill (`motionPrompt` primarily, `dialogue`/`generateAudio`/`durationSec`). All
+  narration belongs in `dialogue` as `VO:` or `Name: VO:` with `generateAudio: true`.
 
 Update `STORY.md`'s Cast / Scenes-in-order sections as you add each entry.
 
@@ -181,9 +182,10 @@ image file that the look's `refImage` points at, which every scene from then on 
   references (`refKit`: separate face/body/hair/garment photos) are a stronger version
   of the same idea — see `character-refs` for how those are built and attached.
 
-Locations and props have only the text-only route — `location`/`prop --handoff` behaves
-the same way as the character's text-only case: an empty attach list names the
-destination path (or says none is configured) because the render IS what fills it in.
+Locations and props start from text when their configured images do not yet exist.
+`location`/`prop --handoff` names the destination to save the generated reference to.
+On later runs, existing location views or the existing prop image are attached for
+consistency. Configured but not yet generated images are destinations, not inputs.
 
 The scene cannot be assembled until every entity it `@mentions` has a reference image on
 disk — `shotkit lint` will report each one missing, and a `.refs.txt` that lists a path
@@ -225,7 +227,7 @@ Once every `@mentioned` entity has its reference image in place:
    single shot carries both a spoken line and a `VO:` segment.
 2. Run `shotkit --project <dir> lint <scene-id>` and fix anything it reports — it
    checks for unresolved/missing references, music/singing words, dialogue or
-   voiceover that won't fit the clip, and `[shot N]` anchors pointing at shots the
+   `VO:` narration that won't fit the clip together with spoken lines, and `[shot N]` anchors pointing at shots the
    motion prompt never declares.
 3. Run `shotkit --project <dir> motion <scene-id> --mode t2v --handoff` — `t2v` is the
    default mode for every scene per `cinematic-scenes` (frees the camera, needs no seed

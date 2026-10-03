@@ -291,8 +291,8 @@ class TestHandoff(unittest.TestCase):
             self.assertIn("bible.json", after_heading)
 
     def test_handoff_still_writes_warnings_to_stderr(self):
-        (self.root / "refs" / "key.png").unlink()
-        code, _, err = self.run_cli("prop", "key", "--handoff")
+        (self.root / "refs" / "skye-primary.png").unlink()
+        code, _, err = self.run_cli("frame", "s01", "--handoff")
         self.assertEqual(code, 0)
         self.assertIn("missing reference file", err)
 

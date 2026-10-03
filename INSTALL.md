@@ -92,11 +92,10 @@ install path and redo it with an absolute path to the repo root.
 cd "$SHOTKIT" && python3 -m unittest discover -s tests
 ```
 
-All tests must pass. These are not ordinary unit tests: most of them compare shotkit's
-output against golden fixtures captured by running the original pipeline this craft came
-from. Green means the prompts shotkit emits are the prompts that pipeline emitted, byte for
-byte. That is the whole claim of this package, so a red suite is worth stopping over rather
-than working around.
+All tests must pass. Golden fixtures protect the original prompt-building rules;
+workflow and validation tests cover project loading, reference generation, settings,
+and narration through `VO:` in `dialogue`. The assembled project prompts include
+shotkit-specific behavior, including the shared motion style preamble.
 
 If Python is older than 3.9, say so and stop — that is the floor.
 

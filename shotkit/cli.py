@@ -123,6 +123,25 @@ def _handoff_block(render: project_mod.Render) -> str:
             "(none attached — nothing in this prompt @mentions a reference image, "
             "or what's mentioned has none configured)"
         )
+    if render.creates_reference and render.refs:
+        lines.extend([
+            "", "=== SAVE GENERATED REFERENCE ===",
+            render.save_to or "No destination configured; add one in bible.json.",
+        ])
+    settings = []
+    if render.mode:
+        settings.append(f"Mode: {render.mode}")
+    if render.aspect:
+        settings.append(f"Aspect ratio: {render.aspect}")
+    if render.duration_sec:
+        settings.append(f"Duration: {render.duration_sec:g} seconds")
+    if render.mode == "i2v":
+        settings.append(
+            "Start-frame slot (separate from reference images): "
+            + (render.start_frame or "choose the generated opening frame")
+        )
+    if settings:
+        lines.extend(["", "=== GENERATOR SETTINGS — set these manually ===", *settings])
     return "\n".join(lines)
 
 
@@ -400,7 +419,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p_motion = sub.add_parser("motion", help="render a scene's motion/video prompt")
     p_motion.add_argument("scene_id")
     p_motion.add_argument("--mode", default=None, help="i2v | t2v | ref-anchored")
-    p_motion.add_argument("--keyframe", default=None, help="path to the anchor frame")
+    p_motion.add_argument("--keyframe", default=None, help="start/anchor frame; relative paths use the project root (i2v or ref-anchored)")
     p_motion.add_argument("--handoff", action="store_true", help=_HANDOFF_HELP)
 
     p_sheet = sub.add_parser("sheet", help="render a character reference sheet prompt")
@@ -450,13 +469,17 @@ def main(argv: list[str] | None = None) -> int:
     except SystemExit as exc:
         return exc.code if isinstance(exc.code, int) else 1
 
-    if args.command == "init":
-        return cmd_init(args)
-    if args.command == "styles":
-        return cmd_styles(args)
-
-    root = pathlib.Path(args.project).resolve()
-    return _ROOT_HANDLERS[args.command](root, args)
+    try:
+        if args.command == "init":
+            return cmd_init(args)
+        if args.command == "styles":
+            return cmd_styles(args)
+        root = pathlib.Path(args.project).resolve()
+        return _ROOT_HANDLERS[args.command](root, args)
+    except (ValueError, OSError) as exc:
+        return _refuse(str(exc))
+    except KeyError as exc:
+        return _refuse(_key_error_message(exc))
 
 
 if __name__ == "__main__":

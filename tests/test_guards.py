@@ -91,5 +91,10 @@ class TestLints(unittest.TestCase):
         self.assertIsNone(guards.lint_shot_anchors(DIALOGUE, motion))
         self.assertIsNotNone(guards.lint_shot_anchors(DIALOGUE, "she turns"))
 
-    def test_vo_fit_warns_past_the_tempo_ceiling(self):
-        self.assertIsNotNone(guards.lint_vo_fit(" ".join(["word"] * 60), 8))
+    def test_vo_in_dialogue_uses_the_baked_speech_budget(self):
+        self.assertIsNotNone(guards.lint_dialogue_fit("VO: " + " ".join(["word"] * 20), 8))
+
+    def test_spoken_and_vo_share_one_budget(self):
+        self.assertIsNotNone(guards.lint_dialogue_fit(
+            "Skye: " + "word " * 10 + "VO: " + "word " * 10, 8
+        ))

@@ -29,7 +29,7 @@ for digits), run for run. The substitution operates on maximal runs of letters O
 outside a kept span: every letter-run becomes one filler word, every digit-run becomes
 one filler number, and nothing else about the text moves — no whitespace is added or
 removed, no run is merged or split. Because the lints this corpus exists to exercise
-(`lint_dialogue_fit`, `lint_vo_fit`) work from `len(text.split())`, a substitution that
+(`lint_dialogue_fit`) work from `len(text.split())`, a substitution that
 never touches whitespace preserves every word count exactly, run for run, without having
 to reverse-engineer which specific runs a lint reads.
 
@@ -232,13 +232,14 @@ def _prop(p: dict, counter: _Counter) -> dict:
 def _scene(s: dict, loc_id_by_name: dict, counter: _Counter) -> dict:
     # `synopsis` is dropped, not redacted — see the module docstring. No shotkit code
     # reads it, and it was the corpus's largest leak surface.
+    if (s.get("voiceover") or "").strip():
+        raise ValueError("Legacy voiceover found; migrate narration to dialogue as VO: before exporting the corpus")
     return {
         "id": s["id"],
         "locationId": loc_id_by_name.get(s.get("location"), ""),
         "scenePrompt": _redact(s.get("scenePrompt") or "", _KEEP_MOTION, counter),
         "motionPrompt": _redact(s.get("motionPrompt") or "", _KEEP_MOTION, counter),
         "dialogue": _redact(s.get("dialogue") or "", _KEEP_DIALOGUE, counter),
-        "voiceover": _redact(s.get("voiceover") or "", _KEEP_NONE, counter),
         "durationSec": s.get("durationSec"),
         "generateAudio": True,
         "aspect": "9:16",

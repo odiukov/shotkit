@@ -12,11 +12,6 @@ from __future__ import annotations
 import re
 from typing import Optional
 
-# Beyond this a time-stretched voiceover sounds chipmunky. Inlined from the tool's
-# app/domain/audio/vo_fit.py so this module has no dependencies.
-MAX_TEMPO = 1.15
-
-
 # ---------------------------------------------------------------------------
 # i2v safety
 # ---------------------------------------------------------------------------
@@ -300,7 +295,7 @@ def _narrator_descriptor(speaker: str, voices: dict | None) -> str:
 def narration_clause(raw_dialogue: str, voices: dict | None = None) -> str:
     """Build the motion-prompt clause for engine-baked off-screen narration (VO: segments).
 
-    The engine voices this as baked audio (NOT the TTS narrator track). [shot N] anchors pin
+    The engine generates this narration in the clip's audio. [shot N] anchors pin
     a segment to its shot. When *voices* resolves a segment's speaker to a gender, that gender
     (and any voiceNote) is named so the engine stops flipping the narrator's voice; otherwise
     the phrasing is exactly the legacy generic clause.
@@ -361,10 +356,10 @@ _CLIP_CEILING_S = 15
 def lint_dialogue_fit(
     raw_dialogue: str, duration_sec: Optional[float] = None
 ) -> Optional[str]:
-    """Warn when baked on-camera speech doesn't fit the clip slot."""
+    """Budget all baked speech together: on-camera lines and VO narration."""
     words = sum(
         len(s["text"].split())
-        for s in spoken_segments(raw_dialogue)
+        for s in parse_dialogue(raw_dialogue)
         if s["text"].strip()
     )
     if not words:
@@ -386,42 +381,6 @@ def lint_dialogue_fit(
                 f"spoken dialogue ~{needed:.0f}s fills under half the {duration_sec}s clip "
                 "— the video model (t2v/i2v) may ad-lib gibberish; shorten the clip or add a line"
             )
-    return None
-
-
-_VO_WORDS_PER_SEC = 2.3  # Aura-2 natural pace; tunable (see spec Open Questions)
-
-
-def lint_vo_fit(
-    voiceover_text: str, duration_sec: Optional[float] = None
-) -> Optional[str]:
-    """Warn when the standalone TTS narrator VO won't fit the scene slot.
-
-    Estimate is word-count based (pre-synthesis, free). Auto-fit compresses up to
-    MAX_TEMPO, so a VO fits a slot when needed <= slot * MAX_TEMPO; between slot and
-    that ceiling it only fits by speeding up.
-    """
-    words = len((voiceover_text or "").split())
-    if not words:
-        return None
-    needed = words / _VO_WORDS_PER_SEC
-    if duration_sec is not None and duration_sec > 0:
-        if needed > duration_sec * MAX_TEMPO:
-            return (
-                f"voiceover ~{needed:.0f}s longer than the {duration_sec:.0f}s clip "
-                "— it will be cut off; trim the narration or raise the duration"
-            )
-        if needed > duration_sec:
-            return (
-                f"voiceover ~{needed:.0f}s slightly over the {duration_sec:.0f}s clip "
-                f"— it will be sped up (≤{MAX_TEMPO:g}×) to fit; trim for a natural pace"
-            )
-        return None
-    if needed > _CLIP_CEILING_S:
-        return (
-            f"voiceover ~{needed:.0f}s exceeds the {_CLIP_CEILING_S}s clip ceiling "
-            "— split it across scenes"
-        )
     return None
 
 

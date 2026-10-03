@@ -29,35 +29,17 @@ cuts — reach for a multishot `motionPrompt` on the one scene instead. Each `SH
 label is also what a `[shot N]` dialogue anchor points at (below), so number them
 sequentially from 1.
 
-## Dialogue vs. voiceover — two fields, two different jobs
+## Dialogue and narration share one field
 
-`dialogue` and `voiceover` are separate scene fields that ask for fundamentally
-different things:
+All speech lives in `dialogue` and is generated in the clip with `generateAudio: true`.
+A plain speaker-labelled line (`Skye: I never asked for this.`) is on-camera,
+lip-synced speech. A `VO:` segment (`VO: some words` or `Skye: VO: some words`)
+is off-screen narration generated in the same audio track, with no speaking face.
 
-- **`dialogue`** is everything meant to be **baked into the clip's own audio** by the
-  generator itself, when `generateAudio` is on.
-  - A plain speaker-labelled line (`Skye: I never asked for this.`) is **on-camera,
-    lip-synced speech** — the character in frame is expected to say it, mouth moving.
-  - A `VO:`-prefixed segment (`VO: some words`, or `Skye: VO: some words`) is
-    **engine-voiced, off-screen narration**, baked into the same clip's audio but with
-    no face on camera saying it.
-- **`voiceover`** is a wholly separate narration track, produced by a **separate
-  text-to-speech step outside the clip generator** and laid in afterward, never
-  lip-synced.
-
-Put narration in **exactly one** of the two, never both on the same scene — that's
-double narration. Reach for a `VO:` segment in `dialogue` for a one-off aside baked into
-this clip; reach for the `voiceover` field when the same narrator needs to sound
-identical across every scene of a story, since a TTS track you hold constant yourself is
-the only way to guarantee that. `shotkit` has no voice catalog, but a `VO:` segment named
-by a character (`Eli: VO: ...`) CAN carry a nudge: set that character's `gender` (and an
-optional `voiceNote`) in `bible.json` and shotkit names it in the baked clause — "an
-off-screen male (gravelly, low register) narrator voice-over says…" — instead of the
-generic phrasing. This is exactly what it sounds like: a nudge, not a lock, worded from
-shotkit's own reasoning "so the engine stops flipping the narrator's voice." If a `VO:`
-narrator needs to sound consistent scene to scene, holding that voice is still mostly on
-you (or whatever TTS step renders the separate `voiceover` track) — `gender`/`voiceNote`
-steer the model's choice, they don't pin an exact voice the way a held TTS track does.
+For a named narrator, keep the speaker label consistent and set `gender` and optional
+`voiceNote` in `bible.json`. These steer the generated voice but do not guarantee an
+identical voice across clips. Narration has no separate field or synthesis step.
+Budget the combined spoken and VO text at roughly two words per second.
 
 ## `[shot N]` anchors
 

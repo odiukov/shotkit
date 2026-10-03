@@ -78,6 +78,20 @@ project's visual style, your cast (with `@id`-addressable characters, locations 
 props), your first scene's action. Then add the actual reference images the bible names,
 under `my-film/refs/`.
 
+If you have no images yet, create the first references with these handoffs:
+
+```bash
+python3 shotkit.py --project my-film sheet hero --handoff
+python3 shotkit.py --project my-film sheet ally --handoff
+python3 shotkit.py --project my-film location warehouse --handoff
+python3 shotkit.py --project my-film prop case --handoff
+```
+
+Generate each image and save it at the destination shown. The starter characters
+need no input photos. Add `identityRefs` or a role-labelled `refKit` only when you
+actually have source images. Location and prop commands attach existing images for
+consistency on later runs; ungenerated destinations are not attachment requirements.
+
 ```bash
 python3 shotkit.py --project my-film frame s01
 ```
@@ -89,6 +103,38 @@ Paste the `.txt` into your generator's prompt box, attach every file `.refs.txt`
 — **in that order** — and generate. Add `--handoff` to any generating command and
 stdout carries one paste-ready block (the prompt, then a numbered image list in that
 same order) instead of the plain echo — the two `out/` files are written either way.
+The handoff also shows manual generator settings and reference save destinations.
+
+## Scene fields and narration
+
+All speech belongs in `dialogue`, with `generateAudio: true`:
+
+```json
+{
+  "dialogue": "Alex: [shot 1] Keep the case.\nAlex: VO: [shot 2] That was the last time I saw him.",
+  "generateAudio": true
+}
+```
+
+Plain lines are on-camera speech; `VO:` segments are off-screen narration generated
+in the same clip. The numbered anchors require matching `SHOT 1` and `SHOT 2` in
+`motionPrompt`. Give narration a shot without on-camera speech. `lint` budgets all
+spoken and narrated words together at roughly two words per second. Keep a named
+narrator's `gender` and `voiceNote` consistent in the bible to guide their voice.
+The old `voiceover` field is removed: a non-empty value raises an error explaining
+how to move it to `dialogue`; empty legacy values remain readable.
+
+`locationId` supplies the default location and its reference. An explicit
+`@location#view` selects a named view. `style.globalPreamble` prefixes frame, poster,
+and motion prompts. Scene `aspect` overrides `style.aspect` in frame/motion handoffs;
+`durationSec` supplies motion's manual duration setting. Posters and reference images
+use their fixed 9:16 composition. Set these values in your generator UI yourself.
+
+For `motion --mode i2v --keyframe refs/opening.png --handoff`, the keyframe appears
+as a separate start-frame-slot instruction. In `ref-anchored`, it is reference #1.
+Relative keyframe paths use the project root; `t2v` rejects `--keyframe`.
+Unknown JSON fields, invalid types, duplicate entity IDs, and unknown requested
+character looks produce errors instead of silently using defaults.
 
 `python3 shotkit.py --project my-film lint s01` checks a scene for broken or missing
 references and dialogue that won't fit its clip length, before you spend anything on a

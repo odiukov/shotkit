@@ -52,9 +52,8 @@ Same shape, with three swaps:
   one-continuous-image-edge-to-edge lock.
 - Step 5 (the frozen-instant lock, in the frame block) is replaced by a composition
   clause naming the exact top/bottom percentage band a vertical poster's crop will keep
-  on screen (from the scene's `posterFocusY`, or a sensible default) — a poster is
-  composed for a crop, not a full frame, so the subject has to land inside the surviving
-  band on purpose.
+  on screen, only when the scene explicitly supplies `posterFocusY`. Without that
+  field, no crop-band clause is emitted: compose for the full poster.
 
 Carrying the frame's continuous-image lock into a poster prompt produces a sentence
 `shotkit` never actually emits for a poster — the two headers lead into two different
@@ -65,7 +64,8 @@ follow-up locks, not the same one.
 `motionPrompt` becomes a video prompt in this exact order — nothing here is
 interchangeable:
 
-1. **A who-is-who clause — but NOT the frame block's, and NOT unconditional.** The
+1. The project's `style.globalPreamble`, followed by **a who-is-who clause — but
+   NOT the frame block's, and NOT unconditional.** The
    motion path only ever injects `"Character identities — match each face to its
    reference image: <Name>: <desc> <Name>: <desc> …"` (trailing space, prepended
    directly), and only when **two or more** `@mentioned` characters carry a non-empty
@@ -139,7 +139,9 @@ inside a project directory (a directory holding `bible.json` and `scenes/`).
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" poster s01`
 - `motion <scene> --mode i2v|t2v|ref-anchored [--keyframe PATH] [--handoff]` — render a
   scene's motion prompt (`--mode` is required; `ref-anchored` also requires
-  `--keyframe`).
+  `--keyframe`). Relative keyframe paths resolve against the project root. In `i2v`,
+  `--keyframe` identifies the separate start-frame slot in the handoff; it is not
+  inserted into the reference list. `t2v` rejects `--keyframe`.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" motion s01 --mode t2v`
 - `sheet <character> [--look LABEL] [--handoff]` — render a character reference-sheet
   prompt (`--look` defaults to `primary`).
@@ -150,7 +152,7 @@ inside a project directory (a directory holding `bible.json` and `scenes/`).
 - `prop <prop> [--handoff]` — render a prop hero-shot prompt.
   `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" prop case`
 - `lint <scene>` — check a scene for broken or missing references, music/singing words,
-  dialogue/voiceover that won't fit the clip, and `[shot N]` anchors pointing at shots
+  combined dialogue and `VO:` narration that won't fit the clip, and `[shot N]` anchors pointing at shots
   the motion prompt never declares. Writes nothing to `out/`; exits 1 if it found
   anything, 0 if clean.
 - `status` — print a read-only inventory: every character/location/prop with a mark for
@@ -237,3 +239,12 @@ can't tell apart from something having silently broken:
   nothing with a reference image attached.
 
 Warnings still go to stderr either way.
+
+The handoff also lists manual generator settings: scene `aspect` (falling back to
+`style.aspect`), `durationSec` for motion, mode, and the separate `i2v` start frame.
+Posters and reference images use the 9:16 layout their prompts specify. These settings
+must be entered in the generator UI; shotkit does not configure it automatically.
+Reference-generation handoffs show the configured save destination even when existing
+images are attached. Location and prop generation attach only files already on disk.
+`locationId` supplies the scene's default location and reference; an explicit
+`@location#view` selects a different view of that location.

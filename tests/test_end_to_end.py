@@ -38,7 +38,18 @@ class TestEndToEnd(unittest.TestCase):
             # The template's bible.json ships reference filenames that do not exist
             # yet — @hero and @ally each have a primary look refImage, @case is a
             # bare prop uri, all under refs/.
-            for name in ("hero-primary.png", "ally-primary.png", "case.png"):
+            # Generate each first reference before a scene asks to attach it.
+            for args, name in (
+                (("sheet", "hero"), "hero-primary.png"),
+                (("sheet", "ally"), "ally-primary.png"),
+                (("prop", "case"), "case.png"),
+                (("location", "warehouse"), "warehouse-day.png"),
+            ):
+                first = run("--project", str(project), *args, "--handoff")
+                self.assertEqual(first.returncode, 0, first.stderr)
+                self.assertEqual(first.stderr, "")
+                self.assertIn("nothing to attach", first.stdout)
+                self.assertIn(name, first.stdout)
                 (project / "refs" / name).write_bytes(b"\x89PNG")
 
             frame = run("--project", str(project), "frame", "s01")
@@ -61,11 +72,8 @@ class TestEndToEnd(unittest.TestCase):
                 (project / "out" / "scenes" / "s01" / "motion.txt").exists()
             )
 
-            # The template's motionPrompt ("She walks forward across the floor,
-            # glancing back once") names nobody — every @mention lives in scenePrompt
-            # (@hero, @case, @ally). A new user's first motion render must still
-            # attach the cast, not ship an unanchored t2v clip with an empty refs
-            # file (see shotkit/project.py::render_motion's mention-union comment).
+            # Both prompts describe the cast and setting. The final motion handoff
+            # must attach the references generated earlier in this workflow.
             motion_refs = (
                 (project / "out" / "scenes" / "s01" / "motion.refs.txt")
                 .read_text(encoding="utf-8")
