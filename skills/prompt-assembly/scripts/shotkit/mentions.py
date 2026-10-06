@@ -1,8 +1,7 @@
 """Domain mention helpers.
 
 Pure: resolves @id / @name mentions in free text. No I/O.
-Python 3's `re` makes `\\w` Unicode-aware by default, so `[\\w-]` covers
-`[\\p{L}\\p{N}_-]`.
+Project identifiers and names use English letters only.
 """
 
 from __future__ import annotations
@@ -15,10 +14,29 @@ from typing import Union
 # Types
 # ---------------------------------------------------------------------------
 # A view selector parsed from a mention suffix:
-#  - 'primary'  -> bare `@id` (the index-0 reference view)
+#  - 'primary'  -> bare `@id` (the default reference view)
 #  - 'all'      -> `@id*` (every stored view, capped later by the ref budget)
 #  - {'label': str}  -> `@id#label` (the one stored view whose label matches)
 ViewSel = Union[str, dict]  # 'primary' | 'all' | {'label': str}
+
+def ref_index(refs: list[dict]) -> dict[str, dict]:
+    """Build one unambiguous, case-insensitive namespace for IDs and names."""
+    index = {}
+    ids = set()
+    for ref in refs:
+        key = ref["id"].lower()
+        if key in ids:
+            raise ValueError(f"duplicate entity id {ref['id']!r} (case-insensitive)")
+        ids.add(key)
+        index[key] = ref
+    for ref in refs:
+        key = (ref.get("name") or "").strip().lower()
+        if not key:
+            continue
+        if key in index and index[key] is not ref:
+            raise ValueError(f"ambiguous entity name {ref['name']!r}: conflicts with another name or id")
+        index[key] = ref
+    return index
 
 
 # ---------------------------------------------------------------------------
@@ -26,7 +44,7 @@ ViewSel = Union[str, dict]  # 'primary' | 'all' | {'label': str}
 # ---------------------------------------------------------------------------
 def _build_pattern(refs: list[dict]) -> str:
     """Return the combined token pattern for named refs + generic id."""
-    named = [r for r in refs if r["name"].strip()]
+    named = [r for r in refs if (r.get("name") or "").strip()]
     # Sort names longest-first so "@Red Key" wins over a hypothetical "@Red".
     sorted_names = sorted(named, key=lambda r: len(r["name"]), reverse=True)
     name_alts = [re.escape(r["name"]) for r in sorted_names]
@@ -41,7 +59,7 @@ def _build_pattern(refs: list[dict]) -> str:
     # which would have read the whole token, never runs. The mention then resolves to the
     # BASE character (wrong reference image into the scene) and strip_mentions leaves the
     # "_new" tail dangling. A mention must end at a non-token character.
-    return rf"@(?:({joined})|([\w-]+))(?![\w-])"
+    return rf"@(?:({joined})|([A-Za-z0-9_-]+))(?![A-Za-z0-9_-])"
 
 
 # ---------------------------------------------------------------------------
@@ -52,11 +70,7 @@ def mentioned_ref_ids(text: str, refs: list[dict]) -> set:
     out: set[str] = set()
     if not text:
         return out
-    named = [r for r in refs if r["name"].strip()]
-    by_key: dict[str, str] = {}
-    for r in named:
-        by_key[r["id"].lower()] = r["id"]
-        by_key[r["name"].lower()] = r["id"]
+    by_key = {key: ref["id"] for key, ref in ref_index(refs).items()}
 
     pat = _build_pattern(refs)
     for m in re.finditer(pat, text, flags=re.IGNORECASE):
@@ -75,15 +89,11 @@ def strip_mentions(text: str, refs: list[dict]) -> str:
     """
     if not text:
         return text
-    named = [r for r in refs if r["name"].strip()]
-    by_key: dict[str, str] = {}
-    for r in named:
-        by_key[r["id"].lower()] = r["name"]
-        by_key[r["name"].lower()] = r["name"]
+    by_key = {key: ref.get("name") or ref["id"] for key, ref in ref_index(refs).items()}
 
     tok = _build_pattern(refs)
     # Consume any trailing `#label` / `*` selector along with the `@`.
-    pat = rf"(?:{tok})(?:#[\w-]+|\*)?"
+    pat = rf"(?:{tok})(?:#[A-Za-z0-9_-]+|\*)?"
 
     def _replace(m: re.Match) -> str:
         token = (m.group(1) or m.group(2) or "").lower().strip()
@@ -100,15 +110,11 @@ def parse_ref_mentions(text: str, refs: list[dict]) -> list[dict]:
     """
     if not text:
         return []
-    named = [r for r in refs if r["name"].strip()]
-    by_key: dict[str, str] = {}
-    for r in named:
-        by_key[r["id"].lower()] = r["id"]
-        by_key[r["name"].lower()] = r["id"]
+    by_key = {key: ref["id"] for key, ref in ref_index(refs).items()}
 
     tok = _build_pattern(refs)
     # Optional trailing selector: `#label` or `*`, directly after the id/name.
-    pat = rf"(?:{tok})(#[\w-]+|\*)?"
+    pat = rf"(?:{tok})(#[A-Za-z0-9_-]+|\*)?"
 
     sel: dict[str, ViewSel] = {}
     for m in re.finditer(pat, text, flags=re.IGNORECASE):
@@ -162,14 +168,10 @@ def prompt_ref_issues(text: str, refs: list[dict]) -> dict:
     """
     unknown: list[str] = []
     missing: list[str] = []
-    by_key: dict[str, dict] = {}
-    for r in refs:
-        if (r.get("name") or "").strip():
-            by_key[r["name"].lower()] = r
-            by_key[r["id"].lower()] = r
+    by_key = ref_index(refs)
     # Same token shape as parse_ref_mentions: consume the optional `#label`/`*` selector
     # so a look tag is never mistaken for a broken reference of its own.
-    pat = rf"(?:{_build_pattern(refs)})(?:#[\w-]+|\*)?"
+    pat = rf"(?:{_build_pattern(refs)})(?:#[A-Za-z0-9_-]+|\*)?"
     for m in re.finditer(pat, text or "", flags=re.IGNORECASE):
         token = (m.group(1) or m.group(2) or "").strip()
         ent = by_key.get(token.lower())

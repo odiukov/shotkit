@@ -5,6 +5,8 @@ from __future__ import annotations
 import math
 import re
 
+from shotkit.mentions import ref_index
+
 
 STYLE = {"globalPreamble": str, "banned": str, "aspect": (str, type(None))}
 LOOK = {"label": str, "description": str, "refImage": (str, type(None))}
@@ -31,6 +33,8 @@ SCENE = {
 def path_component(value: str, context: str) -> None:
     if not value.strip() or value in (".", "..") or any(c in value for c in "/\\\0\n\r"):
         raise ValueError(f"{context}: expected a non-empty name without path separators")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+", value):
+        raise ValueError(f"{context}: use English letters (A-Z, a-z), digits, underscores or hyphens only")
 
 
 def validate(value, schema, context: str) -> None:
@@ -40,7 +44,7 @@ def validate(value, schema, context: str) -> None:
         unknown = value.keys() - schema.keys()
         if unknown:
             raise ValueError(f"{context}: unknown field(s): {', '.join(sorted(unknown))}")
-        for key in ("id", "uri", "label"):
+        for key in ("id", "uri", "label", "name"):
             if schema.get(key) is str and key not in value:
                 raise ValueError(f"{context}: missing required field {key}")
         for key, item in value.items():
@@ -48,6 +52,16 @@ def validate(value, schema, context: str) -> None:
         for key in ("id", "label"):
             if key in value:
                 path_component(value[key], f"{context}.{key}")
+        if "name" in value:
+            name = value["name"]
+            if not name.strip() or name != name.strip():
+                raise ValueError(f"{context}.name: expected a non-empty name without surrounding whitespace")
+            if not re.fullmatch(r"[A-Za-z][A-Za-z0-9 .'\-]*", name):
+                raise ValueError(f"{context}.name: use an English name")
+            if schema is CHARACTER and not re.fullmatch(r"[A-Z][A-Za-z'\-]*(?: [A-Z][A-Za-z'\-]*){0,2}", name):
+                raise ValueError(f"{context}.name: use one to three capitalized English words for dialogue speakers")
+        if value.get("locationId"):
+            path_component(value["locationId"], f"{context}.locationId")
         if value.get("aspect") is not None and "aspect" in schema:
             if not re.fullmatch(r"[1-9]\d*:[1-9]\d*", value["aspect"]):
                 raise ValueError(f"{context}.aspect: expected a ratio such as 9:16")
@@ -73,14 +87,19 @@ def validate(value, schema, context: str) -> None:
             raise ValueError(f"{context}: expected {names}")
         if isinstance(value, float) and not math.isfinite(value):
             raise ValueError(f"{context}: must be finite")
+        if isinstance(value, str):
+            key = context.rsplit(".", 1)[-1].split("[", 1)[0]
+            # Paths are filesystem data, not authored prompt text.
+            if key not in {"uri", "refImage", "identityRefs", "referenceImages"}:
+                if any(c.isalpha() and not c.isascii() for c in value):
+                    raise ValueError(f"{context}: use English text only (A-Z, a-z); non-English letters are not supported")
 
 
 def validate_bible(data: dict, context: str) -> None:
     validate(data, BIBLE, context)
-    seen = set()
-    for kind in ("characters", "locations", "props"):
-        for entity in data.get(kind, []):
-            eid = entity["id"]
-            if eid in seen:
-                raise ValueError(f"{context}: duplicate entity id {eid!r}")
-            seen.add(eid)
+    entities = [entity for kind in ("characters", "locations", "props")
+                for entity in data.get(kind, [])]
+    try:
+        ref_index(entities)
+    except ValueError as exc:
+        raise ValueError(f"{context}: {exc}") from exc

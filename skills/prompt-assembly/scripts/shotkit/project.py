@@ -269,6 +269,11 @@ def _select_character_look(char: Character, view):
     return hit.ref_image, warnings
 
 
+def _primary_location_view(loc: Location):
+    return next((v for v in loc.views if norm_label(v.label) == "primary"),
+                next(iter(loc.views), None))
+
+
 def _select_location_views(loc: Location, view):
     """Port of app/domain/ref_budget.py::select_location_views, adapted to Location.
 
@@ -277,11 +282,13 @@ def _select_location_views(loc: Location, view):
     warnings: list = []
     uris = [v.uri for v in loc.views]
     if not uris:
+        if isinstance(view, dict):
+            warnings.append(f'@{loc.id}#{view["label"]}: no view labelled "{view["label"]}"')
         return [], warnings
     if view == "all":
         return list(uris), warnings
     if view == "primary":
-        return [uris[0]], warnings
+        return [_primary_location_view(loc).uri], warnings
     want = (view.get("label") or "").strip().lower()
     labels = [v.label for v in loc.views]
     idx = next((i for i, lbl in enumerate(labels) if norm_label(lbl) == want), -1)
@@ -289,7 +296,7 @@ def _select_location_views(loc: Location, view):
         warnings.append(
             f'@{loc.id}#{want}: no view labelled "{want}" — using the primary view'
         )
-        return [uris[0]], warnings
+        return [_primary_location_view(loc).uri], warnings
     return [uris[idx]], warnings
 
 
@@ -674,8 +681,10 @@ def render_location(
     selected = (
         next((v for v in loc.views if norm_label(v.label) == norm_label(view)), None)
         if view and norm_label(view) != "primary"
-        else next(iter(loc.views), None)
+        else _primary_location_view(loc)
     )
+    if view and selected is None and norm_label(view) != "primary":
+        raise ValueError(f"location {location_id!r}: unknown view {view!r}; add it to views in bible.json first")
     return Render(
         prompt=prompt,
         refs=refs,
@@ -745,8 +754,12 @@ def lint_scene(project: Project, scene: Scene) -> list:
     # Resolve both prompts' mentions the same way render_frame/render_motion do, and
     # check the union of what they attach — deduped, order preserved, since the same
     # file can be mentioned in both prompts.
-    scene_refs = _resolve_mentions(project, scene_text)[4]
-    motion_refs = _resolve_mentions(project, scene.motion_prompt)[4]
+    scene_resolution = _resolve_mentions(project, scene_text)
+    motion_text = " ".join(filter(None, [scene.motion_prompt, scene.scene_prompt]))
+    motion_resolution = _resolve_mentions(project, _scene_mentions(project, scene, motion_text))
+    scene_refs, scene_warnings = scene_resolution[4:]
+    motion_refs, motion_warnings = motion_resolution[4:]
+    out.extend(dict.fromkeys(scene_warnings + motion_warnings))
     all_refs = list(dict.fromkeys(scene_refs + motion_refs))
     out.extend(missing_ref_files(all_refs))
 

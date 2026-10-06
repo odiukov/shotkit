@@ -192,6 +192,19 @@ including narration voice lookup. Changing the bible's display name then updates
 compiled prompts without editing every source scene. Plain-name labels still work,
 but their renames must be authored explicitly.
 
+Author project text in English only; Cyrillic and other non-English letters are
+validation errors. Use nonempty English names for every entity. Character names
+must be one to three capitalized words (apostrophes and hyphens are allowed).
+IDs and look/view labels accept only `A-Z`, `a-z`, `0-9`, `_` and `-`.
+IDs and names must be unambiguous across all entity types, ignoring case; a name
+may match its own ID, but never another entity's ID or name. Unicode filesystem
+paths and English typographic punctuation remain supported.
+
+Location defaults prefer the view labelled `primary`, then the first view when
+that label is absent. Explicit unknown `--view` labels are errors. In scene prose,
+unknown look/view selectors produce fallback warnings and make `lint` return 1;
+correct them before handing off a generation prompt.
+
 ## The `out/` file contract
 
 Every generating command (`frame`, `poster`, `motion`, `sheet`, `location`, `prop`)

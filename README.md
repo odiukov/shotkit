@@ -138,6 +138,21 @@ Relative keyframe paths use the project root; `t2v` rejects `--keyframe`.
 Unknown JSON fields, invalid types, duplicate entity IDs, and unknown requested
 character looks produce errors instead of silently using defaults.
 
+Author names, descriptions, prompts and dialogue in English. Non-English letters
+(including Cyrillic) are rejected with the field's path; English typography such
+as curly quotes and em dashes is allowed. Filesystem paths may contain Unicode.
+Entity names are required and cannot be blank. Character names use one to three
+capitalized English words, with apostrophes or hyphens allowed, so dialogue speakers
+can be parsed reliably (for example, `Alex Rivera` or `Mary-Jane O'Neil`).
+IDs and look/view labels use only `A-Z`, `a-z`, `0-9`, `_` and `-`; use `winter-coat`,
+not `winter coat`. IDs and names share a case-insensitive namespace: duplicate IDs,
+duplicate names and names matching another entity's ID are errors.
+
+Location defaults select the view labelled `primary`, falling back to the first
+view only when no such label exists. Explicit `--view` labels must exist, except
+that `primary` also supports this default fallback. Unknown `#look`/`#view` selectors
+in scene prose warn and fall back during assembly; they also make `lint` fail.
+
 `python3 shotkit.py --project my-film lint s01` checks a scene for broken or missing
 references and dialogue that won't fit its clip length, before you spend anything on a
 render. `python3 shotkit.py --project my-film status` prints a read-only inventory of
@@ -192,6 +207,12 @@ out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
 > order anyway: many generators weight earlier references more heavily, and a reference
 > set past an engine's cap silently drops the surplus, so which images come first can
 > decide which ones make the trip at all.
+
+## Development checks
+
+Run `python3 -m unittest discover -s tests -v` from the repository root.
+GitHub Actions runs the suite on Python 3.9 and 3.14 on Linux and macOS, including
+the installer, CLI, prompt snapshots and input-validation regressions.
 
 ## Not included
 

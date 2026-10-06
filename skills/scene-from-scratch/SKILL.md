@@ -22,6 +22,10 @@ turning a story or scene request into a project folder, a filled-in bible, draft
 scenes, and reference-generation prompts — and everything after the shot is authored: handing the user one prompt
 and an ordered image list they can act on immediately.
 
+Write project artifacts in English: entity names, descriptions, story prose,
+prompts and dialogue. Do not author Cyrillic text. Follow `prompt-assembly`'s
+English name and ID rules; the CLI rejects non-English letters in project JSON.
+
 ## Story requests still need a production handoff
 
 In a Shotkit filmmaking workflow, "create a story" can describe the whole project,

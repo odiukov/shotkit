@@ -12,7 +12,7 @@ REFS = [
     {"id": "anna_new", "name": "Anna New", "has_image": True},
     {"id": "cleo", "name": "Cleo", "has_image": True},
     {"id": "cleos_auto", "name": "Cleo's Auto", "has_image": True},
-    {"id": "skye", "name": "Скай", "has_image": False},
+    {"id": "skye", "name": "Skye", "has_image": False},
 ]
 
 
@@ -33,8 +33,8 @@ class TestMentions(unittest.TestCase):
         self.assertEqual(mentioned_ref_ids(text, REFS), {"cleos_auto"})
         self.assertEqual(prompt_ref_issues(text, REFS), {"unknown": [], "missing": []})
 
-    def test_cyrillic_name_resolves(self):
-        self.assertEqual(mentioned_ref_ids("@Скай turns", REFS), {"skye"})
+    def test_english_name_resolves(self):
+        self.assertEqual(mentioned_ref_ids("@Skye turns", REFS), {"skye"})
 
     def test_strip_mentions_replaces_with_display_name_and_drops_selector(self):
         self.assertEqual(
@@ -58,9 +58,9 @@ class TestMentions(unittest.TestCase):
         self.assertEqual(got, [{"id": "cleo", "view": {"label": "night"}}])
 
     def test_issues_report_unknown_and_missing(self):
-        issues = prompt_ref_issues("@nobody and @Скай", REFS)
+        issues = prompt_ref_issues("@nobody and @Skye", REFS)
         self.assertEqual(issues["unknown"], ["@nobody"])
-        self.assertEqual(issues["missing"], ["Скай"])
+        self.assertEqual(issues["missing"], ["Skye"])
 
     def test_empty_ref_list_does_not_raise(self):
         self.assertEqual(mentioned_ref_ids("@anything", []), set())

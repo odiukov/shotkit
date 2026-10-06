@@ -38,8 +38,6 @@ project at all and always returns 0.
 from __future__ import annotations
 
 import argparse
-import contextlib
-import io
 import json
 import pathlib
 import shutil
@@ -148,18 +146,27 @@ def _handoff_block(render: project_mod.Render) -> str:
     return "\n".join(lines)
 
 
-def _write_render(
+def _save_render(
     prompt_path: pathlib.Path,
     refs_path: pathlib.Path,
     render: project_mod.Render,
-    handoff: bool = False,
-) -> int:
+) -> None:
+    """Persist the shared prompt/refs contract without terminal output."""
     prompt_path.parent.mkdir(parents=True, exist_ok=True)
     prompt_path.write_text(render.prompt, encoding="utf-8")
     refs_text = "\n".join(render.refs)
     if refs_text:
         refs_text += "\n"
     refs_path.write_text(refs_text, encoding="utf-8")
+
+
+def _write_render(
+    prompt_path: pathlib.Path,
+    refs_path: pathlib.Path,
+    render: project_mod.Render,
+    handoff: bool = False,
+) -> int:
+    _save_render(prompt_path, refs_path, render)
     if handoff:
         print(_handoff_block(render))
     else:
@@ -352,40 +359,52 @@ def cmd_build(root: pathlib.Path, args: argparse.Namespace) -> int:
         labels = [look.label for look in character.looks] or ["primary"]
         labels.sort(key=lambda label: label.strip().lower() != "primary")
         for label in labels:
-            jobs.append(("characters", character.id, f"{label}.sheet", cmd_sheet,
+            jobs.append(("characters", character.id, f"{label}.sheet", project_mod.render_sheet,
                          dict(character_id=character.id, look=label)))
     for location in project.locations:
         labels = [view.label for view in location.views] or ["primary"]
         for label in labels:
-            jobs.append(("locations", location.id, f"{label}.view", cmd_location,
+            jobs.append(("locations", location.id, f"{label}.view", project_mod.render_location,
                          dict(location_id=location.id, view=label)))
     for prop in project.props:
-        jobs.append(("props", prop.id, "prop", cmd_prop, dict(prop_id=prop.id)))
+        jobs.append(("props", prop.id, "prop", project_mod.render_prop, dict(prop_id=prop.id)))
     issues = {}
     for scene in scenes:
         issues[scene.id] = project_mod.lint_scene(project, scene)
         if scene.scene_prompt.strip():
-            jobs.append(("scenes", scene.id, "frame", cmd_frame, dict(scene_id=scene.id)))
+            jobs.append(("scenes", scene.id, "frame", project_mod.render_frame, dict(scene=scene)))
         if scene.motion_prompt.strip():
-            jobs.append(("scenes", scene.id, "motion", cmd_motion,
-                         dict(scene_id=scene.id, mode="t2v", keyframe=None)))
+            jobs.append(("scenes", scene.id, "motion", project_mod.render_motion,
+                         dict(scene=scene, mode="t2v", keyframe=None)))
         else:
             issues[scene.id].append("motionPrompt is empty: no motion prompt assembled")
 
+    # Assemble against one loaded snapshot, then persist structured results.
+    compiled = []
+    for category, entity_id, leaf, builder, options in jobs:
+        try:
+            render = builder(project, **options)
+            messages = list(render.warnings)
+        except (OSError, ValueError, KeyError) as exc:
+            render = None
+            messages = [_key_error_message(exc) if isinstance(exc, KeyError) else str(exc)]
+        compiled.append((category, entity_id, leaf, render, messages))
+
     results = []
-    for category, entity_id, leaf, handler, options in jobs:
-        stdout, stderr = io.StringIO(), io.StringIO()
-        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
-            try:
-                code = handler(root, argparse.Namespace(handoff=False, **options))
-            except (OSError, ValueError, KeyError) as exc:
-                code = _refuse(str(exc))
+    for category, entity_id, leaf, render, messages in compiled:
         prompt, refs = _render_paths(root, category, entity_id, leaf)
+        assembled = render is not None
+        if assembled:
+            try:
+                _save_render(prompt, refs, render)
+            except OSError as exc:
+                assembled = False
+                messages.append(str(exc))
         results.append({
             "prompt": str(prompt.relative_to(root)),
             "refs": str(refs.relative_to(root)),
-            "assembled": code == 0,
-            "messages": stderr.getvalue().splitlines(),
+            "assembled": assembled,
+            "messages": messages,
         })
     failed = sum(not item["assembled"] for item in results)
     warnings = sum(len(item["messages"]) for item in results)
