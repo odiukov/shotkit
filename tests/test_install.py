@@ -67,7 +67,7 @@ class TestInstallation(unittest.TestCase):
             self.assertTrue(link.is_symlink())
             self.assertFalse(Path(os.readlink(link)).is_absolute())
             self.assertEqual(link.resolve(), (canonical / name).resolve())
-        for forbidden in ("INSTALL.md", "README.md", "install.py", ".claude-plugin", "tests"):
+        for forbidden in ("README.md", "install.py", ".claude-plugin", "tests"):
             self.assertFalse(any(p.name == forbidden for p in canonical.rglob("*")))
         cli = canonical / "prompt-assembly/scripts/shotkit.py"
         film = moved / "sample film"

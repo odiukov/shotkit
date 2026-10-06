@@ -21,7 +21,7 @@ templates live inside `prompt-assembly/scripts/`; there is no separate runtime
 folder, no duplicate skill files, and no dependency on the source checkout after
 installation. On macOS/Linux, the relative links continue to work if you move the
 project. Repeating the command skips identical files and refuses conflicting local
-changes. See [INSTALL.md](INSTALL.md) for updates, migration and verification.
+changes. The installer targets macOS/Linux and requires filesystem symlink support.
 
 Start a session in the target project and invoke `$scene-from-scratch` in Codex or
 `/scene-from-scratch` in Claude Code. Inspect each agent's skill menu to confirm all
@@ -29,6 +29,52 @@ six are discovered; a successful copy alone does not verify discovery.
 
 The source retains its Claude plugin manifests for packaged plugin distribution.
 The local installer does not register a plugin or copy those manifests.
+Do not additionally register the same skills through a marketplace or install
+user-level copies: that creates duplicate discovery routes. Use the installer
+instead of copying the whole repository or creating a separate `.shotkit` runtime.
+Installed skills need neither `CLAUDE_PLUGIN_ROOT` nor machine-specific source paths.
+
+### Updates and migration
+
+Repeating the installer restores missing skills or Claude links and skips identical
+files, ignoring Python caches. It checks all destinations before writing and refuses
+conflicting skills, unrelated Claude folders/links, or redirected parent directories.
+
+To update, compare the installed skills with the source, preserve local edits, and
+move only the folders being replaced to a backup **outside skill-discovery
+directories**. Rerun the installer; existing Claude links can remain in place.
+Preserve unrelated skills and Claude configuration. For an older `.shotkit` layout,
+back up and move the six old skill folders and `.shotkit` out of the way first.
+Do not leave discoverable backup copies or remove unrelated user-level skills.
+
+### Verify and start
+
+From the target project's root, check both installed entrypoints:
+
+```bash
+python3 .agents/skills/prompt-assembly/scripts/shotkit.py --help
+python3 .claude/skills/prompt-assembly/scripts/shotkit.py styles
+```
+
+For a functional check, use a new scratch film folder: run `init`, then `status`,
+`sheet hero --handoff` and `build` with `--project` pointing to that folder. Verify
+the generated prompt and `.refs.txt` files. Do not overwrite an existing film.
+Missing starter reference images are expected; successful text assembly does not
+mean images have been generated.
+
+Confirm all six folders in `.agents/skills/` and their relative Claude links exist.
+Then check actual skill discovery in each agent's skill menu; filesystem and Python
+checks alone cannot establish discovery. When installing for someone, report the
+installation path, checks performed and any unverified discovery step.
+
+For example, start in Codex with:
+
+```text
+$scene-from-scratch Create a scene where she hands him a folder in a bank lobby and he doesn't take it. Use /absolute/path/to/my-film as the film project folder.
+```
+
+In Claude Code use `/scene-from-scratch` with the same request. Name the film folder
+again in later sessions to resume it.
 
 ## Requirements
 
