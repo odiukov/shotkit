@@ -9,10 +9,11 @@ never talks to a generator itself — it writes text and lists files; you paste 
 
 ## Install in a project — Codex and Claude Code
 
-One command installs the same six skills for both agents, at project scope only:
+From the shotkit repository root, one command installs the same six skills for
+both agents, at project scope only (replace `../your-project` with your target):
 
 ```bash
-python3 /absolute/path/to/shotkit/install.py "/absolute/path/to/your/project"
+python3 install.py "../your-project"
 ```
 
 The target project must already exist. The installer copies the six folders into
@@ -70,7 +71,7 @@ installation path, checks performed and any unverified discovery step.
 For example, start in Codex with:
 
 ```text
-$scene-from-scratch Create a scene where she hands him a folder in a bank lobby and he doesn't take it. Use /absolute/path/to/my-film as the film project folder.
+$scene-from-scratch Create a scene where she hands him a folder in a bank lobby and he doesn't take it. Use ./my-film as the film project folder.
 ```
 
 In Claude Code use `/scene-from-scratch` with the same request. Name the film folder

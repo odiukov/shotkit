@@ -90,7 +90,7 @@ non-empty, and creates it otherwise.
 - **If the user names a location for the project, use theirs** instead of picking one.
 - Run `shotkit init <name>` to create it, then **say the folder's absolute path back to
   the user in the same message, explicitly** — e.g. "Project created at
-  `/Users/alex/films/mira-vale-bank-lobby`." This is the path they'll need to name to
+  `<resolved-project-root>/mira-vale-bank-lobby`." This is the path they'll need to name to
   resume later; a path only mentioned in passing is one nobody can recall a week on.
 - Everything about this story lives under that one folder from here on —
   `bible.json`, `scenes/`, `refs/`, `out/` — never scattered elsewhere.

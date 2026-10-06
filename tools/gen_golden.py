@@ -4,10 +4,12 @@ Run ONCE, from the shortdrama repo ROOT (its `app` package is not installed —
 this script puts the invoking cwd on sys.path itself, so the cwd must BE that
 root), with that repo's interpreter:
 
-    cd /Users/oleksandr/orca/projects/shortdrama
-    uv run python /Users/oleksandr/orca/projects/shotkit/tools/gen_golden.py
+For sibling checkouts named `shortdrama` and `shotkit`:
 
-Writes /Users/oleksandr/orca/projects/shotkit/tests/golden/*.txt.
+    cd ../shortdrama
+    uv run python ../shotkit/tools/gen_golden.py
+
+Writes tests/golden/*.txt in the shotkit checkout containing this script.
 Reads the shortdrama tree and writes nothing to it.
 """
 
@@ -17,7 +19,7 @@ import os
 import pathlib
 import sys
 
-OUT = pathlib.Path("/Users/oleksandr/orca/projects/shotkit/tests/golden")
+OUT = pathlib.Path(__file__).resolve().parent.parent / "tests" / "golden"
 
 # `python /abs/path/to/script.py` puts the SCRIPT's own directory on
 # sys.path[0], not the invoking cwd — so `import app...` below would fail to
