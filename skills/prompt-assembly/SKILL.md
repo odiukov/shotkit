@@ -128,29 +128,37 @@ manifest's own per-image notes instead.
 
 ## The CLI commands
 
-Every command is invoked as `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" <command>` from
-inside a project directory (a directory holding `bible.json` and `scenes/`).
+The CLI is bundled in this skill: [scripts/shotkit.py](scripts/shotkit.py), with
+its Python package and templates alongside it. Resolve that path relative to this
+`SKILL.md` file, **not the current working directory**, and set `SHOTKIT_CLI` to the
+resolved absolute path in the shell used for the commands below. No plugin variable
+or machine-specific path is needed; this also works through a Claude skill symlink.
+
+Invoke `python3 "$SHOTKIT_CLI" <command>` from the film project directory (the one
+holding `bible.json` and `scenes/`), or pass `--project /path/to/film` before the
+command. `SHOTKIT_CLI` is a shell variable you set, not a variable supplied by the
+agent host. Resolve it again in a new shell/session.
 
 - `init <dir>` — scaffold a new project from the template.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" init my-project`
+  `python3 "$SHOTKIT_CLI" init my-project`
 - `frame <scene> [--handoff]` — render a scene's opening keyframe prompt.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" frame s01`
+  `python3 "$SHOTKIT_CLI" frame s01`
 - `poster <scene> [--handoff]` — render a scene's poster/key-art prompt.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" poster s01`
+  `python3 "$SHOTKIT_CLI" poster s01`
 - `motion <scene> --mode i2v|t2v|ref-anchored [--keyframe PATH] [--handoff]` — render a
   scene's motion prompt (`--mode` is required; `ref-anchored` also requires
   `--keyframe`). Relative keyframe paths resolve against the project root. In `i2v`,
   `--keyframe` identifies the separate start-frame slot in the handoff; it is not
   inserted into the reference list. `t2v` rejects `--keyframe`.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" motion s01 --mode t2v`
+  `python3 "$SHOTKIT_CLI" motion s01 --mode t2v`
 - `sheet <character> [--look LABEL] [--handoff]` — render a character reference-sheet
   prompt (`--look` defaults to `primary`).
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" sheet hero --look primary`
+  `python3 "$SHOTKIT_CLI" sheet hero --look primary`
 - `location <location> [--view LABEL] [--handoff]` — render a location-view prompt (no
   `--view` renders the primary view).
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" location warehouse --view night`
+  `python3 "$SHOTKIT_CLI" location warehouse --view night`
 - `prop <prop> [--handoff]` — render a prop hero-shot prompt.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" prop case`
+  `python3 "$SHOTKIT_CLI" prop case`
 - `lint <scene>` — check a scene for broken or missing references, music/singing words,
   combined dialogue and `VO:` narration that won't fit the clip, and `[shot N]` anchors pointing at shots
   the motion prompt never declares. Writes nothing to `out/`; exits 1 if it found
@@ -159,11 +167,11 @@ inside a project directory (a directory holding `bible.json` and `scenes/`).
   whether its reference image exists on disk, and every scene with a mark for whether
   `out/` already holds its rendered artifacts. No scene argument; writes nothing to
   `out/`; always exits 0 once the project loads (a report, not a gate).
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" status`
+  `python3 "$SHOTKIT_CLI" status`
 - `styles` — list the six shipped style presets (id, name, preamble, banned) to copy
   into a project's `style.globalPreamble` / `style.banned`. No `--project` needed;
   writes nothing to `out/`.
-  `python3 "$CLAUDE_PLUGIN_ROOT/shotkit.py" styles`
+  `python3 "$SHOTKIT_CLI" styles`
 
 ## The `out/` file contract
 

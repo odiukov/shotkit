@@ -7,52 +7,28 @@ project folder (a style, a cast, a set of scenes) into the finished prompt a gen
 web UI already accepts, plus an ordered list of which reference images to attach. shotkit
 never talks to a generator itself — it writes text and lists files; you paste and attach.
 
-## Install — three ways
+## Install in a project — Codex and Claude Code
 
-Pick whichever matches how you work. All three end up at the same place: six Claude
-Code skills plus a `shotkit` CLI, available next session.
-
-Every command below names this repo's own clone directory by its **absolute path** —
-deliberately, not `./shotkit` or a bare `shotkit`. This repo's root directory and the
-Python package inside it (`shotkit/project.py` etc.) share the same name, `shotkit`. Run
-`cp -R shotkit ...` from inside the repo and the shell resolves `shotkit` to that INNER
-package directory: the command still exits 0, but it installs a folder of `.py` files
-with no `.claude-plugin/`, no `skills/`, no `template/` — silently the wrong thing, with
-nothing to say so. Replace `/path/to/shotkit` below with wherever you cloned this repo
-(e.g. the output of `pwd` when run from this file's directory).
-
-**1. Copy the folder.** Drop this whole directory at `~/.claude/skills/shotkit/`. Claude
-Code auto-loads anything under `~/.claude/skills/` as a plugin — no install step, no
-restart beyond starting a new session.
+One command installs the same six skills for both agents, at project scope only:
 
 ```bash
-cp -R /path/to/shotkit ~/.claude/skills/shotkit
+python3 /absolute/path/to/shotkit/install.py "/absolute/path/to/your/project"
 ```
 
-**2. Install from a local marketplace.** Registers this folder as a plugin marketplace,
-then installs the one plugin in it:
+The target project must already exist. The installer copies the six folders into
+`.agents/skills/` and creates relative links in `.claude/skills/`. The CLI and its
+templates live inside `prompt-assembly/scripts/`; there is no separate runtime
+folder, no duplicate skill files, and no dependency on the source checkout after
+installation. On macOS/Linux, the relative links continue to work if you move the
+project. Repeating the command skips identical files and refuses conflicting local
+changes. See [INSTALL.md](INSTALL.md) for updates, migration and verification.
 
-```bash
-claude plugin marketplace add /path/to/shotkit
-claude plugin install shotkit@shotkit
-```
+Start a session in the target project and invoke `$scene-from-scratch` in Codex or
+`/scene-from-scratch` in Claude Code. Inspect each agent's skill menu to confirm all
+six are discovered; a successful copy alone does not verify discovery.
 
-**3. Ship it with a repo.** Same two commands, scoped to the project instead of your
-user config — this writes both the marketplace and the install into `.claude/settings.json`
-at the repo root. Commit that file and everyone who opens the repo in Claude Code gets the
-plugin with no per-person install step:
-
-```bash
-claude plugin marketplace add /path/to/shotkit --scope project
-claude plugin install shotkit@shotkit --scope project
-git add .claude/settings.json
-git commit -m "chore: add shotkit plugin"
-```
-
-Verify any of the three with `claude plugin details shotkit` — it should list six
-skills (`cinematic-scenes`, `pov-scenes`, `short-drama-structure`, `character-refs`,
-`prompt-assembly`, `scene-from-scratch`). Fewer than six means something didn't load;
-re-check the copy.
+The source retains its Claude plugin manifests for packaged plugin distribution.
+The local installer does not register a plugin or copy those manifests.
 
 ## Requirements
 
@@ -62,8 +38,13 @@ should be able to clone this, run it, and never wonder what else needs installin
 
 ## Five minutes to a first prompt
 
-From inside this folder (adjust the path to `shotkit.py` if you're running from
-elsewhere):
+From the source repository, the `shotkit.py` compatibility link works as below.
+After installation, use `.agents/skills/prompt-assembly/scripts/shotkit.py` from the
+target project root, or its absolute path when working from another directory:
+
+The source `shotkit/`, `template/` and `shotkit.py` paths are compatibility symlinks
+to the runtime inside `skills/prompt-assembly/scripts/`; the code and templates are
+maintained in one place.
 
 ```bash
 python3 shotkit.py init my-film

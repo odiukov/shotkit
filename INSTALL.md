@@ -1,121 +1,131 @@
-# Instructions for Claude: install shotkit
+# Instructions for Claude Code or Codex: install shotkit
 
-You are being pointed at this file because someone wants shotkit installed. Read it,
-install it, verify it, then tell them what they can do next. This file is addressed to
-you, not to them — `README.md` is the one written for a person.
+If you were pointed at this file to install shotkit, install it in the target
+project, verify it, then explain how to start. If asked only to edit these
+instructions, do not install anything.
 
-## What this folder is
+## Scope and requirements
 
-A Claude Code plugin: six skills that teach cinematic prompt craft, plus a `shotkit` CLI
-that assembles finished prompts and the ordered list of reference images each prompt talks
-about. It works with any text-to-image / text-to-video generator. It ships no dependencies
-— standard library Python 3.9 or newer, nothing to `pip install`.
+Install only at the target project's level. Infer the project from the request or
+current workspace; ask for its path only if unclear. Do not install skills,
+plugins, launchers or dependencies at user or system level.
 
-## The one trap, read this before running anything
+Python 3.9 or newer is required. There are no third-party dependencies, API keys,
+network calls or `pip install` steps. The installer below targets macOS/Linux and
+requires filesystem symlink support.
 
-**The repository root and the Python package inside it are both named `shotkit`.**
+## One command for both agents
 
-```
-shotkit/              <- the repo root: this is what gets installed
-  .claude-plugin/     <- only here
-  skills/             <- only here
-  shotkit/            <- the Python package. NOT what gets installed.
-```
-
-Run `cp -R shotkit …` from *inside* the repo and you silently copy the Python package —
-no `skills/`, no `.claude-plugin/`. The copy succeeds, the install appears to work, and
-the skills never load. Nothing tells you why.
-
-**So: always use an absolute path to the repo root.** Establish it first and reuse it:
+Use an absolute path to this repository's `install.py`, and pass the existing
+project directory. The installer locates its source skills relative to itself,
+so it works from any working directory and with spaces in paths:
 
 ```bash
-SHOTKIT="$(cd /path/to/shotkit && pwd)"   # adjust to where this folder actually is
-ls "$SHOTKIT/.claude-plugin/plugin.json"  # must exist — if it does not, you have the package
+python3 /absolute/path/to/shotkit/install.py "/absolute/path/to/your/project"
 ```
 
-If that `ls` fails, you are pointed one level too deep. Go up one directory.
+This copies six skill folders into `.agents/skills/` and creates one relative
+symlink per skill in `.claude/skills/`. Codex reads the canonical folders; Claude
+Code reads the same files through the links. There is only one installed copy of
+each skill, its references and its executable resources.
 
-## Pick one of three installs
+```text
+<project>/
+  .agents/skills/
+    cinematic-scenes/
+    pov-scenes/
+    short-drama-structure/
+    character-refs/
+    prompt-assembly/
+      SKILL.md
+      references/
+      scripts/
+        shotkit.py
+        shotkit/
+        template/
+    scene-from-scratch/
+  .claude/skills/
+    cinematic-scenes -> ../../.agents/skills/cinematic-scenes
+    pov-scenes -> ../../.agents/skills/pov-scenes
+    short-drama-structure -> ../../.agents/skills/short-drama-structure
+    character-refs -> ../../.agents/skills/character-refs
+    prompt-assembly -> ../../.agents/skills/prompt-assembly
+    scene-from-scratch -> ../../.agents/skills/scene-from-scratch
+```
 
-Ask the person which they want only if it is unclear. Otherwise **default to option 1** —
-it is the fewest moving parts.
+The CLI, Python package and templates are already bundled inside `prompt-assembly`.
+Do not create a separate `.shotkit` directory, copy the whole repository, or copy
+`README.md`, `INSTALL.md`, plugin metadata, development tools or tests into the
+project. The installed skills need neither the source checkout nor
+`CLAUDE_PLUGIN_ROOT`. Commands resolve `scripts/shotkit.py` relative to the loaded
+`prompt-assembly/SKILL.md`; no machine-specific paths are written into skill files.
+The project can move without reinstalling.
 
-### 1. Copy the folder (default)
+These are local skills in both agents. Do not additionally register the same
+skills through Claude marketplace commands: that would create another discovery
+route. `.claude-plugin/` stays in the source repository for users who explicitly
+choose packaged plugin distribution; it is not part of this local installation.
 
-Claude Code auto-loads anything under `~/.claude/skills/` as a plugin. No install command,
-no restart beyond starting a new session.
+See [Codex skill discovery](https://learn.chatgpt.com/docs/build-skills) and
+[Claude Code skills and symlinks](https://code.claude.com/docs/en/skills#choose-where-skills-load).
+
+## Repeated runs, updates and older installations
+
+A repeated run skips identical installed skills and reuses the correct Claude
+links. It can restore missing skill folders or links. Before writing anything, it
+checks all six destinations and refuses different existing skills, unrelated
+Claude folders or links, and redirected parent directories. It never overwrites
+local edits. Python caches are ignored when copying and comparing.
+
+For an update, compare any differing installed skills with the source. Preserve
+local edits and move the folders being replaced to a backup **outside all
+skill-discovery directories**, then rerun the same command. Preserve unrelated
+skills and Claude configuration. Existing Claude links to the canonical folders
+can remain in place while those folders are replaced.
+
+For the older `.shotkit` layout, back up the six old skill folders and `.shotkit`
+first, compare and preserve local edits, then move them out of the way and run the
+installer. Do not leave duplicate skills in a discoverable backup folder. Remove
+only user-level copies confirmed to belong to an earlier attempt when the user's
+migration request covers them. Never delete unrelated user skills.
+
+## Verify the installation
+
+Run the source checks from the complete source repository:
 
 ```bash
-cp -R "$SHOTKIT" ~/.claude/skills/shotkit
+python3 --version
+python3 -m unittest discover -s tests
 ```
 
-### 2. Local marketplace
-
-For someone who prefers plugins managed by the CLI.
+Then, from the target project's root, run the **installed** CLI:
 
 ```bash
-claude plugin marketplace add "$SHOTKIT"
-claude plugin install shotkit@shotkit
+python3 .agents/skills/prompt-assembly/scripts/shotkit.py --help
+python3 .claude/skills/prompt-assembly/scripts/shotkit.py styles
 ```
 
-### 3. Shipped with a repository
+For a functional check, choose a new scratch film directory, run `init`, then
+`status` and `sheet hero --handoff` with `--project` pointing at that directory.
+Check that the generated sheet prompt and `.refs.txt` exist. Starter reference
+images do not exist yet; a successful CLI check does not mean images were generated.
+Do not initialize into the repository root or overwrite an existing film.
 
-So that everyone who opens a given repo in Claude Code gets it with no per-person step.
-**Both commands are required** — `marketplace add` alone registers the source but enables
-nothing for anyone else:
+Confirm all six canonical skill folders exist, the six Claude symlinks resolve to
+them, and there is no separate `.shotkit` runtime. Open a session in the target
+project and inspect skill discovery: Codex CLI/IDE has `/skills`; Claude uses its
+`/` skill menu. Do not claim either agent discovered the skills based only on file
+copies or Python tests. Report which discovery checks were actually performed.
 
-```bash
-cd /path/to/their/repo
-claude plugin marketplace add "$SHOTKIT" --scope project
-claude plugin install shotkit@shotkit --scope project
-git add .claude/settings.json
-git commit -m "chore: add shotkit plugin"
+## Tell the user how to start
+
+Report the installation path, verification result and any unverified discovery
+step. Keep it brief. For example, in Codex:
+
+```text
+$scene-from-scratch Create a scene where she hands him a folder in a bank lobby and he doesn't take it. Use /absolute/path/to/my-film as the film project folder.
 ```
 
-The pointer lands in `.claude/settings.json` at that repo's root. That file is what makes
-it work for the next person, so it has to be committed.
-
-## Verify — do not skip this
-
-Two checks. Run both and report both.
-
-```bash
-claude plugin details shotkit
-```
-
-Must list **six** skills: `cinematic-scenes`, `pov-scenes`, `short-drama-structure`,
-`character-refs`, `prompt-assembly`, `scene-from-scratch`. Fewer than six almost always
-means the `shotkit`-inside-`shotkit` trap above — check what actually landed at the
-install path and redo it with an absolute path to the repo root.
-
-```bash
-cd "$SHOTKIT" && python3 -m unittest discover -s tests
-```
-
-All tests must pass. Golden fixtures protect the original prompt-building rules;
-workflow and validation tests cover project loading, reference generation, settings,
-and narration through `VO:` in `dialogue`. The assembled project prompts include
-shotkit-specific behavior, including the shared motion style preamble.
-
-If Python is older than 3.9, say so and stop — that is the floor.
-
-## Then tell them how to start
-
-Keep it to a few lines. Something like:
-
-> Installed, six skills loaded, tests green. Start a new session and say what you want —
-> for example *"I want a scene where she hands him a folder in a bank lobby and he doesn't
-> take it."* I will ask what the characters look like, set up a project folder, give you
-> the prompts to generate their reference sheets, and then the finished scene prompt with
-> the images listed in attach order.
-
-Mention that each project lives in its own folder and that naming that folder's path in a
-later session lets you pick the work back up rather than start over.
-
-## If they ask what it does before installing
-
-`README.md` covers it. The short version: you describe a scene, Claude writes the shot
-list and dialogue using the craft skills, and `shotkit` assembles the full prompt — the
-who-is-who clause built from the character descriptions, the speech and narration clauses
-bound to their shot numbers, the audio discipline — plus the reference images in the exact
-order the prompt's own numbering depends on.
+In Claude Code, invoke `/scene-from-scratch` with the same request. Each film lives
+in its own folder; naming that folder in a later session lets the agent resume it.
+`README.md` explains the workflow for a person.
