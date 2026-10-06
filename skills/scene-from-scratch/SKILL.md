@@ -44,14 +44,19 @@ For a production starter, finish the following before handing work back:
   or retain the unrelated `init` sample. Read `cinematic-scenes` for shot craft.
   Record the draft scope and provisional format in `STORY.md`; do not invent every
   future episode just to fill folders.
-- Resolve the bundled CLI using `prompt-assembly`, then **execute** `sheet`,
-  `location` and `prop` for those entities. A list of commands to run later is not
-  their output. Each command writes both its prompt and its `.refs.txt`.
+- Resolve the bundled CLI using `prompt-assembly`, then **execute**
+  `python3 "$SHOTKIT_CLI" --project <dir> build`. It assembles character, location,
+  prop and scene prompts in one pass. A list of commands to run later is not output.
+  It writes full `out/scenes/<id>/motion.txt` and `motion.refs.txt` even when images
+  are missing. The authored `motionPrompt` in JSON is only an input, not the final
+  assembled generator prompt.
 - Verify the resulting `out/characters/<id>/primary.sheet.txt`,
   `out/locations/<id>/<view>.view.txt` and `out/props/<id>/prop.txt` files and their
-  paired reference lists. Link to the actual files in the handoff.
-- State what is still pending: generated reference images, scene authoring, final
-  scene prompt assembly, or video generation. Do not label prompts as images.
+  paired reference lists. Also verify the full `out/scenes/<id>/motion.txt` and
+  `motion.refs.txt` for every authored scene; scene JSON alone is insufficient.
+  Read `out/build-report.json` and link to the actual files in the handoff.
+- State what is still pending: generated reference images, video generation or
+  later episodes outside the current scope. Do not label prompts as images.
 
 Missing reference images do **not** block this text-prompt pass. With no supplied
 photos, prepare the first reference prompts from descriptions. For unspecified
@@ -241,11 +246,11 @@ Locations and props start from text when their configured images do not yet exis
 On later runs, existing location views or the existing prop image are attached for
 consistency. Configured but not yet generated images are destinations, not inputs.
 
-A final reference-backed scene handoff needs the mentioned reference images on disk:
-`shotkit lint` reports missing ones, and a `.refs.txt` listing nonexistent paths is
-not ready to attach. This blocks the final image-dependent handoff, not creating
-the reference prompts below or writing scene drafts. Prepare the reference prompts
-before waiting for images:
+A generation-ready scene handoff needs the mentioned reference images on disk.
+Missing images do not block full text assembly: `build` writes the same complete
+motion prompt and ordered reference list now, with missing files in its report.
+Mark the output "prompt assembled; images pending" until those paths exist. The
+commands below are useful for individual references; `build` runs the whole pass.
 
 For each **new** character:
 ```
@@ -273,13 +278,15 @@ Never stop earlier with only the story outline and an empty bible. If the reques
 scope includes scene drafts, write those too and label missing image dependencies;
 do not present an incomplete reference list as a ready-to-generate scene handoff.
 Mark entities "references ready" only after verifying the actual image files, then
-continue the final scene assembly. Do not create placeholder images to pass lint.
+verify the image-dependent handoff is ready. Full text must already be assembled;
+do not create placeholder images to pass lint.
 
 ## The scene pass
 
 Write scene drafts during skeleton creation; generated images are not a dependency
 for authoring text. Once the references exist, revise those same drafts as needed
-and assemble the final scene handoff. Do not create a second set of scenes.
+and reassemble the scene handoff. Assemble full text now with `build`; do not wait
+for images to create `out/scenes`. Do not create a second set of scenes.
 
 1. Author `motionPrompt` and `dialogue` following `cinematic-scenes`'s recipe — the
    upfront structure header (shot count + duration + aspect), the timecoded
@@ -292,17 +299,42 @@ and assemble the final scene handoff. Do not create a second set of scenes.
    those missing references too. The command checks for unresolved/missing references, music/singing words, dialogue or
    `VO:` narration that won't fit the clip together with spoken lines, and `[shot N]` anchors pointing at shots the
    motion prompt never declares.
-3. Once the required reference images are present, run
+3. Run `shotkit --project <dir> build` after authoring or editing the scenes.
+   For one scene's paste-ready stdout, run
    `shotkit --project <dir> motion <scene-id> --mode t2v --handoff` — `t2v` is the
    default mode for every scene per `cinematic-scenes` (frees the camera, needs no seed
    frame); add `--handoff` for the paste-ready block.
 4. Update `STORY.md`'s scene state to *authored* once the prompt is written, and to
    *rendered* once the user confirms they generated it.
 
+## Revising a story or character
+
+Treat `STORY.md`, `bible.json` and `scenes/*.json` as authored sources, and `out/` as
+compiled text. After a requested change, complete the affected source edits and
+run `build` in the same turn, without waiting for a separate rebuild request.
+
+- Keep entity IDs stable. Change display names and appearance in the bible; use
+  `@id` in scene prose and dialogue speaker labels (`@mark: [shot 2] ...`) so the
+  compiler resolves the current display name. Existing plain-name dialogue is
+  supported, but the author must update those labels when renaming a character.
+- A change of motivation, relationship or plot requires authoring: read the story
+  and affected scenes, rewrite their action/dialogue and downstream consequences,
+  and update the bible where relevant. `build` assembles text; it cannot infer new
+  scenes from a change made only in `STORY.md`.
+- Avoid duplicating canonical appearance in scene prose. If a scene contains an old
+  name or appearance as plain text, update it deliberately; do not blindly replace
+  text inside spoken dialogue or unrelated entities.
+- Run `build`, read its report, and link the rebuilt motion files. It rebuilds all
+  current scenes, so dependent prompts are not skipped. This is a workflow step
+  performed by the agent, not a background file watcher.
+- Changing text does not repaint reference images or videos. After a visual design
+  change, identify the existing images needing regeneration and affected scenes;
+  never imply the existing media has automatically adopted the new appearance.
+
 ## What the user gets at the end
 
 For the initial story skeleton: link to `STORY.md`, `bible.json`, the draft scene
-files, and the generated character/location/prop prompt files. State that reference
+files, assembled `out/scenes/<id>/motion.txt` files, and character/location/prop prompts. State that reference
 images and final video generation are still pending. An initial skeleton does not
 require the user to generate images during the same turn.
 

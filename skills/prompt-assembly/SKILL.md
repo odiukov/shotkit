@@ -139,6 +139,19 @@ holding `bible.json` and `scenes/`), or pass `--project /path/to/film` before th
 command. `SHOTKIT_CLI` is a shell variable you set, not a variable supplied by the
 agent host. Resolve it again in a new shell/session.
 
+- `build` — rebuild the whole project's text outputs after authoring or editing.
+  Writes all character-look sheets, location views, props, and every authored
+  scene's full `motion.txt` + `motion.refs.txt` in `t2v` mode. Frames are also built
+  when `scenePrompt` is present. Missing images produce warnings, not a skipped
+  motion prompt. Read `out/build-report.json` for artifact results and scene lint.
+  `python3 "$SHOTKIT_CLI" --project /path/to/film build`
+  Run this after every relevant source edit; `out/` is generated output, so edit
+  `bible.json`/`scenes/*.json` instead. The compiler does not rewrite `STORY.md`,
+  infer plot changes, regenerate media, or watch files. It replaces current prompt
+  files; it does not delete old outputs for entities/scenes removed from the sources.
+  Use individual `motion` commands for `i2v` or `ref-anchored` handoffs instead of
+  this default `t2v` batch. Exit 0 means text assembly succeeded, not that images
+  exist or scene lint is clean; errors are recorded and return 1.
 - `init <dir>` — scaffold a new project from the template.
   `python3 "$SHOTKIT_CLI" init my-project`
 - `frame <scene> [--handoff]` — render a scene's opening keyframe prompt.
@@ -172,6 +185,12 @@ agent host. Resolve it again in a new shell/session.
   into a project's `style.globalPreamble` / `style.banned`. No `--project` needed;
   writes nothing to `out/`.
   `python3 "$SHOTKIT_CLI" styles`
+
+Use stable `@id` references in scene prose and in dialogue speaker labels, such as
+`@mark: [shot 2] Give it back.` The CLI resolves labels before parsing speech,
+including narration voice lookup. Changing the bible's display name then updates
+compiled prompts without editing every source scene. Plain-name labels still work,
+but their renames must be authored explicitly.
 
 ## The `out/` file contract
 

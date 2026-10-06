@@ -86,6 +86,27 @@ stdout carries one paste-ready block (the prompt, then a numbered image list in 
 same order) instead of the plain echo — the two `out/` files are written either way.
 The handoff also shows manual generator settings and reference save destinations.
 
+## Rebuild after edits
+
+From the installed project's root:
+
+```bash
+python3 .agents/skills/prompt-assembly/scripts/shotkit.py --project my-film build
+```
+
+This rebuilds all reference prompts and each scene's full motion prompt into the
+existing `out/` structure. Scene JSON is authored input; `out/scenes/<id>/motion.txt`
+is the assembled generator text. Frames are included when `scenePrompt` is present.
+The batch uses `t2v`; use the individual motion command for other modes. Missing
+reference images are reported in `out/build-report.json` and do not prevent text
+assembly. A successful build is not a claim that media has been generated.
+
+The authoring agent runs `build` after source changes. Keep character IDs stable
+and use `@id` for dialogue speakers as well as shot prose, so display-name changes
+resolve everywhere those tokens appear. Plot edits require the author to update
+`STORY.md` and affected scene JSON first. Build does not interpret Markdown,
+watch files, regenerate existing images, or remove obsolete output files.
+
 ## Scene fields and narration
 
 All speech belongs in `dialogue`, with `generateAudio: true`:

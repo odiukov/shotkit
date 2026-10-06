@@ -30,7 +30,8 @@ This skill decides **what happens and in what order**. For the craft inside each
 For a Shotkit story or episode project, the outline is the structure stage. Use
 `scene-from-scratch` to automatically populate the bible, write draft scene JSON
 and execute the character, location and prop reference-prompt pass before calling
-the production starter complete. Propose unspecified visual details as provisional
+the production starter complete. Run `build` after source edits so every scene also has its full
+`out/scenes/<id>/motion.txt`, even while images are pending. Propose unspecified visual details as provisional
 designs; do not wait for a separate request to create the skeleton. A
 `STORY.md` plus empty entity arrays does not provide the generation assets. Keep an
 explicit request for a synopsis or concept only within that narrower scope.

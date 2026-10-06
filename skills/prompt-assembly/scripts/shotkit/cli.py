@@ -38,6 +38,9 @@ project at all and always returns 0.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
+import json
 import pathlib
 import shutil
 import sys
@@ -336,6 +339,73 @@ def cmd_lint(root: pathlib.Path, args: argparse.Namespace) -> int:
     return 1 if issues else 0
 
 
+def cmd_build(root: pathlib.Path, args: argparse.Namespace) -> int:
+    """Reassemble all text artifacts, including drafts whose images are pending."""
+    project = _load_project_or_refuse(root)
+    if project is None:
+        return 1
+    # Validate scene JSON before replacing any outputs.
+    scenes = [project_mod.load_scene(project, p.stem)
+              for p in sorted((root / "scenes").glob("*.json"))]
+    jobs = []
+    for character in project.characters:
+        labels = [look.label for look in character.looks] or ["primary"]
+        labels.sort(key=lambda label: label.strip().lower() != "primary")
+        for label in labels:
+            jobs.append(("characters", character.id, f"{label}.sheet", cmd_sheet,
+                         dict(character_id=character.id, look=label)))
+    for location in project.locations:
+        labels = [view.label for view in location.views] or ["primary"]
+        for label in labels:
+            jobs.append(("locations", location.id, f"{label}.view", cmd_location,
+                         dict(location_id=location.id, view=label)))
+    for prop in project.props:
+        jobs.append(("props", prop.id, "prop", cmd_prop, dict(prop_id=prop.id)))
+    issues = {}
+    for scene in scenes:
+        issues[scene.id] = project_mod.lint_scene(project, scene)
+        if scene.scene_prompt.strip():
+            jobs.append(("scenes", scene.id, "frame", cmd_frame, dict(scene_id=scene.id)))
+        if scene.motion_prompt.strip():
+            jobs.append(("scenes", scene.id, "motion", cmd_motion,
+                         dict(scene_id=scene.id, mode="t2v", keyframe=None)))
+        else:
+            issues[scene.id].append("motionPrompt is empty: no motion prompt assembled")
+
+    results = []
+    for category, entity_id, leaf, handler, options in jobs:
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            try:
+                code = handler(root, argparse.Namespace(handoff=False, **options))
+            except (OSError, ValueError, KeyError) as exc:
+                code = _refuse(str(exc))
+        prompt, refs = _render_paths(root, category, entity_id, leaf)
+        results.append({
+            "prompt": str(prompt.relative_to(root)),
+            "refs": str(refs.relative_to(root)),
+            "assembled": code == 0,
+            "messages": stderr.getvalue().splitlines(),
+        })
+    failed = sum(not item["assembled"] for item in results)
+    warnings = sum(len(item["messages"]) for item in results)
+    report = {
+        "motionMode": "t2v", "artifacts": results, "sceneIssues": issues,
+        "note": "Text prompts only. Review missing references and authoring issues before generation. "
+                "Existing images are not regenerated or verified against changed character designs. "
+                "STORY.md and scene prose must be reconciled by the author before build.",
+    }
+    report_path = root / "out" / "build-report.json"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(f"Assembled {len(results) - failed}/{len(results)} prompts; {len(scenes)} scenes; "
+          f"{warnings} warnings; {failed} errors.")
+    if not scenes:
+        print("No scene JSON found: write scenes/*.json to build motion prompts.")
+    print(f"Report: {report_path}")
+    return 1 if failed else 0
+
+
 def _presence_mark(paths: list) -> tuple[str, str]:
     """(" " | "x", note) for one entity's status line.
 
@@ -444,12 +514,14 @@ def _build_parser() -> argparse.ArgumentParser:
         help="print a read-only project inventory (cast/locations/props refs, scene output)",
     )
 
+    sub.add_parser("build", help="rebuild all reference and scene prompts (t2v), including drafts with missing images")
     sub.add_parser("styles", help="list the shipped style presets")
 
     return parser
 
 
 _ROOT_HANDLERS = {
+    "build": cmd_build,
     "frame": cmd_frame,
     "poster": cmd_poster,
     "motion": cmd_motion,

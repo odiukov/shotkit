@@ -542,7 +542,7 @@ def render_motion(
         scene.motion_prompt,
         mode=mode,
         chars=chars,
-        dialogue=scene.dialogue,
+        dialogue=strip_mentions(scene.dialogue, ref_dicts(project)),
         generate_audio=scene.generate_audio,
         loop=scene.loop,
         refs_for_strip=ref_dicts(project),
@@ -727,14 +727,17 @@ def lint_scene(project: Project, scene: Scene) -> list:
     if words:
         out.append(f"motionPrompt contains music/singing words: {', '.join(words)}")
 
-    msg = lint_dialogue_fit(scene.dialogue, scene.duration_sec)
+    dialogue = strip_mentions(scene.dialogue, refs)
+    for token in prompt_ref_issues(scene.dialogue, refs)["unknown"]:
+        out.append(f"dialogue: unknown reference {token}")
+    msg = lint_dialogue_fit(dialogue, scene.duration_sec)
     if msg:
         out.append(msg)
 
     if scene.dialogue.strip() and not scene.generate_audio:
         out.append("dialogue (including VO:) is ignored when generateAudio is false")
 
-    msg = lint_shot_anchors(scene.dialogue, scene.motion_prompt)
+    msg = lint_shot_anchors(dialogue, scene.motion_prompt)
     if msg:
         out.append(msg)
 
