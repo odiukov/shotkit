@@ -95,7 +95,7 @@ Run the source checks from the complete source repository:
 
 ```bash
 python3 --version
-python3 -m unittest discover -s tests
+python3 -m unittest discover
 ```
 
 Then, from the target project's root, run the **installed** CLI:

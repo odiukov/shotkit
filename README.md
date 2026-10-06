@@ -38,16 +38,14 @@ should be able to clone this, run it, and never wonder what else needs installin
 
 ## Five minutes to a first prompt
 
-From the source repository, the `shotkit.py` compatibility link works as below.
+From the source repository, run `skills/prompt-assembly/scripts/shotkit.py` as below.
 After installation, use `.agents/skills/prompt-assembly/scripts/shotkit.py` from the
-target project root, or its absolute path when working from another directory:
-
-The source `shotkit/`, `template/` and `shotkit.py` paths are compatibility symlinks
-to the runtime inside `skills/prompt-assembly/scripts/`; the code and templates are
-maintained in one place.
+target project root, or its absolute path when working from another directory.
+The CLI, Python package and templates live together in
+`skills/prompt-assembly/scripts/`.
 
 ```bash
-python3 shotkit.py init my-film
+python3 skills/prompt-assembly/scripts/shotkit.py init my-film
 ```
 
 This scaffolds `my-film/` with a starter `bible.json` (style, a couple of characters, a
@@ -62,10 +60,10 @@ under `my-film/refs/`.
 If you have no images yet, create the first references with these handoffs:
 
 ```bash
-python3 shotkit.py --project my-film sheet hero --handoff
-python3 shotkit.py --project my-film sheet ally --handoff
-python3 shotkit.py --project my-film location warehouse --handoff
-python3 shotkit.py --project my-film prop case --handoff
+python3 skills/prompt-assembly/scripts/shotkit.py --project my-film sheet hero --handoff
+python3 skills/prompt-assembly/scripts/shotkit.py --project my-film sheet ally --handoff
+python3 skills/prompt-assembly/scripts/shotkit.py --project my-film location warehouse --handoff
+python3 skills/prompt-assembly/scripts/shotkit.py --project my-film prop case --handoff
 ```
 
 Generate each image and save it at the destination shown. The starter characters
@@ -74,7 +72,7 @@ actually have source images. Location and prop commands attach existing images f
 consistency on later runs; ungenerated destinations are not attachment requirements.
 
 ```bash
-python3 shotkit.py --project my-film frame s01
+python3 skills/prompt-assembly/scripts/shotkit.py --project my-film frame s01
 ```
 
 This writes `my-film/out/scenes/s01/frame.txt` (the finished keyframe prompt — also
@@ -153,15 +151,15 @@ view only when no such label exists. Explicit `--view` labels must exist, except
 that `primary` also supports this default fallback. Unknown `#look`/`#view` selectors
 in scene prose warn and fall back during assembly; they also make `lint` fail.
 
-`python3 shotkit.py --project my-film lint s01` checks a scene for broken or missing
+`python3 skills/prompt-assembly/scripts/shotkit.py --project my-film lint s01` checks a scene for broken or missing
 references and dialogue that won't fit its clip length, before you spend anything on a
-render. `python3 shotkit.py --project my-film status` prints a read-only inventory of
+render. `python3 skills/prompt-assembly/scripts/shotkit.py --project my-film status` prints a read-only inventory of
 the whole project — every character/location/prop with a mark for whether its
 reference image exists on disk, every scene with a mark for whether it already has
 rendered output — without opening any of the individual files by hand.
-`python3 shotkit.py styles` lists the six shipped style presets (id, name, preamble,
+`python3 skills/prompt-assembly/scripts/shotkit.py styles` lists the six shipped style presets (id, name, preamble,
 banned) to copy into a project's `style.globalPreamble` / `style.banned` — no
-`--project` needed, nothing written to disk. Run `python3 shotkit.py --help` for the
+`--project` needed, nothing written to disk. Run `python3 skills/prompt-assembly/scripts/shotkit.py --help` for the
 full command list — `frame`, `poster`, `motion`, `sheet`, `location`, `prop` each accept
 `--handoff` and write their own prompt + refs pair nested under `out/` by kind and
 entity id:
@@ -210,7 +208,7 @@ out/props/<prop-id>/prop.txt               out/props/<prop-id>/prop.refs.txt
 
 ## Development checks
 
-Run `python3 -m unittest discover -s tests -v` from the repository root.
+Run `python3 -m unittest discover -v` from the repository root.
 GitHub Actions runs the suite on Python 3.9 and 3.14 on Linux and macOS, including
 the installer, CLI, prompt snapshots and input-validation regressions.
 

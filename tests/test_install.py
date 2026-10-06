@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import json
 from pathlib import Path
 import shutil
 import subprocess
@@ -81,6 +82,25 @@ class TestInstallation(unittest.TestCase):
         result = self.command(claude_cli, "--project", film, "status")
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("hero", result.stdout)
+        # Both agents must rebuild edited source JSON after the original checkout
+        # is gone and the installed project has moved, without root aliases.
+        scene_path = film / "scenes/s01.json"
+        for entrypoint, motion in (
+            (cli, "The camera slowly pans left."),
+            (claude_cli, "The camera slowly pans right."),
+        ):
+            scene = json.loads(scene_path.read_text())
+            scene["motionPrompt"] = motion
+            scene_path.write_text(json.dumps(scene))
+            result = self.command(entrypoint, "--project", film, "build")
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertIn("Assembled 7/7 prompts", result.stdout)
+            self.assertIn(motion, (film / "out/scenes/s01/motion.txt").read_text())
+            report = json.loads((film / "out/build-report.json").read_text())
+            for artifact in report["artifacts"]:
+                self.assertTrue(artifact["assembled"], artifact)
+                self.assertTrue((film / artifact["prompt"]).is_file())
+                self.assertTrue((film / artifact["refs"]).is_file())
 
     def test_repeat_preserves_files_and_repairs_a_missing_link(self):
         self.install()

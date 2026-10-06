@@ -18,7 +18,7 @@ import sys
 import tempfile
 import unittest
 
-ROOT = pathlib.Path(__file__).resolve().parent.parent
+from tests import RUNTIME
 
 
 class TestEndToEnd(unittest.TestCase):
@@ -28,7 +28,7 @@ class TestEndToEnd(unittest.TestCase):
 
             def run(*args):
                 return subprocess.run(
-                    [sys.executable, str(ROOT / "shotkit.py"), *args],
+                    [sys.executable, str(RUNTIME / "shotkit.py"), *args],
                     capture_output=True,
                     text=True,
                 )
@@ -90,7 +90,7 @@ class TestEndToEnd(unittest.TestCase):
         import re
 
         pep604 = re.compile(r"->\s*[\w\[\]. ]+\s*\||:\s*[\w\[\]. ]+\s*\|\s*\w")
-        for py in list((ROOT / "shotkit").rglob("*.py")) + [ROOT / "shotkit.py"]:
+        for py in list((RUNTIME / "shotkit").rglob("*.py")) + [RUNTIME / "shotkit.py"]:
             text = py.read_text(encoding="utf-8")
             if pep604.search(text):
                 with self.subTest(file=py.name):
@@ -107,7 +107,7 @@ class TestEndToEnd(unittest.TestCase):
         import ast
 
         stdlib_ok = set(sys.stdlib_module_names)
-        for py in list((ROOT / "shotkit").rglob("*.py")) + [ROOT / "shotkit.py"]:
+        for py in list((RUNTIME / "shotkit").rglob("*.py")) + [RUNTIME / "shotkit.py"]:
             tree = ast.parse(py.read_text(encoding="utf-8"))
             for node in ast.walk(tree):
                 mods = []
