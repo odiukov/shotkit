@@ -25,6 +25,16 @@ Trigger when the user wants the **structure of vertical short-form drama** — t
 
 This skill decides **what happens and in what order**. For the craft inside each scene (body weight, environmental force, camera, vertical framing, dialogue sizing), use the **cinematic-scenes** skill. The two compose: this one lays out the episode's beats, cinematic-scenes renders each beat.
 
+## Continue into production when that is the requested scope
+
+For a Shotkit story or episode project, the outline is the structure stage. Use
+`scene-from-scratch` to automatically populate the bible, write draft scene JSON
+and execute the character, location and prop reference-prompt pass before calling
+the production starter complete. Propose unspecified visual details as provisional
+designs; do not wait for a separate request to create the skeleton. A
+`STORY.md` plus empty entity arrays does not provide the generation assets. Keep an
+explicit request for a synopsis or concept only within that narrower scope.
+
 ## Core principle
 
 **Vertical short drama is retention engineering.** Viewers swipe away in seconds. Every choice serves one goal: get them to the next beat, and every episode to the next episode. Three levers do almost all the work:

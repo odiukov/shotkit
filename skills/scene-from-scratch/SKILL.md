@@ -1,13 +1,15 @@
 ---
 name: scene-from-scratch
 description: |
-  The entry point for a scene request when the project may not exist yet, or exists but
-  doesn't have the cast, location or props the request implies. Covers creating the named
+  Start or resume a Shotkit story, episode or scene project, including requests phrased
+  as "make a story" within the filmmaking workflow. Fill the cast, locations and props,
+  and automatically create the populated bible, draft scene files and reference-generation
+  prompts as well as the story outline. Covers creating the named
   project folder, the cold-start question pass (what's missing, ask only what's needed),
   writing the bible, generating references before the scene, resuming a project in a new
-  session, and the final copy-paste handoff. Load whenever the user asks for a scene and
-  you haven't first confirmed the project folder exists with the entities it needs, or
-  when they say "we're working on project X" / name an existing project to continue.
+  session, and the final copy-paste handoff. Load for story/episode/scene creation in a Shotkit project, missing character or
+  reference prompts, or a named project to continue. Explicit prose-only brainstorming
+  stays prose-only; do not turn unrelated fiction writing into a production project.
 ---
 
 # Starting a scene from scratch
@@ -16,9 +18,55 @@ This is the front door. `cinematic-scenes` teaches the shot craft, `character-re
 teaches reference roles and looks, `prompt-assembly` teaches what the CLI actually
 emits — all three assume the project folder exists and the bible already names the
 people, places and things in the scene. This skill covers everything before that point:
-turning a scene request into a project folder, a filled-in bible, and a generated
-reference set — and everything after the shot is authored: handing the user one prompt
+turning a story or scene request into a project folder, a filled-in bible, draft
+scenes, and reference-generation prompts — and everything after the shot is authored: handing the user one prompt
 and an ordered image list they can act on immediately.
+
+## Story requests still need a production handoff
+
+In a Shotkit filmmaking workflow, "create a story" can describe the whole project,
+not just its synopsis. Use `short-drama-structure` for episode beats when appropriate,
+then continue this workflow through the bible, draft scene files and reference-prompt pass. `STORY.md`
+and an empty `bible.json` are an outline, not a completed production starter.
+Honor an explicit request for ideas, a synopsis only, or a pause before production.
+Do not ask whether to create the skeleton after the user has requested the story
+project. Do not add an approval gate merely because story or character designs are
+first drafts. Unspecified visual details are draft design choices, not blockers.
+
+For a production starter, finish the following before handing work back:
+
+- Write the story and record the actual intended scope in `STORY.md`.
+- Populate `bible.json` with the cast, locations and recurring props needed for that
+  scope. Keep identity separate from wardrobe and give references save destinations.
+- Write valid `scenes/<id>.json` drafts for the opening sequence or episode being
+  developed. Use actual beats, entity IDs and location IDs from this story, with
+  playable action and appropriately sized dialogue; do not leave `scenes/` empty
+  or retain the unrelated `init` sample. Read `cinematic-scenes` for shot craft.
+  Record the draft scope and provisional format in `STORY.md`; do not invent every
+  future episode just to fill folders.
+- Resolve the bundled CLI using `prompt-assembly`, then **execute** `sheet`,
+  `location` and `prop` for those entities. A list of commands to run later is not
+  their output. Each command writes both its prompt and its `.refs.txt`.
+- Verify the resulting `out/characters/<id>/primary.sheet.txt`,
+  `out/locations/<id>/<view>.view.txt` and `out/props/<id>/prop.txt` files and their
+  paired reference lists. Link to the actual files in the handoff.
+- State what is still pending: generated reference images, scene authoring, final
+  scene prompt assembly, or video generation. Do not label prompts as images.
+
+Missing reference images do **not** block this text-prompt pass. With no supplied
+photos, prepare the first reference prompts from descriptions. For unspecified
+appearance, clothing, lighting and ordinary props, propose coherent draft choices
+that fit the story and mark them as provisional in `STORY.md`; do not stop to ask
+permission for each creative choice. Preserve any details the user already gave.
+Ask only when a missing answer materially changes the requested story or the user
+explicitly reserves a choice. If the user says they will supply designs or photos,
+honor that dependency while completing independent parts of the skeleton.
+
+Before finishing, check the filesystem, not just the prose: a production skeleton
+needs populated entity arrays, actual story-specific scene JSON, and nonempty
+reference prompt files for every character/location/prop included in its scope.
+Do not claim completion while those are absent. Report any concrete generation
+error instead of substituting empty folders or a command list.
 
 ## Step 0 — the project folder, named and placed
 
@@ -87,7 +135,10 @@ also carries a `STORY.md` at its root, a plain Markdown file **you write and mai
   nothing tells you which one the renders actually used.
 - **Scenes in order** — each scene's id, a one-line beat, and its state: *authored*
   (prompts written), *references ready* (cast/location/props for it have images on
-  disk), or *rendered* (`shotkit motion`/`frame` has run for it).
+  disk), or *prompts assembled* (`shotkit motion`/`frame` has run for it).
+  Keep *images/video generated* separate: those require actual media files.
+  Also record *reference prompts prepared* when the `sheet`/`location`/`prop` text
+  files exist but their images have not been generated yet.
 - **Decisions** — what was settled and what was deliberately rejected, with the reason.
   This is what stops a later session from re-opening a question the user already
   closed.
@@ -112,12 +163,15 @@ intake form.
 
 ## The question protocol — few, specific, answerable
 
-Ask everything you need in **one message**, not one question at a time:
+The automatic skeleton above is the default for a Shotkit story request. Use the
+questions below only for choices the user wants to supply or ambiguities that
+materially change the story. They are not a mandatory intake form or a prerequisite
+for drafting. If a question is needed, ask the missing details in **one message**:
 
 - **Character** — three pieces of information, kept separate:
   1. **Identity**: age, face, build, hair. This becomes `canonicalDescription` — the person themselves, unchanged across scenes.
   2. **Default look** (wardrobe/state): what they're wearing when we first meet them. This becomes the `primary` entry in the character's `looks[]` array.
-  3. **Reference photos**: do they already have any images of this person's face? This is the fork in how the sheet gets generated, so ask it here rather than discovering it later. If yes, the photos go under `refs/` and their paths into the character's `identityRefs` list in `bible.json` — the sheet is then generated to MATCH that face, not invented from prose. If no, `identityRefs` stays empty and the sheet is generated from the description alone (see "The reference pass" below for what each route produces). Neither answer blocks anything; ask once, here, so you're not re-asking mid-render.
+  3. **Reference photos**: do they already have any images of this person's face? This is the fork in how the sheet gets generated, so use any supplied photos here; if none were supplied, start with a text-only draft. If supplied, the photos go under `refs/` and their paths into the character's `identityRefs` list in `bible.json` — the sheet is then generated to MATCH that face, not invented from prose. If no, `identityRefs` stays empty and the sheet is generated from the description alone (see "The reference pass" below for what each route produces). Neither route blocks creating the initial prompt files.
 
   If what they have is several separate photos — one for the face, one for a garment, a separate body reference — that's a stronger mechanism than one flat photo (`refKit`, role-labelled references); don't set that up here, just note it and point them at `character-refs`, which owns it.
 
@@ -134,8 +188,8 @@ the `primary` look and keep `canonicalDescription` to the person, exactly as if 
 asked the two questions separately. Copying their sentence whole into `canonicalDescription`
 is the easy mistake here, because it is the sentence you were handed: it reads as obedience
 and silently locks that coat onto the character in every scene they ever appear in. If what
-they gave you is all wardrobe and no face, ask for the identity half — that one is worth
-asking for.
+they gave you is all wardrobe and no face, propose a separate draft identity unless
+the user has reserved that choice.
 
 ## Writing the bible
 
@@ -187,9 +241,11 @@ Locations and props start from text when their configured images do not yet exis
 On later runs, existing location views or the existing prop image are attached for
 consistency. Configured but not yet generated images are destinations, not inputs.
 
-The scene cannot be assembled until every entity it `@mentions` has a reference image on
-disk — `shotkit lint` will report each one missing, and a `.refs.txt` that lists a path
-resolving to nothing is silently useless to a generator. So before authoring the scene:
+A final reference-backed scene handoff needs the mentioned reference images on disk:
+`shotkit lint` reports missing ones, and a `.refs.txt` listing nonexistent paths is
+not ready to attach. This blocks the final image-dependent handoff, not creating
+the reference prompts below or writing scene drafts. Prepare the reference prompts
+before waiting for images:
 
 For each **new** character:
 ```
@@ -212,24 +268,32 @@ path instead (see above).
 **Hand the user every block, tell them where to save each result** (the look's/view's/
 prop's `refImage`/`uri` path under `refs/`, exactly as written into `bible.json` above —
 the same path the handoff block itself now names when the list comes back empty),
-**and stop.** Do not attempt to author or render the scene yet — update `STORY.md` to
-note these entities are now "references ready" once the user confirms the images are
-saved, then continue.
+**and record "reference prompts prepared; images pending" in `STORY.md`.**
+Never stop earlier with only the story outline and an empty bible. If the requested
+scope includes scene drafts, write those too and label missing image dependencies;
+do not present an incomplete reference list as a ready-to-generate scene handoff.
+Mark entities "references ready" only after verifying the actual image files, then
+continue the final scene assembly. Do not create placeholder images to pass lint.
 
 ## The scene pass
 
-Once every `@mentioned` entity has its reference image in place:
+Write scene drafts during skeleton creation; generated images are not a dependency
+for authoring text. Once the references exist, revise those same drafts as needed
+and assemble the final scene handoff. Do not create a second set of scenes.
 
 1. Author `motionPrompt` and `dialogue` following `cinematic-scenes`'s recipe — the
    upfront structure header (shot count + duration + aspect), the timecoded
    `SHOT N [start–end]` lines, `@mention` for every character/location/prop present,
    `[shot N]` anchors on any `dialogue`/`VO:` segment, and the narration sweep so no
    single shot carries both a spoken line and a `VO:` segment.
-2. Run `shotkit --project <dir> lint <scene-id>` and fix anything it reports — it
-   checks for unresolved/missing references, music/singing words, dialogue or
+2. Run `shotkit --project <dir> lint <scene-id>` and fix authoring errors. During
+   skeleton creation, report genuinely missing image files as pending dependencies;
+   do not fake them or wait to save the draft. Before the final handoff, resolve
+   those missing references too. The command checks for unresolved/missing references, music/singing words, dialogue or
    `VO:` narration that won't fit the clip together with spoken lines, and `[shot N]` anchors pointing at shots the
    motion prompt never declares.
-3. Run `shotkit --project <dir> motion <scene-id> --mode t2v --handoff` — `t2v` is the
+3. Once the required reference images are present, run
+   `shotkit --project <dir> motion <scene-id> --mode t2v --handoff` — `t2v` is the
    default mode for every scene per `cinematic-scenes` (frees the camera, needs no seed
    frame); add `--handoff` for the paste-ready block.
 4. Update `STORY.md`'s scene state to *authored* once the prompt is written, and to
@@ -237,7 +301,12 @@ Once every `@mentioned` entity has its reference image in place:
 
 ## What the user gets at the end
 
-Exactly what `cinematic-scenes`'s workflow was missing a clean handoff for: **one prompt
+For the initial story skeleton: link to `STORY.md`, `bible.json`, the draft scene
+files, and the generated character/location/prop prompt files. State that reference
+images and final video generation are still pending. An initial skeleton does not
+require the user to generate images during the same turn.
+
+For a final scene handoff with references ready: exactly what `cinematic-scenes`'s workflow was missing a clean handoff for: **one prompt
 to paste into their generator, and a numbered list of images to attach, in that exact
 order.** That is the `--handoff` block from the `motion` command above — nothing further
 to open, reconcile or re-order by hand.
